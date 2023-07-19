@@ -1,0 +1,17 @@
+{
+    "definition": {
+	"drill": {},
+	"mineshaft": {},
+	"input": {},
+	"output": {},
+	"store": {},
+	"mixer": {},
+	"repeater": {},
+	"developer": {},
+	"transmitter": {},
+	"laboratory": {},
+	"launcher": {},
+	"radiator": {},
+	"barrier": {}
+    }
+}
