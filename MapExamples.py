@@ -1,7 +1,7 @@
 library0 = {
     "objects": {
-	"drill": {},
-	"mineshaft": {},
+	"drill": {"shape": "drill-0", "radius": 30},
+	"mineshaft": {"shape": "mineshaft-0", "radius": 30},
 	"input": {},
 	"output": {},
 	"store": {},
@@ -18,12 +18,19 @@ library0 = {
 	"desert-0": {"desc": "desert", "color": [1.0, 1.0, 1.0],    "level": 10.5},
 	"desert-1": {"desc": "desert", "color": [0.92, 0.92, 0.92], "level": 14.2},
 	"desert-2": {"desc": "desert", "color": [0.84, 0.84, 0.84], "level": 32.3}
+    },
+    "players": {
+        "Aaa": {"color": [1.0, 1.0, 0.0]}
     }
 }
 
 battlefield0 = {
+    "objects": [
+        ("mineshaft", -380, -120, "Aaa", 1.0),
+        ("drill", -340, -200, "Aaa", 1.0),
+        ("drill", -300, -250, "Aaa", 0.66)
+    ],
     "resorces": [
-
     ],
     "terrains": [
         ("base", "desert-0"),
