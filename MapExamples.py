@@ -1,27 +1,35 @@
 library0 = {
     "objects": {
-	"drill": {"shape": "drill-0", "radius": 30},
-	"mineshaft": {"shape": "mineshaft-0", "radius": 30},
-	"input": {"shape": "input-0", "radius": 30},
-	"output": {"shape": "output-0", "radius": 30},
-	"store": {"shape": "store-0", "radius": 30},
-	"mixer": {"shape": "mixer-0", "radius": 30},
-	"repeater": {"shape": "repeater-0", "radius": 30},
-	"developer": {"shape": "developer-0", "radius": 30, "fuel": "AC"},
-	"launcher": {"shape": "launcher-0", "radius": 30, "fuel": "AC"},
-	"transmitter": {"shape": "transmitter-0", "radius": 60, "fuel": "AB"},
-	"laboratory": {"shape": "laboratory-0", "radius": 30, "fuel": "AB"},
-	"radiator": {"shape": "radiator-0", "radius": 60, "fuel": "BC"},
-	"barrier": {"shape": "barrier-0", "radius": 30, "fuel": "BC"}
+	"drill":       {"shape": "drill-0",     "radius": 50, "structure": 10},
+	"mineshaft":   {"shape": "mineshaft-0", "radius": 50, "structure": 30, "range": 100},
+	"input":       {"shape": "input-0",     "radius": 50, "structure": 20, "range": 80},
+	"output":      {"shape": "output-0",    "radius": 50, "structure": 20, "range": 80},
+	"store":       {"shape": "store-0",      "radius": 50, "structure": 30, "range": 160},
+	"mixer":       {"shape": "mixer-0",      "radius": 60, "structure": 50, "range": 160},
+	"repeater":    {"shape": "repeater-0",    "radius": 50, "structure": 10, "range": 200},
+	"developer":   {"shape": "developer-0",   "radius": 50, "structure": 60, "range": 160, "fuel": "AC"},
+	"launcher":    {"shape": "launcher-0",    "radius": 80, "structure": 30, "range": 400, "fuel": "AC"},
+	"transmitter": {"shape": "transmitter-0", "radius": 100, "structure": 100, "range": 0, "fuel": "AB"},
+	"laboratory":  {"shape": "laboratory-0",  "radius": 50, "structure": 100, "range": 0, "fuel": "AB"},
+	"radiator":    {"shape": "radiator-0",    "radius": 100, "structure": 80, "range": 600, "fuel": "BC"},
+	"barrier":     {"shape": "barrier-0",     "radius": 50, "structure": 80, "range": 300, "fuel": "BC"}
     },
     "resources": {
         "A": {"color": [1.0, 0.1, 0.1]},
         "B": {"color": [0.1, 0.8, 0.1]},
         "C": {"color": [0.1, 0.1, 1.0]},
-        "AB": {"color": [1.0, 0.8, 0.1]},
-        "AC": {"color": [1.0, 0.1, 1.0]},
-        "BC": {"color": [0.1, 0.9, 0.9]}
+        "AB": {"color": [1.0, 0.8, 0.1], "process": {"A": 0.6, "B": 0.4}},
+        "AC": {"color": [1.0, 0.1, 1.0], "process": {"A": 0.4, "C": 0.6}},
+        "BC": {"color": [0.1, 0.9, 0.9], "process": {"C": 0.7, "B": 0.3}}
     },
+    "settings": {
+        "base-free-range": 50,
+        "base-height-factor": 3,
+        "distribution-method": "dynamic-random"
+    },
+    "technologies": ["store-size", "mine-gain", "mixing-gain", "bandwidth", 
+                     "research", "development", "transmission",
+                     "barrier", "radiation", "rockets"],
     "terrains": {
 	"desert-0": {"desc": "desert", "color": [1.0, 0.98, 0.95], "level": 10.5},
 	"desert-1": {"desc": "desert", "color": [1.0, 0.92, 0.92], "level": 14.2},
@@ -43,7 +51,8 @@ battlefield0 = {
         ("drill", -300, -250, "Aaa", 0.1),
         ("input", -140, -200, "Aaa", 1.0, "A"),
         ("output", -100, -250, "Aaa", 0.66, "A"),
-        ("store", -300, 50, "Aaa", 0.5, "A", 166.0),
+        ("store", -350, 50, "Bbb", 1.0, None, 0),
+        ("store", -300, 20, "Aaa", 0.5, "A", 166.0),
         ("mixer", -200, -250, "Aaa", 0.5, None),
         ("mixer", -200, -450, "Aaa", 0.5, "BC"),
         ("mixer", -100, -450, "Aaa", 1.0, "AB"),
@@ -54,7 +63,8 @@ battlefield0 = {
         ("barrier", 0, 250, "Aaa", 1.0, True),
         ("developer", 200, 150, "Aaa", 1.0, True),
         ("transmitter", 300, 150, "Aaa", 1.0, True),
-        ("repeater", 400, 150, "Aaa", 1.0)
+        ("repeater", 450, 150, "Aaa", 1.0, True),
+        ("repeater", 400, 150, "Aaa", 1.0, False)
     ],
     "resorces": [
     ],
@@ -79,7 +89,29 @@ battlefield0 = {
          (-1158.33, -10.14),
          (-1055.52, -125.04),
          (-1073.67, -324.6),
-         )
+         ),
+        ("polygon", "desert-1",
+         (1110.52, 159.03),
+         (1052.5, 379.52),
+         (1069.91, 808.9),
+         (1377.43, 1197.66),
+         (1777.8, 1273.09),
+         (2085.32, 988.77),
+         (2102.73, 594.21),
+         (1980.88, 263.48),
+         (1517.59, 64.28),
+         ),
+        ("polygon", "desert-2",
+         (1327.79, 353.87),
+         (1246.02, 570.56),
+         (1331.87, 860.84),
+         (1495.41, 999.84),
+         (1752.98, 1040.73),
+         (1851.11, 824.04),
+         (1855.19, 607.35),
+         (1777.51, 468.35),
+         (1601.71, 333.43),
+         (1397.29, 308.9),
+        )
     ]
 }
-
