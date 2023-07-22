@@ -9,6 +9,7 @@ class ObjectPainter(TerrPainter):
         self.battlefield =  battlefield
         self.library = library
         self.config = config
+        self.connections = []
 
     def get_object_color(self, hp): 
         v = 0.8 * (1.0 - hp)
@@ -374,3 +375,44 @@ class ObjectPainter(TerrPainter):
             elif shape == "developer-0": self.draw_developer_0(context, xloc, yloc, color, hp, *params)
             elif shape == "repeater-0": self.draw_repeater_0(context, xloc, yloc, color, hp, *params)
             else: raise ValueError(f"Not supported object: {obj}")
+
+        for xyo, xye, distance, free_range in self.connections:
+            xo, yo = self.calc_render_params(*xyo)
+            xe, ye = self.calc_render_params(*xye)
+            w1 = 8 * self.config["window-zoom"]
+            w2 = 3 * self.config["window-zoom"]
+            w3 = 5 * self.config["window-zoom"]
+            if free_range < distance:
+                f = free_range / distance
+                x = xo + (xe - xo) * f
+                y = yo + (ye - yo) * f
+            
+            context.set_source_rgba(0.0, 0.0, 0.0)
+            context.set_line_width(w1)
+            context.move_to(xo, yo)
+            context.line_to(xe, ye) 
+            context.stroke()
+
+            context.set_source_rgba(1.0, 1.0, 1.0)
+            context.set_line_width(w2)
+            context.move_to(xo, yo)
+            context.line_to(xe, ye) 
+            context.stroke()
+
+            context.set_source_rgba(0.0, 0.0, 0.0)
+            context.arc(xo, yo , w3, 0, TWO_PI)
+            context.fill()
+            context.arc(xe, ye , w3, 0, TWO_PI)
+            context.fill()
+            if free_range < distance:
+                context.arc(x, y , w3, 0, TWO_PI)
+                context.fill()
+            
+            context.set_source_rgba(1.0, 1.0, 1.0)
+            context.arc(xo, yo , w2, 0, TWO_PI)
+            context.fill()
+            context.arc(xe, ye , w2, 0, TWO_PI)
+            context.fill()
+            if free_range < distance:
+                context.arc(x, y , w2, 0, TWO_PI)
+                context.fill()

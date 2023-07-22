@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import gi, cairo
+import gi, cairo, copy
 from BaseWindow import BaseWindow
 
 gi.require_version('Gtk', '3.0')
@@ -40,6 +40,7 @@ class NaviPainter:
 class NaviWindow(BaseWindow):
     def __init__(self, config):
         self.painter = NaviPainter(config)
+        self.config_backup = copy.deepcopy(config)
         self.config = config
 
         title = config["window-title"]
@@ -53,10 +54,10 @@ class NaviWindow(BaseWindow):
 
     def on_press(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
-        if key_name == "Return":
+        if key_name == "Escape":
             print("##> move center & redraw")
-            self.config["window-offset"] = 0, 0
-            self.config["window-zoom"] = 1.0
+            self.config["window-offset"] = self.config_backup["window-offset"]
+            self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.draw_content()
         elif key_name == "Up":
             print("##> move up & redraw")
