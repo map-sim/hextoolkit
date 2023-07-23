@@ -46,6 +46,9 @@ class LibraryValidator(TypeValidator):
         r2 = self.library["objects"][name]["radius"] ** 2
         assert d2 >= r2, f"{name} ({xy}) -- {xy2}"
 
+    def validate_tech_exists(self, tech):
+        assert tech in self.library["technologies"], tech
+
     def validate_buildable(self, terr):
         assert self.library["terrains"][terr]["buildable"], terr
 
@@ -65,6 +68,7 @@ class BattlefieldValidator(TypeValidator):
         objects = battlefield["objects"]
         resources = battlefield["resources"]
         self.validate_object_types(objects)
+        self.validate_object_params(objects)
         self.validate_object_distribution(battlefield)
         self.validate_mineshafts(objects, resources)
         
@@ -77,6 +81,24 @@ class BattlefieldValidator(TypeValidator):
             assert type(y) is int
         print("validate_object_types...")
 
+    def validate_object_params(self, objects):
+        for name, _, _, _, _, *rest in objects:            
+            if name == "laboratory":
+                tech = rest[0]
+                if tech is None: continue
+                self.libval.validate_tech_exists(tech)
+            if name == "launcher":
+                xy, found = rest[0], False                
+                if xy is None: continue
+                for _, x2, y2, _, _, *rest in objects:
+                    if xy == (x2, y2): found = True
+                assert found, f"{name}, --> {xy}"
+            if name in ("radiator", "barrier", "observer",
+                        "repeater", "developer", "transmitter"):
+                switch = rest[0]
+                assert switch in (False, True), f"{name}: switch: {switch}"
+        print("validate_object_params...")
+                
     def validate_object_distribution(self, battlefield):
         graph_terr, tmp_list = TerrGraph(battlefield), []
         for name, x, y, *rest in battlefield["objects"]:
