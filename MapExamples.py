@@ -14,7 +14,7 @@ library0 = {
 	"laboratory":  {"shape": "laboratory-0",  "radius": 50, "cost": 120, "structure": 100, "range": 0, "fuel": "AB", "height-factor": 6},
 	"radiator":    {"shape": "radiator-0",    "radius": 100, "cost": 120, "structure": 80, "range": 500, "fuel": "BC", "height-factor": 9},
 	"barrier":     {"shape": "barrier-0",     "radius": 50, "cost": 120, "structure": 80, "range": 300, "fuel": "BC", "height-factor": 10},
-	"sensor":      {"shape": "sensor-0",     "radius": 50, "cost": 40, "structure": 50, "range": 600, "fuel": "BC", "height-factor": 12}
+	"observer":    {"shape": "observer-0",     "radius": 50, "cost": 40, "structure": 50, "range": 600, "fuel": "BC", "height-factor": 12}
     },
     "resources": {
         "A": {"color": [1.0, 0.1, 0.1]},
@@ -80,7 +80,7 @@ battlefield0 = {
         ("repeater", 300, 50, "Aaa", 1.0, True),
         ("repeater", 250, 40, "Aaa", 1.0, False),
         ("barrier", -240, 190, "Aaa", 1.0, True),
-        ("sensor", 50, 430, "Aaa", 1.0, True),
+        ("observer", 50, 430, "Aaa", 1.0, True),
         ("block", 300, 270, "Bbb", 1.0),
     ],
     "resources": {

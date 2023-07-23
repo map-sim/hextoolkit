@@ -75,7 +75,7 @@ class ObjectPainter(TerrPainter):
         context.arc(xloc, yloc, rr, 0, TWO_PI)
         context.fill()
 
-    def draw_sensor_0(self, context, xloc, yloc, color, hp, switch):
+    def draw_observer_0(self, context, xloc, yloc, color, hp, switch):
         xloc, yloc = self.calc_render_params(xloc, yloc)
         r = 25 * self.config["window-zoom"]
         rr = 8 * self.config["window-zoom"]
@@ -95,7 +95,7 @@ class ObjectPainter(TerrPainter):
         xc = xloc + 10 * self.config["window-zoom"]
         yc = yloc + 16 * self.config["window-zoom"]
         if not switch: resource = None
-        else: resource = resource = self.library["objects"]["sensor"]["fuel"]
+        else: resource = resource = self.library["objects"]["observer"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
 
     def draw_mineshaft_0(self, context, xloc, yloc, color, hp, resource):
@@ -411,7 +411,7 @@ class ObjectPainter(TerrPainter):
             elif shape == "transmitter-0": self.draw_transmitter_0(context, xloc, yloc, color, hp, *params)
             elif shape == "developer-0": self.draw_developer_0(context, xloc, yloc, color, hp, *params)
             elif shape == "repeater-0": self.draw_repeater_0(context, xloc, yloc, color, hp, *params)
-            elif shape == "sensor-0": self.draw_sensor_0(context, xloc, yloc, color, hp, *params)
+            elif shape == "observer-0": self.draw_observer_0(context, xloc, yloc, color, hp, *params)
             elif shape == "block-0": self.draw_block_0(context, xloc, yloc, color, hp)
             else: raise ValueError(f"Not supported object: {obj}")
 

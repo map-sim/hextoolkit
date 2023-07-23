@@ -74,7 +74,7 @@ class ObjectGraph:
               (no == "store" and ne == "developer") or
               (no == "store" and ne == "radiator") or
               (no == "store" and ne == "launcher") or
-              (no == "store" and ne == "sensor") or
+              (no == "store" and ne == "observer") or
               (no == "store" and ne == "transmitter")):
             if po != pe: return None, None, None, None
             re = self.library["objects"][ne]["fuel"]
@@ -116,7 +116,7 @@ class ObjectGraph:
             if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)
             return d, h, (xo, yo), (xe, ye)
-        elif no == "sensor":
+        elif no == "observer":
             so = objects[i1][5]
             if so is None: return None, None, None, None
             if po == pe: return None, None, None, None
