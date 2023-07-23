@@ -394,7 +394,7 @@ class ObjectPainter(TerrPainter):
         else: resource = resource = self.library["objects"]["transmitter"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
 
-    def draw_connection(self, xyo, xye, distance, free_range):
+    def draw_connection(self, context, xyo, xye, distance, free_range):
         xo, yo = self.calc_render_params(*xyo)
         xe, ye = self.calc_render_params(*xye)
         w1 = 8 * self.config["window-zoom"]
@@ -458,7 +458,7 @@ class ObjectPainter(TerrPainter):
             else: raise ValueError(f"Not supported object: {obj}")
 
         for xyo, xye, distance, free_range in self.connections:
-            self.draw_connection(xyo, xye, distance, free_range)
+            self.draw_connection(context, xyo, xye, distance, free_range)
 
         if self.cross is not None:
             xo, yo = self.calc_render_params(*self.cross)
