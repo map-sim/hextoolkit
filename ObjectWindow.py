@@ -147,6 +147,7 @@ class ObjectWindow(TerrWindow):
         self.painter = ObjectPainter(config, library, battlefield)
         self.selected_object_index = None
         self.selected_player = None
+        self.selected_object = None
         self.pointer_mode = "terr"
 
         self.graph_terr = TerrGraph(battlefield)
@@ -170,6 +171,7 @@ class ObjectWindow(TerrWindow):
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.connections = []
             self.selected_player = None
+            self.selected_object = None
             self.pointer_mode = "terr"
             self.draw_content()
         elif key_name == "F1":
@@ -183,7 +185,12 @@ class ObjectWindow(TerrWindow):
             self.pointer_mode = "obj"
             self.graph = self.graph_obj
             self.painter.connections = []
-            self.draw_content()            
+            self.draw_content()
+        # elif key_name == "F3":
+        #     print("##> pointer mode: new object")            
+        #     self.pointer_mode = "new"
+        #     self.painter.connections = []
+        #     self.draw_content()
         elif key_name == "p" and self.pointer_mode == "obj":
             players = list(self.library["players"].keys())            
             if self.selected_player is not None:
@@ -191,6 +198,13 @@ class ObjectWindow(TerrWindow):
                 self.selected_player = players[(ixp+1) % len(players)]
             else: self.selected_player = players[0]
             print("##> switch player: ", self.selected_player)
+        elif key_name == "o" and self.pointer_mode == "obj":
+            objects = [ob for ob in self.library["objects"]]
+            if self.selected_object is not None:
+                ixp = objects.index(self.selected_object)
+                self.selected_object = objects[(ixp+1) % len(objects)]
+            else: self.selected_object = objects[0]
+            print("##> switch objects: ", self.selected_object)
         else: return TerrWindow.on_press(self, widget, event)
 
     def on_click_obj(self, widget, event):
@@ -217,6 +231,12 @@ class ObjectWindow(TerrWindow):
             return TerrWindow.on_click(self, widget, event)
         elif self.pointer_mode == "obj":
             return self.on_click_obj(widget, event)
+        # elif self.pointer_mode == "new":
+        #     ox, oy = self.get_click_location(event)
+        #     ox, oy = int(ox), int(oy)
+        #     newrow = (self.selected_object, ox, oy, self.selected_player, 1.0, None)
+        #     self.battlefield["objects"].append(newrow)
+        #     self.draw_content()
         else: raise ValueError("on_click")
         
 def run_example():

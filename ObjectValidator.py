@@ -52,6 +52,7 @@ class LibraryValidator(TypeValidator):
 class BattlefieldValidator(TypeValidator):
     types = {
         "iteration": int,
+        "ratiation": (int, float),
         "objects": list,
         "resources": dict,
         "terrains": list

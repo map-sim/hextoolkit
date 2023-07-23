@@ -94,7 +94,7 @@ class ObjectPainter(TerrPainter):
 
         xc = xloc + 10 * self.config["window-zoom"]
         yc = yloc + 16 * self.config["window-zoom"]
-        if not switch: resource = None
+        if switch is None or not switch: resource = None
         else: resource = resource = self.library["objects"]["observer"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
 
@@ -241,7 +241,7 @@ class ObjectPainter(TerrPainter):
         xc = xloc + 16 * self.config["window-zoom"]
         yc = yloc + 16 * self.config["window-zoom"]
         
-        if not switch: resource = None
+        if switch is None or not switch: resource = None
         else: resource = self.library["objects"]["barrier"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
 
@@ -268,7 +268,7 @@ class ObjectPainter(TerrPainter):
         xc = xloc + 16 * self.config["window-zoom"]
         yc = yloc + 16 * self.config["window-zoom"]
 
-        if not switch: resource = None
+        if switch is None or not switch: resource = None
         else: resource = self.library["objects"]["radiator"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
         
@@ -339,7 +339,7 @@ class ObjectPainter(TerrPainter):
         xc = xloc + 16 * self.config["window-zoom"]
         yc = yloc + 16 * self.config["window-zoom"]
 
-        if not switch: resource = None
+        if switch is None or not switch: resource = None
         else: resource = resource = self.library["objects"]["developer"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
 
@@ -389,7 +389,7 @@ class ObjectPainter(TerrPainter):
         xc = xloc + 16 * self.config["window-zoom"]
         yc = yloc - 16 * self.config["window-zoom"]
 
-        if not switch: resource = None
+        if switch is None or not switch: resource = None
         else: resource = resource = self.library["objects"]["transmitter"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
         
