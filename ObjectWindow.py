@@ -74,6 +74,7 @@ class ObjectGraph:
               (no == "store" and ne == "developer") or
               (no == "store" and ne == "radiator") or
               (no == "store" and ne == "launcher") or
+              (no == "store" and ne == "sensor") or
               (no == "store" and ne == "transmitter")):
             if po != pe: return None, None, None, None
             re = self.library["objects"][ne]["fuel"]
@@ -110,6 +111,15 @@ class ObjectGraph:
             te = objects[i1][5]
             if te is None: return None, None, None, None
             if te[0] != xe or te[1] != ye: return None, None, None, None
+            if po == pe: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
+        elif no == "sensor":
+            so = objects[i1][5]
+            if so is None: return None, None, None, None
+            if po == pe: return None, None, None, None
             d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
             if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)
@@ -124,7 +134,10 @@ class ObjectGraph:
         for i in range(length):
             distance, h, xyo, xye = self.check_objects_connection(index, i)
             if distance is None: continue
-            free_range = dfr + h * hf
+            name = self.battlefield["objects"][i][0]
+            if "height-factor" in self.library["objects"][name]:
+                free_range = dfr + h * self.library["objects"][name]["height-factor"]
+            else: free_range = dfr + h * hf
             row = xyo, xye, distance, free_range
             output_connections.append(row)
         return output_connections
@@ -133,7 +146,8 @@ class ObjectWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         self.painter = ObjectPainter(config, library, battlefield)
         self.selected_object_index = None
-        self.pointer_mode = "Terr"
+        self.selected_player = None
+        self.pointer_mode = "terr"
 
         self.graph_terr = TerrGraph(battlefield)
         self.graph_obj = ObjectGraph(library, battlefield, self.graph_terr)
@@ -155,19 +169,28 @@ class ObjectWindow(TerrWindow):
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.connections = []
+            self.selected_player = None
+            self.pointer_mode = "terr"
             self.draw_content()
         elif key_name == "F1":
-            print("##> pointer mode: Terr")
-            self.pointer_mode = "Terr"
+            print("##> pointer mode: terr")
+            self.pointer_mode = "terr"
             self.graph = self.graph_terr
             self.painter.connections = []
             self.draw_content()
         elif key_name == "F2":
-            print("##> pointer mode: Obj")
-            self.pointer_mode = "Obj"
+            print("##> pointer mode: obj")
+            self.pointer_mode = "obj"
             self.graph = self.graph_obj
             self.painter.connections = []
-            self.draw_content()
+            self.draw_content()            
+        elif key_name == "p" and self.pointer_mode == "obj":
+            players = list(self.library["players"].keys())            
+            if self.selected_player is not None:
+                ixp = players.index(self.selected_player)
+                self.selected_player = players[(ixp+1) % len(players)]
+            else: self.selected_player = players[0]
+            print("##> switch player: ", self.selected_player)
         else: return TerrWindow.on_press(self, widget, event)
 
     def on_click_obj(self, widget, event):
@@ -181,18 +204,18 @@ class ObjectWindow(TerrWindow):
             self.selected_object_index, min_d2 = i, d2            
         if self.selected_object_index is None:
             self.painter.connections = []
-            print("Selected Obj: -")
+            print("Selected object: -")
             self.draw_content(); return True
-        else: print("Selected Obj:", self.battlefield["objects"][self.selected_object_index])
+        else: print("Selected object:", self.battlefield["objects"][self.selected_object_index])
         links = self.graph_obj.find_all_connections(self.selected_object_index)
         self.painter.connections = links
         self.draw_content()
         return True
 
     def on_click(self, widget, event):
-        if self.pointer_mode == "Terr":
+        if self.pointer_mode == "terr":
             return TerrWindow.on_click(self, widget, event)
-        elif self.pointer_mode == "Obj":
+        elif self.pointer_mode == "obj":
             return self.on_click_obj(widget, event)
         else: raise ValueError("on_click")
         

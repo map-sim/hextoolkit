@@ -1,18 +1,20 @@
 library0 = {
     "objects": {
-	"drill":       {"shape": "drill-0",     "radius": 50, "structure": 10},
-	"mineshaft":   {"shape": "mineshaft-0", "radius": 50, "structure": 30, "range": 100},
-	"input":       {"shape": "input-0",     "radius": 50, "structure": 20, "range": 80},
-	"output":      {"shape": "output-0",    "radius": 50, "structure": 20, "range": 80},
-	"store":       {"shape": "store-0",      "radius": 50, "structure": 30, "range": 160},
-	"mixer":       {"shape": "mixer-0",      "radius": 60, "structure": 50, "range": 160},
-	"repeater":    {"shape": "repeater-0",    "radius": 50, "structure": 10, "range": 200},
-	"developer":   {"shape": "developer-0",   "radius": 50, "structure": 60, "range": 160, "fuel": "AC"},
-	"launcher":    {"shape": "launcher-0",    "radius": 80, "structure": 30, "range": 400, "fuel": "AC"},
-	"transmitter": {"shape": "transmitter-0", "radius": 100, "structure": 100, "range": 0, "fuel": "AB"},
-	"laboratory":  {"shape": "laboratory-0",  "radius": 50, "structure": 100, "range": 0, "fuel": "AB"},
-	"radiator":    {"shape": "radiator-0",    "radius": 100, "structure": 80, "range": 600, "fuel": "BC"},
-	"barrier":     {"shape": "barrier-0",     "radius": 50, "structure": 80, "range": 300, "fuel": "BC"}
+	"drill":       {"shape": "drill-0",     "radius": 50, "cost": 10, "structure": 5},
+	"block":       {"shape": "block-0",     "radius": 50, "cost": 10, "structure": 50},
+	"mineshaft":   {"shape": "mineshaft-0", "radius": 50, "cost": 20, "structure": 30, "range": 100},
+	"input":       {"shape": "input-0",     "radius": 50, "cost": 20, "structure": 20, "range": 80},
+	"output":      {"shape": "output-0",    "radius": 50, "cost": 20, "structure": 20, "range": 80},
+	"store":       {"shape": "store-0",      "radius": 50, "cost": 30, "structure": 30, "range": 160},
+	"mixer":       {"shape": "mixer-0",      "radius": 60, "cost": 50, "structure": 50, "range": 160},
+	"repeater":    {"shape": "repeater-0",    "radius": 50, "cost": 10, "structure": 10, "range": 200},
+	"developer":   {"shape": "developer-0",   "radius": 50, "cost": 60, "structure": 60, "range": 160, "fuel": "AC"},
+	"launcher":    {"shape": "launcher-0",    "radius": 80, "cost": 30, "structure": 30, "range": 400, "fuel": "AC"},
+	"transmitter": {"shape": "transmitter-0", "radius": 100, "cost": 150, "structure": 100, "range": 0, "fuel": "AB"},
+	"laboratory":  {"shape": "laboratory-0",  "radius": 50, "cost": 120, "structure": 100, "range": 0, "fuel": "AB", "height-factor": 6},
+	"radiator":    {"shape": "radiator-0",    "radius": 100, "cost": 120, "structure": 80, "range": 500, "fuel": "BC", "height-factor": 9},
+	"barrier":     {"shape": "barrier-0",     "radius": 50, "cost": 120, "structure": 80, "range": 300, "fuel": "BC", "height-factor": 10},
+	"sensor":      {"shape": "sensor-0",     "radius": 50, "cost": 40, "structure": 50, "range": 600, "fuel": "BC", "height-factor": 12}
     },
     "resources": {
         "A": {"color": [1.0, 0.1, 0.1]},
@@ -28,8 +30,8 @@ library0 = {
         "distribution-method": "dynamic-random"
     },
     "technologies": ["store-size", "mine-gain", "mixing-gain", "bandwidth", 
-                     "research", "development", "transmission",
-                     "barrier", "radiation", "rockets"],
+                     "research", "development", "transmission", "rockets",
+                     "barrier", "radiation", "sensoring"],
     "terrains": {
 	"desert-0": {"desc": "desert", "color": [1.0, 0.95, 0.93], "level": 10.5, "buildable": True},
 	"desert-1": {"desc": "desert", "color": [1.0, 0.9, 0.9], "level": 14.2, "buildable": True},
@@ -65,9 +67,9 @@ battlefield0 = {
         ("mixer", 0, -450, "Aaa", 0.5, "AC"),
         ("store", 80, -400, "Aaa", 0.5, "AC", 126.0),
         ("store", 80, -500, "Aaa", 0.5, "A", 126.0),
-        ("launcher", 200, 250, "Aaa", 1.0, (100, 250)),
+        ("launcher", 200, 250, "Aaa", 1.0, (300, 270)),
         ("radiator", 100, 250, "Aaa", 1.0, True),
-        ("laboratory", 100, 150, "Aaa", 1.0, "tech"),
+        ("laboratory", 100, 150, "Aaa", 1.0, "mine-gain"),
         ("barrier", 0, 250, "Aaa", 1.0, True),
         ("developer", 200, 150, "Aaa", 1.0, True),
         ("transmitter", 300, 150, "Aaa", 1.0, True),
@@ -76,7 +78,10 @@ battlefield0 = {
         ("store", -50, 350, "Aaa", 0.5, "AB", 126.0),
         ("store", 150, 50, "Aaa", 0.5, "AB", 126.0),
         ("repeater", 300, 50, "Aaa", 1.0, True),
-        ("repeater", 250, 50, "Aaa", 1.0, False)
+        ("repeater", 250, 40, "Aaa", 1.0, False),
+        ("barrier", -240, 190, "Aaa", 1.0, True),
+        ("sensor", 50, 430, "Aaa", 1.0, True),
+        ("block", 300, 270, "Bbb", 1.0),
     ],
     "resources": {
         (-380, -120): {"A": 0.1, "B": 10.5, "C": 0.4},

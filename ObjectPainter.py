@@ -61,6 +61,43 @@ class ObjectPainter(TerrPainter):
         context.arc(xloc, yloc, 2*r/3, 0, TWO_PI)
         context.fill()
 
+    def draw_block_0(self, context, xloc, yloc, color, hp):
+        xloc, yloc = self.calc_render_params(xloc, yloc)
+        r = 18 * self.config["window-zoom"]
+        rr = 8 * self.config["window-zoom"]
+
+        ob_color = self.get_object_color(hp)
+        points = [(xloc, yloc+r), (xloc + r, yloc),
+                  (xloc, yloc-r), (xloc - r, yloc)]
+        self.draw_polygon(context, ob_color, points)
+
+        context.set_source_rgba(*color)
+        context.arc(xloc, yloc, rr, 0, TWO_PI)
+        context.fill()
+
+    def draw_sensor_0(self, context, xloc, yloc, color, hp, switch):
+        xloc, yloc = self.calc_render_params(xloc, yloc)
+        r = 25 * self.config["window-zoom"]
+        rr = 8 * self.config["window-zoom"]
+
+        ob_color = self.get_object_color(hp)
+        points = [(xloc, yloc+r), (xloc + r, yloc),
+                  (xloc, yloc-r), (xloc - r, yloc)]
+        self.draw_polygon(context, ob_color, points)
+
+        context.set_source_rgba(*color)
+        context.arc(xloc-rr, yloc, rr, 0, TWO_PI)
+        context.fill()
+        context.set_source_rgba(*color)
+        context.arc(xloc+rr, yloc, rr, 0, TWO_PI)
+        context.fill()
+
+        xc = xloc + 10 * self.config["window-zoom"]
+        yc = yloc + 16 * self.config["window-zoom"]
+        if not switch: resource = None
+        else: resource = resource = self.library["objects"]["sensor"]["fuel"]
+        self.draw_control(context, xc, yc, ob_color, resource)
+
     def draw_mineshaft_0(self, context, xloc, yloc, color, hp, resource):
         self.draw_drill_0(context, xloc, yloc, color, hp)
         xloc, yloc = self.calc_render_params(xloc, yloc)
@@ -374,6 +411,8 @@ class ObjectPainter(TerrPainter):
             elif shape == "transmitter-0": self.draw_transmitter_0(context, xloc, yloc, color, hp, *params)
             elif shape == "developer-0": self.draw_developer_0(context, xloc, yloc, color, hp, *params)
             elif shape == "repeater-0": self.draw_repeater_0(context, xloc, yloc, color, hp, *params)
+            elif shape == "sensor-0": self.draw_sensor_0(context, xloc, yloc, color, hp, *params)
+            elif shape == "block-0": self.draw_block_0(context, xloc, yloc, color, hp)
             else: raise ValueError(f"Not supported object: {obj}")
 
         for xyo, xye, distance, free_range in self.connections:

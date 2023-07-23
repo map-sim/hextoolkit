@@ -37,6 +37,10 @@ class LibraryValidator(TypeValidator):
         self.validate_types(library)
         self.library = library
 
+        assert self.library["players"], "no player"
+        assert self.library["terrains"], "no terrain"
+        assert self.library["resources"], "no resource"
+
     def validate_distance2(self, name, d2, xy, xy2):
         assert name in self.library["objects"]
         r2 = self.library["objects"][name]["radius"] ** 2
