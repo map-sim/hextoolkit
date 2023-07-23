@@ -10,7 +10,8 @@ class ObjectPainter(TerrPainter):
         self.library = library
         self.config = config
         self.connections = []
-
+        self.cross = None
+        
     def get_object_color(self, hp): 
         v = 0.8 * (1.0 - hp)
         if v > 1.0: v = 1.0
@@ -392,7 +393,48 @@ class ObjectPainter(TerrPainter):
         if switch is None or not switch: resource = None
         else: resource = resource = self.library["objects"]["transmitter"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
-        
+
+    def draw_connection(self, xyo, xye, distance, free_range):
+        xo, yo = self.calc_render_params(*xyo)
+        xe, ye = self.calc_render_params(*xye)
+        w1 = 8 * self.config["window-zoom"]
+        w2 = 3 * self.config["window-zoom"]
+        w3 = 5 * self.config["window-zoom"]
+        if free_range < distance:
+            f = free_range / distance
+            x = xo + (xe - xo) * f
+            y = yo + (ye - yo) * f
+            
+        context.set_source_rgba(0.0, 0.0, 0.0)
+        context.set_line_width(w1)
+        context.move_to(xo, yo)
+        context.line_to(xe, ye) 
+        context.stroke()
+
+        context.set_source_rgba(0.7, 0.7, 0.7)
+        context.set_line_width(w2)
+        context.move_to(xo, yo)
+        context.line_to(xe, ye) 
+        context.stroke()
+
+        context.set_source_rgba(0.0, 0.0, 0.0)
+        context.arc(xo, yo , w3, 0, TWO_PI)
+        context.fill()
+        context.arc(xe, ye , w3, 0, TWO_PI)
+        context.fill()
+        if free_range < distance:
+            context.arc(x, y , w3, 0, TWO_PI)
+            context.fill()
+            
+        context.set_source_rgba(0.7, 0.7, 0.7)
+        context.arc(xo, yo , w2, 0, TWO_PI)
+        context.fill()
+        context.arc(xe, ye , w2, 0, TWO_PI)
+        context.fill()
+        if free_range < distance:
+            context.arc(x, y , w2, 0, TWO_PI)
+            context.fill()
+
     def draw(self, context):
         self.terr_painter.draw(context)
         for obj, xloc, yloc, player, hp, *params in self.battlefield["objects"]:
@@ -416,42 +458,26 @@ class ObjectPainter(TerrPainter):
             else: raise ValueError(f"Not supported object: {obj}")
 
         for xyo, xye, distance, free_range in self.connections:
-            xo, yo = self.calc_render_params(*xyo)
-            xe, ye = self.calc_render_params(*xye)
-            w1 = 8 * self.config["window-zoom"]
-            w2 = 3 * self.config["window-zoom"]
-            w3 = 5 * self.config["window-zoom"]
-            if free_range < distance:
-                f = free_range / distance
-                x = xo + (xe - xo) * f
-                y = yo + (ye - yo) * f
-            
-            context.set_source_rgba(0.0, 0.0, 0.0)
-            context.set_line_width(w1)
-            context.move_to(xo, yo)
-            context.line_to(xe, ye) 
-            context.stroke()
+            self.draw_connection(xyo, xye, distance, free_range)
 
-            context.set_source_rgba(0.7, 0.7, 0.7)
-            context.set_line_width(w2)
-            context.move_to(xo, yo)
-            context.line_to(xe, ye) 
-            context.stroke()
+        if self.cross is not None:
+            xo, yo = self.calc_render_params(*self.cross)
+            r = 15 * self.config["window-zoom"]
+            w = 2 * self.config["window-zoom"]
 
-            context.set_source_rgba(0.0, 0.0, 0.0)
-            context.arc(xo, yo , w3, 0, TWO_PI)
-            context.fill()
-            context.arc(xe, ye , w3, 0, TWO_PI)
-            context.fill()
-            if free_range < distance:
-                context.arc(x, y , w3, 0, TWO_PI)
-                context.fill()
-            
-            context.set_source_rgba(0.7, 0.7, 0.7)
-            context.arc(xo, yo , w2, 0, TWO_PI)
-            context.fill()
-            context.arc(xe, ye , w2, 0, TWO_PI)
-            context.fill()
-            if free_range < distance:
-                context.arc(x, y , w2, 0, TWO_PI)
-                context.fill()
+            context.set_source_rgba(0.2, 0.2, 0.2)
+            context.set_line_width(3*w)
+            context.move_to(xo-r, yo)
+            context.line_to(xo+r, yo) 
+            context.stroke()
+            context.move_to(xo, yo-r)
+            context.line_to(xo, yo+r) 
+            context.stroke()
+            context.set_source_rgba(0.9, 0.9, 0.9)
+            context.set_line_width(w)
+            context.move_to(xo-r+w, yo)
+            context.line_to(xo+r-w, yo) 
+            context.stroke()
+            context.move_to(xo, yo-r+w)
+            context.line_to(xo, yo+r-w) 
+            context.stroke()

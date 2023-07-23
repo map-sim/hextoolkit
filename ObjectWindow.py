@@ -28,6 +28,38 @@ class ObjectGraph:
         he = self.library["terrains"][te]["level"]
         return ho - he
 
+    def add_object(self, choosen):
+        if None in list(choosen.values()):
+            print("add_object failed none:", choosen)
+            return
+
+        x = int(choosen["x"])
+        y = int(choosen["y"])
+        obj = choosen["object"]
+        player = choosen["player"]
+
+        r2 = self.library["objects"][obj]["radius"] ** 2
+        for name, x2, y2, *rest in self.battlefield["objects"]:
+            rr2 = self.library["objects"][name]["radius"] ** 2
+            d2 = (x2-x) **2 + (y2-y) **2
+            if d2 < r2 or d2 < rr2:
+                print("add_object failed d/r")
+                return
+
+        terr, _ = self.terr_graph.check_terrain(x, y)
+        buildable = self.library["terrains"][terr]["buildable"]
+        if not buildable:
+            print("add_object failed - not buildable")
+            return
+
+        if obj == "store":
+            row = obj, x, y, player, 1.0, None, 0.0
+        elif obj in ("observer", "barrier", "radiator",
+                     "developer", "repeater", "transmitter"):
+             row = obj, x, y, player, 1.0, False
+        else: row = obj, x, y, player, 1.0, None
+        self.battlefield["objects"].append(row)
+        
     def check_objects_connection(self, i1, i2):
         objects = self.battlefield["objects"]
         if i1 == i2: return None, None, None, None
@@ -148,10 +180,9 @@ class ObjectWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         self.painter = ObjectPainter(config, library, battlefield)
         self.selected_object_index = None
-        self.selected_player = None
-        self.selected_object = None
         self.pointer_mode = "terr"
-
+        self.reset_shoosen()
+        
         self.graph_terr = TerrGraph(battlefield)
         self.graph_obj = ObjectGraph(library, battlefield, self.graph_terr)
         self.graph = self.graph_terr
@@ -165,16 +196,23 @@ class ObjectWindow(TerrWindow):
         width, height = config["window-size"]
         BaseWindow.__init__(self, title, width, height)
 
+    def reset_shoosen(self):
+        self.choosen = {
+            "object": None,
+            "player": None,            
+            "x": None,
+            "y": None
+        }
+        
     def on_press(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
         if key_name == "Escape":
             print("##> move center & redraw")
+            self.pointer_mode = "terr"
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.connections = []
-            self.selected_player = None
-            self.selected_object = None
-            self.pointer_mode = "terr"
+            self.reset_shoosen()
             self.draw_content()
         elif key_name == "F1":
             print("##> pointer mode: terr")
@@ -188,6 +226,16 @@ class ObjectWindow(TerrWindow):
             self.graph = self.graph_obj
             self.painter.connections = []
             self.draw_content()
+        elif key_name == "F3":
+            print("##> pointer mode: obj-new")
+            self.pointer_mode = "obj-new"
+            self.graph = self.graph_obj
+            self.painter.connections = []
+            self.draw_content()
+        elif key_name == "Return" and self.pointer_mode == "obj-new":
+            print("##> create new object")
+            self.graph.add_object(self.choosen)            
+            self.draw_content()
         elif key_name == "s" and self.pointer_mode == "obj":
             cnt, libname, mapname = 0, "lib", "map"
             flib = lambda c: f"{libname}-{c}.txt"
@@ -200,20 +248,20 @@ class ObjectWindow(TerrWindow):
             with open(fmap(cnt), "w") as fd:
                 fd.write(pformat(self.battlefield))
             print("Save battlefield:", fmap(cnt))
-        elif key_name == "p" and self.pointer_mode == "obj":
+        elif key_name == "p" and self.pointer_mode == "obj-new":
             players = list(self.library["players"].keys())            
-            if self.selected_player is not None:
-                ixp = players.index(self.selected_player)
-                self.selected_player = players[(ixp+1) % len(players)]
-            else: self.selected_player = players[0]
-            print("##> switch player: ", self.selected_player)
-        elif key_name == "o" and self.pointer_mode == "obj":
+            if self.choosen["player"] is not None:
+                ixp = players.index(self.choosen["player"])
+                self.choosen["player"] = players[(ixp+1) % len(players)]
+            else: self.choosen["player"] = players[0]
+            print("##> switch player: ", self.choosen["player"])
+        elif key_name == "o" and self.pointer_mode == "obj-new":
             objects = [ob for ob in self.library["objects"]]
-            if self.selected_object is not None:
-                ixp = objects.index(self.selected_object)
-                self.selected_object = objects[(ixp+1) % len(objects)]
-            else: self.selected_object = objects[0]
-            print("##> switch objects: ", self.selected_object)
+            if self.choosen["object"] is not None:
+                ixp = objects.index(self.choosen["object"])
+                self.choosen["object"] = objects[(ixp+1) % len(objects)]
+            else: self.choosen["object"] = objects[0]
+            print("##> switch objects: ", self.choosen["object"])
         else: return TerrWindow.on_press(self, widget, event)
 
     def on_click_obj(self, widget, event):
@@ -240,6 +288,18 @@ class ObjectWindow(TerrWindow):
             return TerrWindow.on_click(self, widget, event)
         elif self.pointer_mode == "obj":
             return self.on_click_obj(widget, event)
+        elif self.pointer_mode == "obj-new":
+            if event.button == 1:
+                ox, oy = self.get_click_location(event)
+                self.choosen["x"] = ox
+                self.choosen["y"] = oy
+                self.painter.cross = ox, oy
+                self.draw_content()
+            elif event.button == 3:
+                self.choosen["x"] = None
+                self.choosen["y"] = None
+                self.painter.cross = None
+                self.draw_content()
         else: raise ValueError("on_click")
         
 def run_example():
