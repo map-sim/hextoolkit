@@ -393,7 +393,7 @@ class ObjectPainter(TerrPainter):
             context.line_to(xe, ye) 
             context.stroke()
 
-            context.set_source_rgba(1.0, 1.0, 1.0)
+            context.set_source_rgba(0.7, 0.7, 0.7)
             context.set_line_width(w2)
             context.move_to(xo, yo)
             context.line_to(xe, ye) 
@@ -408,7 +408,7 @@ class ObjectPainter(TerrPainter):
                 context.arc(x, y , w3, 0, TWO_PI)
                 context.fill()
             
-            context.set_source_rgba(1.0, 1.0, 1.0)
+            context.set_source_rgba(0.7, 0.7, 0.7)
             context.arc(xo, yo , w2, 0, TWO_PI)
             context.fill()
             context.arc(xe, ye , w2, 0, TWO_PI)

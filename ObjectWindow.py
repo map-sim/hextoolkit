@@ -33,15 +33,87 @@ class ObjectGraph:
         xe, ye = objects[i2][1], objects[i2][2]
         no, ne = objects[i1][0], objects[i2][0]
         po, pe = objects[i1][3], objects[i2][3]
-
-        if no == "store" and ne == "store":
+        do = self.library["objects"][no].get("range", 0)
+        if ((no == "store" and ne == "store") or
+            (no == "mineshaft" and ne == "store") or
+            (no == "store" and ne == "output") or
+            (no == "store" and ne == "input") or
+            (no == "output" and ne == "store") or
+            (no == "input" and ne == "store") or
+            (no == "mixer" and ne == "store")):
             ro, re = objects[i1][5], objects[i2][5]
+            if ro is None: return None, None, None, None
+            if re is None: return None, None, None, None
             if po != pe: return None, None, None, None
             if ro != re: return None, None, None, None
             d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)
             return d, h, (xo, yo), (xe, ye)
-
+        elif no == "input" and ne == "output":
+            ro, re = objects[i1][5], objects[i2][5]
+            if ro is None: return None, None, None, None
+            if re is None: return None, None, None, None
+            if ro != re: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)        
+        elif no == "store" and ne == "mixer":
+            ro, re = objects[i1][5], objects[i2][5]            
+            if re is None: return None, None, None, None
+            if ro not in self.library["resources"][re]["process"]:
+                return None, None, None, None
+            if po != pe: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
+        elif ((no == "store" and ne == "laboratory") or
+              (no == "store" and ne == "barrier") or
+              (no == "store" and ne == "developer") or
+              (no == "store" and ne == "radiator") or
+              (no == "store" and ne == "launcher") or
+              (no == "store" and ne == "transmitter")):
+            if po != pe: return None, None, None, None
+            re = self.library["objects"][ne]["fuel"]
+            ro, ze = objects[i1][5], objects[i2][5]
+            if ro != re: return None, None, None, None
+            if ro is None: return None, None, None, None
+            if ze in (None, False): return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
+        elif no == "developer" and ne == "repeater":
+            if po != pe: return None, None, None, None
+            if not objects[i2][5]: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
+        elif no == "developer" or no == "repeater" or no == "barrier":
+            if po != pe: return None, None, None, None
+            if not objects[i1][5]: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
+        elif no == "radiator":
+            if po == pe: return None, None, None, None
+            if not objects[i1][5]: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
+        elif no == "launcher":
+            te = objects[i1][5]
+            if te is None: return None, None, None, None
+            if te[0] != xe or te[1] != ye: return None, None, None, None
+            d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
+            if d > do: return None, None, None, None
+            h = self.height_diff(xo, yo, xe, ye)
+            return d, h, (xo, yo), (xe, ye)
         return  None, None, None, None
     
     def find_all_connections(self, index):
