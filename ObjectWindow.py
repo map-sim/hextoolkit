@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 
-import gi, copy, copy, math
+import gi, copy, copy, math, os
+from pprint import pformat
+
 from ObjectPainter import ObjectPainter
 from BaseWindow import BaseWindow
 from TerrWindow import TerrWindow
@@ -186,11 +188,18 @@ class ObjectWindow(TerrWindow):
             self.graph = self.graph_obj
             self.painter.connections = []
             self.draw_content()
-        # elif key_name == "F3":
-        #     print("##> pointer mode: new object")            
-        #     self.pointer_mode = "new"
-        #     self.painter.connections = []
-        #     self.draw_content()
+        elif key_name == "s" and self.pointer_mode == "obj":
+            cnt, libname, mapname = 0, "lib", "map"
+            flib = lambda c: f"{libname}-{c}.txt"
+            fmap = lambda c: f"{mapname}-{c}.txt"
+            while os.path.exists(flib(cnt)): cnt += 1
+            while os.path.exists(fmap(cnt)): cnt += 1
+            with open(flib(cnt), "w") as fd:
+                fd.write(pformat(self.library))
+            print("Save library:", flib(cnt))
+            with open(fmap(cnt), "w") as fd:
+                fd.write(pformat(self.battlefield))
+            print("Save battlefield:", fmap(cnt))
         elif key_name == "p" and self.pointer_mode == "obj":
             players = list(self.library["players"].keys())            
             if self.selected_player is not None:
@@ -231,27 +240,31 @@ class ObjectWindow(TerrWindow):
             return TerrWindow.on_click(self, widget, event)
         elif self.pointer_mode == "obj":
             return self.on_click_obj(widget, event)
-        # elif self.pointer_mode == "new":
-        #     ox, oy = self.get_click_location(event)
-        #     ox, oy = int(ox), int(oy)
-        #     newrow = (self.selected_object, ox, oy, self.selected_player, 1.0, None)
-        #     self.battlefield["objects"].append(newrow)
-        #     self.draw_content()
         else: raise ValueError("on_click")
         
 def run_example():
     example_config = {
         "window-zoom": 0.566,
-        "window-title": "terr-window",
+        "window-title": "obj-window",
         "window-size": (1800, 820),
         "window-offset": (750, 400),
         "max-selection-d2": 400,
         "move-sensitive": 50,
     }
 
+    import ast, sys
     from MapExamples import library0
     from MapExamples import battlefield0
     from ObjectValidator import validate
+
+    if len(sys.argv) >= 2:
+        print("try to load map", sys.argv[1])
+        with open(sys.argv[1], "r", encoding="utf-8") as fd:
+            battlefield0 = ast.literal_eval(fd.read())
+    if len(sys.argv) >= 3:
+        print("try to load lib", sys.argv[2])
+        with open(sys.argv[2], "r", encoding="utf-8") as fd:
+            library0 = ast.literal_eval(fd.read())
 
     validate(example_config, library0, battlefield0)
     ObjectWindow(example_config, library0, battlefield0)
