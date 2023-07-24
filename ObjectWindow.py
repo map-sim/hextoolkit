@@ -29,6 +29,15 @@ class ObjectGraph:
         he = self.library["terrains"][te]["level"]
         return ho - he
 
+    def find_object(self, ox, oy, radius2):
+        selected_object_index, min_d2 = None, math.inf
+        for i, (name, x, y, *params) in enumerate(self.battlefield["objects"]):
+            d2 = (x-ox) **2 + (y-oy) **2
+            if min_d2 <= d2: continue
+            if d2 > radius2: continue
+            selected_object_index, min_d2 = i, d2            
+        return selected_object_index
+        
     def generate_resource(self, x, y):
         out_dict = {}
         if self.library["settings"]["resourcing-method"] == "asymptotic-random":
@@ -191,9 +200,16 @@ class ObjectGraph:
             output_connections.append(row)
         return output_connections
 
+def inc_object_param5(row, resources):
+    if row[5] is not None: 
+        ix = (resources.index(row[5]) + 1) % (len(resources) + 1)
+        row[5] = None if ix == len(resources) else resources[ix]
+    else: row[5] = resources[0]
+
 class ObjectWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         self.painter = ObjectPainter(config, library, battlefield)
+        self.selected_object_index2 = None
         self.selected_object_index = None
         self.pointer_mode = "terr"
         self.reset_shoosen()
@@ -247,14 +263,18 @@ class ObjectWindow(TerrWindow):
             self.graph = self.graph_obj
             self.painter.reset()
             self.draw_content()
+        elif key_name == "F4":
+            print("##> pointer mode: obj-edit")
+            self.selected_object_index2 = None
+            self.pointer_mode = "obj-edit"
+            self.graph = self.graph_obj
+            self.draw_content()
         elif key_name == "Return" and self.pointer_mode == "obj-new":
             print("##> create new object")
             self.graph.add_object(self.choosen)            
-            self.draw_content()
-        
+            self.draw_content()        
         elif key_name == "v" and self.pointer_mode == "obj":
             validate(None, self.library, self.battlefield)
-    
         elif key_name == "s" and self.pointer_mode == "obj":
             cnt, libname, mapname = 0, "lib", "map"
             flib = lambda c: f"{libname}-{c}.txt"
@@ -282,30 +302,64 @@ class ObjectWindow(TerrWindow):
             else: self.choosen["object"] = objects[0]
             print("##> switch objects: ", self.choosen["object"])
         else: return TerrWindow.on_press(self, widget, event)
-
-    def on_click_obj(self, widget, event):
+        
+    def on_click_obj_select(self, widget, event):        
         ox, oy = self.get_click_location(event)
-        self.selected_object_index, min_d2 = None, math.inf
         max_d2 = self.config["max-selection-d2"] * self.config["window-zoom"]
-        for i, (name, x, y, *params) in enumerate(self.battlefield["objects"]):
-            d2 = (x-ox) **2 + (y-oy) **2
-            if min_d2 <= d2: continue
-            if d2 > self.config["max-selection-d2"]: continue
-            self.selected_object_index, min_d2 = i, d2            
+        self.selected_object_index = self.graph_obj.find_object(ox, oy, max_d2)
         if self.selected_object_index is None:
-            self.painter.connections = []
+            self.painter.reset()
             print("Selected object: -")
-            self.draw_content(); return True
+            self.draw_content(); return None
         objrow = self.battlefield["objects"][self.selected_object_index]
         print("Selected object:", objrow)
         if objrow[0] in ("mineshaft", "drill"):
             resources = self.battlefield["resources"][objrow[1], objrow[2]]
             print("Resources in-place:", resources)
-        links = self.graph_obj.find_all_connections(self.selected_object_index)
+        return self.selected_object_index
+
+    def on_click_obj_edit(self, widget, event):
+        index = self.on_click_obj_select(widget, event)
+        if index is None: return True
+        
+        row = self.battlefield["objects"][self.selected_object_index]
+        if row[0] in ("store", "output", "input"):
+            resources = list(sorted(self.library["resources"].keys()))
+            inc_object_param5(row, resources)
+        if row[0] in ("barrier", "radiator", "observer",
+                      "developer", "repeater", "transmitter"):
+            row[5] = not row[5]
+        if row[0] == "laboratory":
+            inc_object_param5(row, self.library["technologies"])
+        if row[0] == "mixer":
+            r_items = self.library["resources"].items()
+            resources = [r for r, v in r_items if "process" in v]
+            resources = list(sorted(resources))
+            inc_object_param5(row, resources)
+        if row[0] == "mineshaft":
+            r_items = self.library["resources"].items()
+            resources = [r for r, v in r_items if "process" not in v]
+            resources = list(sorted(resources))
+            inc_object_param5(row, resources)
+        if row[0] == "launcher":
+            if row[5] is not None: row[5] = None
+            elif self.selected_object_index2 is not None:
+                i2 = self.selected_object_index2
+                row2 = self.battlefield["objects"][i2]
+                if row[3] == row2[3]:
+                    print("Warning! The same player, ignore...")
+                else: row[5] = (row2[1], row2[2])
+        print("Object after edit:", row)
+        self.painter.selected_object_index = index
+        self.draw_content()
+        return True
+        
+    def on_click_obj(self, widget, event):
+        index = self.on_click_obj_select(widget, event)
+        if index is None: return True
+        links = self.graph_obj.find_all_connections(index)
+        self.painter.selected_object_index = index
         self.painter.connections = links
-        xi = self.battlefield["objects"][self.selected_object_index][1]
-        yi = self.battlefield["objects"][self.selected_object_index][2]
-        self.painter.selection = xi, yi
         self.draw_content()
         return True
 
@@ -314,6 +368,14 @@ class ObjectWindow(TerrWindow):
             return TerrWindow.on_click(self, widget, event)
         elif self.pointer_mode == "obj":
             return self.on_click_obj(widget, event)
+        elif self.pointer_mode == "obj-edit":
+            if event.button == 1:
+                return self.on_click_obj_edit(widget, event)
+            if event.button == 3:
+                ox, oy = self.get_click_location(event)
+                max_d2 = self.config["max-selection-d2"] * self.config["window-zoom"]
+                self.selected_object_index2 = self.graph_obj.find_object(ox, oy, max_d2)
+                print("Object2 index:", self.selected_object_index2)
         elif self.pointer_mode == "obj-new":
             if event.button == 1:
                 ox, oy = self.get_click_location(event)

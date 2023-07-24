@@ -12,8 +12,8 @@ class ObjectPainter(TerrPainter):
         self.reset()
 
     def reset(self):
+        self.selected_object_index = None
         self.connections = []
-        self.selection = None
         self.cross = None
         
     def get_object_color(self, hp): 
@@ -463,8 +463,9 @@ class ObjectPainter(TerrPainter):
         context.stroke()
         
     def draw_selection(self, context):
-        if self.selection is None: return
-        xo, yo = self.calc_render_params(*self.selection)
+        if self.selected_object_index is None: return
+        row = self.battlefield["objects"][self.selected_object_index]
+        xo, yo = self.calc_render_params(row[1], row[2])
         r4 = 45 * self.config["window-zoom"]
         context.set_source_rgba(0.0, 0.0, 0.0, 0.1)
         context.arc(xo, yo , r4, 0, TWO_PI)
@@ -473,7 +474,8 @@ class ObjectPainter(TerrPainter):
     def draw(self, context):
         self.terr_painter.draw(context)
         self.draw_selection(context)
-
+        for xyo, xye, distance, free_range in self.connections:
+            self.draw_connection(context, xyo, xye, distance, free_range)
         for obj, xloc, yloc, player, hp, *params in self.battlefield["objects"]:
             shape = self.library["objects"][obj]["shape"]
             color = self.library["players"][player]["color"]
@@ -493,8 +495,5 @@ class ObjectPainter(TerrPainter):
             elif shape == "observer-0": self.draw_observer_0(context, xloc, yloc, color, hp, *params)
             elif shape == "block-0": self.draw_block_0(context, xloc, yloc, color, hp)
             else: raise ValueError(f"Not supported object: {obj}")
-
-        for xyo, xye, distance, free_range in self.connections:
-            self.draw_connection(context, xyo, xye, distance, free_range)
         self.draw_cross(context)
-            
+
