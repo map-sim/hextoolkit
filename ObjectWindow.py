@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import gi, copy, copy, math, os
+import gi, copy, math, os, random
 from pprint import pformat
 
 from ObjectValidator import validate
@@ -31,11 +31,19 @@ class ObjectGraph:
 
     def generate_resource(self, x, y):
         out_dict = {}
-        for resource, rdef in self.library["resources"].items():
-            if "process" in rdef: continue
-            out_dict[resource] = 0.0
+        if self.library["settings"]["resourcing-method"] == "asymptotic-random":
+            assert self.library["settings"]["resourcing-points"], "resourcing-points"
+            f, m = self.library["settings"]["resourcing-factor"], math.inf
+            for ox, oy in self.library["settings"]["resourcing-points"]:
+                d2 = math.sqrt((ox - x) ** 2 + (oy - y) ** 2)
+                if d2 < m: m = d2
+            for resource, rdef in self.library["resources"].items():
+                if "process" in rdef: continue
+                out_dict[resource] = f * random.uniform(0, f/m)
+        else: raise ValueError("resourcing-method")
+        print("New resources point:", out_dict)
         return out_dict
-            
+
     def add_object(self, choosen):
         if None in list(choosen.values()):
             print("add_object failed none:", choosen); return
@@ -63,8 +71,9 @@ class ObjectGraph:
         else: row = obj, x, y, player, 1.0, None
         self.battlefield["objects"].append(row)
         if obj in ("mineshaft", "drill"):
-            rdict = self.generate_resource(x, y)
-            self.battlefield["resources"][x, y] = rdict
+            if (x, y) not in self.battlefield["resources"]:
+                rdict = self.generate_resource(x, y)
+                self.battlefield["resources"][x, y] = rdict
 
     def check_objects_connection(self, i1, i2):
         objects = self.battlefield["objects"]
@@ -217,26 +226,26 @@ class ObjectWindow(TerrWindow):
             self.pointer_mode = "terr"
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
-            self.painter.connections = []
+            self.painter.reset()
             self.reset_shoosen()
             self.draw_content()
         elif key_name == "F1":
             print("##> pointer mode: terr")
             self.pointer_mode = "terr"
             self.graph = self.graph_terr
-            self.painter.connections = []
+            self.painter.reset()
             self.draw_content()
         elif key_name == "F2":
             print("##> pointer mode: obj")
             self.pointer_mode = "obj"
             self.graph = self.graph_obj
-            self.painter.connections = []
+            self.painter.reset()
             self.draw_content()
         elif key_name == "F3":
             print("##> pointer mode: obj-new")
             self.pointer_mode = "obj-new"
             self.graph = self.graph_obj
-            self.painter.connections = []
+            self.painter.reset()
             self.draw_content()
         elif key_name == "Return" and self.pointer_mode == "obj-new":
             print("##> create new object")
@@ -287,9 +296,16 @@ class ObjectWindow(TerrWindow):
             self.painter.connections = []
             print("Selected object: -")
             self.draw_content(); return True
-        else: print("Selected object:", self.battlefield["objects"][self.selected_object_index])
+        objrow = self.battlefield["objects"][self.selected_object_index]
+        print("Selected object:", objrow)
+        if objrow[0] in ("mineshaft", "drill"):
+            resources = self.battlefield["resources"][objrow[1], objrow[2]]
+            print("Resources in-place:", resources)
         links = self.graph_obj.find_all_connections(self.selected_object_index)
         self.painter.connections = links
+        xi = self.battlefield["objects"][self.selected_object_index][1]
+        yi = self.battlefield["objects"][self.selected_object_index][2]
+        self.painter.selection = xi, yi
         self.draw_content()
         return True
 

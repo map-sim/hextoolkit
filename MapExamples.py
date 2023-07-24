@@ -27,7 +27,9 @@ library0 = {
     "settings": {
         "base-free-range": 50,
         "base-height-factor": 3,
-        "distribution-method": "dynamic-random"
+        "resourcing-method": "asymptotic-random",
+        "resourcing-points": [(-1240, -205), (1530, 650)],
+        "resourcing-factor": 180.0
     },
     "technologies": ["store-size", "mine-gain", "mixing-gain", "bandwidth", 
                      "research", "development", "transmission", "rockets",

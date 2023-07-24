@@ -1,6 +1,6 @@
 {'iteration': 0,
  'objects': [],
- 'ratiation': 0.0,
+ 'ratiation': 20.0,
  'resources': {},
  'terrains': [('base', 'desert-0'),
               ('polygon',

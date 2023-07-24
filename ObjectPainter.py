@@ -9,7 +9,11 @@ class ObjectPainter(TerrPainter):
         self.battlefield =  battlefield
         self.library = library
         self.config = config
+        self.reset()
+
+    def reset(self):
         self.connections = []
+        self.selection = None
         self.cross = None
         
     def get_object_color(self, hp): 
@@ -404,7 +408,7 @@ class ObjectPainter(TerrPainter):
             f = free_range / distance
             x = xo + (xe - xo) * f
             y = yo + (ye - yo) * f
-            
+
         context.set_source_rgba(0.0, 0.0, 0.0)
         context.set_line_width(w1)
         context.move_to(xo, yo)
@@ -435,8 +439,41 @@ class ObjectPainter(TerrPainter):
             context.arc(x, y , w2, 0, TWO_PI)
             context.fill()
 
+    def draw_cross(self, context):
+        if self.cross is None: return
+        xo, yo = self.calc_render_params(*self.cross)
+        r = 15 * self.config["window-zoom"]
+        w = 2 * self.config["window-zoom"]
+        
+        context.set_source_rgba(0.2, 0.2, 0.2)
+        context.set_line_width(3*w)
+        context.move_to(xo-r, yo)
+        context.line_to(xo+r, yo) 
+        context.stroke()
+        context.move_to(xo, yo-r)
+        context.line_to(xo, yo+r) 
+        context.stroke()
+        context.set_source_rgba(0.9, 0.9, 0.9)
+        context.set_line_width(w)
+        context.move_to(xo-r+w, yo)
+        context.line_to(xo+r-w, yo) 
+        context.stroke()
+        context.move_to(xo, yo-r+w)
+        context.line_to(xo, yo+r-w) 
+        context.stroke()
+        
+    def draw_selection(self, context):
+        if self.selection is None: return
+        xo, yo = self.calc_render_params(*self.selection)
+        r4 = 45 * self.config["window-zoom"]
+        context.set_source_rgba(0.0, 0.0, 0.0, 0.1)
+        context.arc(xo, yo , r4, 0, TWO_PI)
+        context.fill()
+
     def draw(self, context):
         self.terr_painter.draw(context)
+        self.draw_selection(context)
+
         for obj, xloc, yloc, player, hp, *params in self.battlefield["objects"]:
             shape = self.library["objects"][obj]["shape"]
             color = self.library["players"][player]["color"]
@@ -459,25 +496,5 @@ class ObjectPainter(TerrPainter):
 
         for xyo, xye, distance, free_range in self.connections:
             self.draw_connection(context, xyo, xye, distance, free_range)
-
-        if self.cross is not None:
-            xo, yo = self.calc_render_params(*self.cross)
-            r = 15 * self.config["window-zoom"]
-            w = 2 * self.config["window-zoom"]
-
-            context.set_source_rgba(0.2, 0.2, 0.2)
-            context.set_line_width(3*w)
-            context.move_to(xo-r, yo)
-            context.line_to(xo+r, yo) 
-            context.stroke()
-            context.move_to(xo, yo-r)
-            context.line_to(xo, yo+r) 
-            context.stroke()
-            context.set_source_rgba(0.9, 0.9, 0.9)
-            context.set_line_width(w)
-            context.move_to(xo-r+w, yo)
-            context.line_to(xo+r-w, yo) 
-            context.stroke()
-            context.move_to(xo, yo-r+w)
-            context.line_to(xo, yo+r-w) 
-            context.stroke()
+        self.draw_cross(context)
+            
