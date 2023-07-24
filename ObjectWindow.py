@@ -3,6 +3,7 @@
 import gi, copy, copy, math, os
 from pprint import pformat
 
+from ObjectValidator import validate
 from ObjectPainter import ObjectPainter
 from BaseWindow import BaseWindow
 from TerrWindow import TerrWindow
@@ -28,11 +29,16 @@ class ObjectGraph:
         he = self.library["terrains"][te]["level"]
         return ho - he
 
+    def generate_resource(self, x, y):
+        out_dict = {}
+        for resource, rdef in self.library["resources"].items():
+            if "process" in rdef: continue
+            out_dict[resource] = 0.0
+        return out_dict
+            
     def add_object(self, choosen):
         if None in list(choosen.values()):
-            print("add_object failed none:", choosen)
-            return
-
+            print("add_object failed none:", choosen); return
         x = int(choosen["x"])
         y = int(choosen["y"])
         obj = choosen["object"]
@@ -43,14 +49,11 @@ class ObjectGraph:
             rr2 = self.library["objects"][name]["radius"] ** 2
             d2 = (x2-x) **2 + (y2-y) **2
             if d2 < r2 or d2 < rr2:
-                print("add_object failed d/r")
-                return
-
+                print("add_object failed d/r"); return
         terr, _ = self.terr_graph.check_terrain(x, y)
         buildable = self.library["terrains"][terr]["buildable"]
         if not buildable:
-            print("add_object failed - not buildable")
-            return
+            print("add_object failed - not buildable"); return
 
         if obj == "store":
             row = obj, x, y, player, 1.0, None, 0.0
@@ -59,7 +62,10 @@ class ObjectGraph:
              row = obj, x, y, player, 1.0, False
         else: row = obj, x, y, player, 1.0, None
         self.battlefield["objects"].append(row)
-        
+        if obj in ("mineshaft", "drill"):
+            rdict = self.generate_resource(x, y)
+            self.battlefield["resources"][x, y] = rdict
+
     def check_objects_connection(self, i1, i2):
         objects = self.battlefield["objects"]
         if i1 == i2: return None, None, None, None
@@ -236,6 +242,10 @@ class ObjectWindow(TerrWindow):
             print("##> create new object")
             self.graph.add_object(self.choosen)            
             self.draw_content()
+        
+        elif key_name == "v" and self.pointer_mode == "obj":
+            validate(None, self.library, self.battlefield)
+    
         elif key_name == "s" and self.pointer_mode == "obj":
             cnt, libname, mapname = 0, "lib", "map"
             flib = lambda c: f"{libname}-{c}.txt"
@@ -315,7 +325,6 @@ def run_example():
     import ast, sys
     from MapExamples import library0
     from MapExamples import battlefield0
-    from ObjectValidator import validate
 
     if len(sys.argv) >= 2:
         print("try to load map", sys.argv[1])

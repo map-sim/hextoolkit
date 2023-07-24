@@ -98,7 +98,7 @@ class BattlefieldValidator(TypeValidator):
                 switch = rest[0]
                 assert switch in (False, True), f"{name}: switch: {switch}"
         print("validate_object_params...")
-                
+
     def validate_object_distribution(self, battlefield):
         graph_terr, tmp_list = TerrGraph(battlefield), []
         for name, x, y, *rest in battlefield["objects"]:
@@ -117,6 +117,6 @@ class BattlefieldValidator(TypeValidator):
         print("validate_mineshafts...")
 
 def validate(config, library, battlefield):
+    if config is not None: ConfigValidator(config)
     libval = LibraryValidator(library)
     BattlefieldValidator(libval, battlefield)
-    ConfigValidator(config)
