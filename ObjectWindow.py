@@ -22,6 +22,9 @@ class ObjectGraph:
         self.battlefield =  battlefield
         self.library = library
 
+    def run(self):
+        print("run")
+        
     def height_diff(self, xo, yo, xe, ye):
         to, _ = self.terr_graph.check_terrain(xo, yo)
         te, _ = self.terr_graph.check_terrain(xe, ye)
@@ -37,7 +40,8 @@ class ObjectGraph:
             if d2 > radius2: continue
             selected_object_index, min_d2 = i, d2            
         return selected_object_index
-        
+
+    
     def generate_resource(self, x, y):
         out_dict = {}
         if self.library["settings"]["resourcing-method"] == "asymptotic-random":
@@ -269,6 +273,20 @@ class ObjectWindow(TerrWindow):
             self.pointer_mode = "obj-edit"
             self.graph = self.graph_obj
             self.draw_content()
+        elif key_name == "Delete" and self.pointer_mode == "obj-edit":
+            index = self.selected_object_index
+            if index is not None:
+                xo = self.battlefield["objects"][index][1]
+                yo = self.battlefield["objects"][index][2]
+                del self.battlefield["objects"][index]
+                for i, (_, x, y, *rest) in enumerate(self.battlefield["objects"]):
+                    if xo != x or yo != y: continue
+                    self.battlefield["objects"][i][5] = None
+                        
+                self.painter.reset()
+                self.reset_shoosen()
+                self.draw_content()
+                
         elif key_name == "Return" and self.pointer_mode == "obj-new":
             print("##> create new object")
             self.graph.add_object(self.choosen)            
@@ -320,8 +338,7 @@ class ObjectWindow(TerrWindow):
 
     def on_click_obj_edit(self, widget, event):
         index = self.on_click_obj_select(widget, event)
-        if index is None: return True
-        
+        if index is None: return True        
         row = self.battlefield["objects"][self.selected_object_index]
         if row[0] in ("store", "output", "input"):
             resources = list(sorted(self.library["resources"].keys()))
