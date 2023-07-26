@@ -15,16 +15,46 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
-
+    
 class ObjectGraph:    
     def __init__(self, library, battlefield, graph_terr):
         self.terr_graph = graph_terr
         self.battlefield =  battlefield
         self.library = library
+        self.current_io = {}
 
+    def bandwidth(self, name, dist, free):
+        if dist <= free: return 1.0
+        rangex = self.library["objects"][name]["range"]
+        if free < dist and free > 0:
+            dn = rangex - free
+            ln = rangex - dist
+        else:
+            dn = rangex - free - dist
+            ln = rangex - free
+        return ln / dn
+
+    def estimate_io(self, index):
+        base = self.battlefield["objects"][index]
+        print(base[0], "estimate io", index)
+        cs = self.find_all_connections(index)
+        total_bw = 0.0
+        for oe, xyo, xye, dist, free in cs:
+            no = self.battlefield["objects"][oe[0]][0]
+            ne = self.battlefield["objects"][oe[1]][0]
+            bw = self.bandwidth(no, dist, free)
+            print(f"{no}({xyo}) --> {ne}({xye}) => {dist}/{free} --> {bw}")
+            total_bw += bw
+        print("TOTAL", total_bw)
+
+    def estimate_store_io(self, index):
+        base = self.battlefield["objects"][index]        
+        
     def run(self):
         print("run")
-        
+        olen = len(self.battlefield["objects"])        
+        for i in range(olen): self.estimate_io(i)
+            
     def height_diff(self, xo, yo, xe, ye):
         to, _ = self.terr_graph.check_terrain(xo, yo)
         te, _ = self.terr_graph.check_terrain(xe, ye)
@@ -98,6 +128,7 @@ class ObjectGraph:
         do = self.library["objects"][no].get("range", 0)
         if ((no == "store" and ne == "store") or
             (no == "mineshaft" and ne == "store") or
+            (no == "mineshaft" and ne == "input") or
             (no == "store" and ne == "output") or
             (no == "store" and ne == "input") or
             (no == "output" and ne == "store") or
@@ -190,17 +221,16 @@ class ObjectGraph:
     
     def find_all_connections(self, index):
         output_connections = []
-        length = len(self.battlefield["objects"])
         dfr = self.library["settings"]["base-free-range"]
         hf = self.library["settings"]["base-height-factor"]        
-        for i in range(length):
+        for i in range(len(self.battlefield["objects"])):
             distance, h, xyo, xye = self.check_objects_connection(index, i)
             if distance is None: continue
             name = self.battlefield["objects"][i][0]
-            if "height-factor" in self.library["objects"][name]:
-                free_range = dfr + h * self.library["objects"][name]["height-factor"]
-            else: free_range = dfr + h * hf
-            row = xyo, xye, distance, free_range
+            dfr2 = self.library["objects"][name].get("free-range", dfr)
+            hf2 = self.library["objects"][name].get("height-factor", hf)            
+            free_range = dfr2 + h * hf2
+            row = (index, i), xyo, xye, distance, free_range
             output_connections.append(row)
         return output_connections
 
@@ -260,18 +290,22 @@ class ObjectWindow(TerrWindow):
             self.pointer_mode = "obj"
             self.graph = self.graph_obj
             self.painter.reset()
+            self.reset_shoosen()
             self.draw_content()
         elif key_name == "F3":
             print("##> pointer mode: obj-new")
             self.pointer_mode = "obj-new"
             self.graph = self.graph_obj
             self.painter.reset()
+            self.reset_shoosen()
             self.draw_content()
         elif key_name == "F4":
             print("##> pointer mode: obj-edit")
             self.selected_object_index2 = None
             self.pointer_mode = "obj-edit"
             self.graph = self.graph_obj
+            self.painter.reset()
+            self.reset_shoosen()
             self.draw_content()
         elif key_name == "Delete" and self.pointer_mode == "obj-edit":
             index = self.selected_object_index
@@ -279,10 +313,12 @@ class ObjectWindow(TerrWindow):
                 xo = self.battlefield["objects"][index][1]
                 yo = self.battlefield["objects"][index][2]
                 del self.battlefield["objects"][index]
-                for i, (_, x, y, *rest) in enumerate(self.battlefield["objects"]):
-                    if xo != x or yo != y: continue
-                    self.battlefield["objects"][i][5] = None
-                        
+                for i, (name, *rest) in enumerate(self.battlefield["objects"]):
+                    if name != "launcher": continue
+                    if rest[4] is None: continue
+                    if rest[4] == (xo, yo):
+                        print("Launcher lost a target...")
+                        self.battlefield["objects"][i][5] = None
                 self.painter.reset()
                 self.reset_shoosen()
                 self.draw_content()
@@ -291,6 +327,8 @@ class ObjectWindow(TerrWindow):
             print("##> create new object")
             self.graph.add_object(self.choosen)            
             self.draw_content()        
+        elif key_name == "r" and self.pointer_mode == "obj":
+            self.graph_obj.run()
         elif key_name == "v" and self.pointer_mode == "obj":
             validate(None, self.library, self.battlefield)
         elif key_name == "s" and self.pointer_mode == "obj":

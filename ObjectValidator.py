@@ -40,7 +40,16 @@ class LibraryValidator(TypeValidator):
         assert self.library["players"], "no player"
         assert self.library["terrains"], "no terrain"
         assert self.library["resources"], "no resource"
-
+        self.validate_objects_ranges()
+        
+    def validate_objects_ranges(self):
+        for obj in self.library["objects"]:
+            if "range" in obj: assert obj["range"] > 0.0
+            if "free-range" in obj: assert obj["free-range"] > 0.0
+            if "free-range" in obj and "range" in obj:
+                assert obj["free-range"] <= obj ["range"]
+        print("validate_objects_ranges...")
+        
     def validate_distance2(self, name, d2, xy, xy2):
         assert name in self.library["objects"]
         r2 = self.library["objects"][name]["radius"] ** 2
