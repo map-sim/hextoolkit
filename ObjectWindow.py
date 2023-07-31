@@ -24,12 +24,62 @@ class RunFrame(dict):
         dict.__init__(self)
 
     def analyze_out_volumes(self):
-        olen = len(self.battlefield["objects"])        
-        for i in range(olen):
-            print(">>", i)
-        
+        olen = len(self.battlefield["objects"])
+        tmp_out_bw_sum, tmp_bw = {}, {}
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            objlib = self.library["objects"][obj[0]]
+            if "volume" not in objlib: continue
+            resource, volume = obj[5], obj[6]
+            if resource is None: continue
+            if volume <= 0.0: continue
+            for bw, conn in self.graph.find_all_connections2(index):
+                assert len(conn) == 1, f"volume cannot be forwarded {conn}"
+                tmp_bw[*conn[0][0]] = bw, resource
+                if conn[0][0][1] in tmp_out_bw_sum:
+                    tmp_out_bw_sum[conn[0][0][1]] += bw
+                else: tmp_out_bw_sum[conn[0][0][1]] = bw
+        for io, (bw, resource) in tmp_bw.items():
+            frac = bw / tmp_out_bw_sum[io[1]]
+            obj = self.battlefield["objects"][io[0]]
+            objlib = self.library["objects"][obj[0]]
+            resrc, volume = obj[5], obj[6]
+            assert resrc == resource, "internal error"
+            portion = min([objlib["capacity"], volume])
+            self[io] = portion * frac, resource
+
+    def calc_suppression(self, index):
+        # radiation
+        return 1.0
+
+    def analyze_out_mine(self):
+        olen = len(self.battlefield["objects"])
+        tmp_out_bw_sum, tmp_bw = {}, {}
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            if obj[0] != "mineshaft": continue
+            resources = self.battlefield["resources"][obj[1], obj[2]]            
+            player, hp, resource = obj[3], obj[4], obj[5]
+            ore = resources.get(resource, 0.0)
+            if ore <= 0.0: continue
+            tech = self.library["players"][player]["technologies"]["mine-gain"]
+            portion = hp * ore * (1 + tech)
+            for bw, conn in self.graph.find_all_connections2(index):
+                assert len(conn) == 1, f"volume cannot be forwarded {conn}"
+                tmp_bw[*conn[0][0]] = bw, portion, resource
+                if conn[0][0][1] in tmp_out_bw_sum:
+                    tmp_out_bw_sum[conn[0][0][1]] += bw
+                else: tmp_out_bw_sum[conn[0][0][1]] = bw
+        for io, (bw, portion, resource) in tmp_bw.items():
+            frac = bw / tmp_out_bw_sum[io[1]]
+            obj = self.battlefield["objects"][io[0]]
+            assert resource == obj[5], "internal error"
+            self[io] = portion * frac, resource
+
     def analyze(self):
         self.analyze_out_volumes()
+        self.analyze_out_mine()
+        print(self)
 
 class ObjectGraph:    
     def __init__(self, library, battlefield, graph_terr):
@@ -234,9 +284,15 @@ class ObjectGraph:
         obj = self.battlefield["objects"][pipe[0][0][0]]
         if len(pipe) == 1:
             bw = self.bandwidth(obj[0], pipe[0][3], pipe[0][4])
-            hpe = self.battlefield["objects"][pipe[0][0][0]][4]
-            hpo = self.battlefield["objects"][pipe[0][0][1]][4]
-            return *pipe[0][0], bw * hpe * hpo
+            hpo = self.battlefield["objects"][pipe[0][0][0]][4]
+            hpe = self.battlefield["objects"][pipe[0][0][1]][4]
+            po = self.battlefield["objects"][pipe[0][0][0]][3]
+            pe = self.battlefield["objects"][pipe[0][0][1]][3]
+            tech = self.library["players"][po]["technologies"]["bandwidth-factor"]
+            if po != pe:
+                t = self.library["players"][pe]["technologies"]["bandwidth-factor"]
+                tech = tech / 2 + t / 2
+            return *pipe[0][0], (1.0 + tech) * bw * hpe * hpo
         elif len(pipe) == 2:
             bw0 = self.bandwidth(obj[0], pipe[0][3], pipe[0][4])
             obj2 = self.battlefield["objects"][pipe[1][0][0]]
@@ -249,13 +305,15 @@ class ObjectGraph:
     def find_all_connections2(self, index):
         obj = self.battlefield["objects"][index]
         if obj[0] != "developer":
-            for conn in self.find_all_connections(index): yield [conn]
+            for conn in self.find_all_connections(index):
+                _, _, bw = self.bandwidth2([conn])
+                yield bw, [conn]
             return
         developer_output = {}
         for oe, xyo, xye, dist, free in self.find_all_connections(index):
             if self.battlefield["objects"][oe[1]][0] == "repeater":
                 for oe2, xyo2, xye2, dist2, free2 in self.find_all_connections(oe[1]):
-                    #if oe[0] == oe2[1]: continue
+                    # if oe[0] == oe2[1]: repeater can repair of its developer
                     conn = [(oe, xyo, xye, dist, free), (oe2, xyo2, xye2, dist2, free2)]
                     _, _, bw = self.bandwidth2(conn)
                     if developer_output.get((oe[0], oe2[1]), (0.0, None))[0] < bw:
@@ -265,23 +323,21 @@ class ObjectGraph:
                 _, _, bw = self.bandwidth2(conn)
                 if developer_output.get(oe, (0.0, None))[0] < bw:
                     developer_output[oe] = bw, conn
-        for _, conn in developer_output.values():
-            yield conn
+        for bw, conn in developer_output.values():
+            yield bw, conn
 
     def analyze_bw(self, six):
         olen = len(self.battlefield["objects"])        
         for i in range(olen):
             if i == six: continue
             print(self.battlefield["objects"][i][0:3], "-->")
-            for conn in self.find_all_connections2(i):
-                _, o, bw = self.bandwidth2(conn)
-                out = self.battlefield["objects"][o][0:3]
+            for bw, conn in self.find_all_connections2(i):
+                out = self.battlefield["objects"][conn[-1][0][1]][0:3]
                 print("----->", out, bw)
         if six is not None:
             print(self.battlefield["objects"][six][0:3], "==>>")
-            for conn in self.find_all_connections2(six):
-                _, o, bw = self.bandwidth2(conn)
-                out = self.battlefield["objects"][o][0:3]
+            for bw, conn in self.find_all_connections2(six):
+                out = self.battlefield["objects"][conn[-1][0][1]][0:3]
                 print("----->", out, bw)
                 
 def inc_object_param5(row, resources):
