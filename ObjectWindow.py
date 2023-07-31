@@ -16,45 +16,27 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
     
+class RunFrame(dict):
+    def __init__(self, library, battlefield, graph):
+        self.battlefield =  battlefield
+        self.library = library
+        self.graph = graph
+        dict.__init__(self)
+
+    def analyze_out_volumes(self):
+        olen = len(self.battlefield["objects"])        
+        for i in range(olen):
+            print(">>", i)
+        
+    def analyze(self):
+        self.analyze_out_volumes()
+
 class ObjectGraph:    
     def __init__(self, library, battlefield, graph_terr):
         self.terr_graph = graph_terr
         self.battlefield =  battlefield
         self.library = library
-        self.current_io = {}
 
-    def bandwidth(self, name, dist, free):
-        if dist <= free: return 1.0
-        rangex = self.library["objects"][name]["range"]
-        if free < dist and free > 0:
-            dn = rangex - free
-            ln = rangex - dist
-        else:
-            dn = rangex - free - dist
-            ln = rangex - free
-        return ln / dn
-
-    def estimate_io(self, index):
-        base = self.battlefield["objects"][index]
-        print(base[0], "estimate io", index)
-        cs = self.find_all_connections(index)
-        total_bw = 0.0
-        for oe, xyo, xye, dist, free in cs:
-            no = self.battlefield["objects"][oe[0]][0]
-            ne = self.battlefield["objects"][oe[1]][0]
-            bw = self.bandwidth(no, dist, free)
-            print(f"{no}({xyo}) --> {ne}({xye}) => {dist}/{free} --> {bw}")
-            total_bw += bw
-        print("TOTAL", total_bw)
-
-    def estimate_store_io(self, index):
-        base = self.battlefield["objects"][index]        
-        
-    def run(self):
-        print("run")
-        olen = len(self.battlefield["objects"])        
-        for i in range(olen): self.estimate_io(i)
-            
     def height_diff(self, xo, yo, xe, ye):
         to, _ = self.terr_graph.check_terrain(xo, yo)
         te, _ = self.terr_graph.check_terrain(xe, ye)
@@ -70,7 +52,6 @@ class ObjectGraph:
             if d2 > radius2: continue
             selected_object_index, min_d2 = i, d2            
         return selected_object_index
-
     
     def generate_resource(self, x, y):
         out_dict = {}
@@ -129,11 +110,12 @@ class ObjectGraph:
         if ((no == "store" and ne == "store") or
             (no == "mineshaft" and ne == "store") or
             (no == "mineshaft" and ne == "input") or
-            (no == "store" and ne == "output") or
             (no == "store" and ne == "input") or
             (no == "output" and ne == "store") or
-            (no == "input" and ne == "store") or
-            (no == "mixer" and ne == "store")):
+            (no == "store" and ne == "input") or
+            (no == "mixer" and ne == "store") or
+            (no == "mixer" and ne == "input") or
+            (no == "output" and ne == "store")):
             ro, re = objects[i1][5], objects[i2][5]
             if ro is None: return None, None, None, None
             if re is None: return None, None, None, None
@@ -152,7 +134,7 @@ class ObjectGraph:
             if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)
             return d, h, (xo, yo), (xe, ye)        
-        elif no == "store" and ne == "mixer":
+        elif no in ("store", "output") and ne == "mixer":
             ro, re = objects[i1][5], objects[i2][5]            
             if re is None: return None, None, None, None
             if ro not in self.library["resources"][re]["process"]:
@@ -162,13 +144,13 @@ class ObjectGraph:
             if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)
             return d, h, (xo, yo), (xe, ye)
-        elif ((no == "store" and ne == "laboratory") or
-              (no == "store" and ne == "barrier") or
-              (no == "store" and ne == "developer") or
-              (no == "store" and ne == "radiator") or
-              (no == "store" and ne == "launcher") or
-              (no == "store" and ne == "observer") or
-              (no == "store" and ne == "transmitter")):
+        elif ((no in ("store", "output") and ne == "laboratory") or
+              (no in ("store", "output") and ne == "barrier") or
+              (no in ("store", "output") and ne == "developer") or
+              (no in ("store", "output") and ne == "radiator") or
+              (no in ("store", "output") and ne == "launcher") or
+              (no in ("store", "output") and ne == "observer") or
+              (no in ("store", "output") and ne == "transmitter")):
             if po != pe: return None, None, None, None
             re = self.library["objects"][ne]["fuel"]
             ro, ze = objects[i1][5], objects[i2][5]
@@ -181,7 +163,6 @@ class ObjectGraph:
             return d, h, (xo, yo), (xe, ye)
         elif no == "developer" and ne == "repeater":
             if po != pe: return None, None, None, None
-            if not objects[i2][5]: return None, None, None, None
             d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
             if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)
@@ -223,17 +204,86 @@ class ObjectGraph:
         output_connections = []
         dfr = self.library["settings"]["base-free-range"]
         hf = self.library["settings"]["base-height-factor"]        
+        name = self.battlefield["objects"][index][0]
+        dfr2 = self.library["objects"][name].get("free-range", dfr)
+        hf2 = self.library["objects"][name].get("height-factor", hf)            
         for i in range(len(self.battlefield["objects"])):
             distance, h, xyo, xye = self.check_objects_connection(index, i)
             if distance is None: continue
-            name = self.battlefield["objects"][i][0]
-            dfr2 = self.library["objects"][name].get("free-range", dfr)
-            hf2 = self.library["objects"][name].get("height-factor", hf)            
             free_range = dfr2 + h * hf2
             row = (index, i), xyo, xye, distance, free_range
             output_connections.append(row)
         return output_connections
 
+    def bandwidth(self, name, dist, free):
+        if dist <= free: return 1.0
+        rangex = self.library["objects"][name]["range"]
+        if free < dist and free > 0:
+            dn = rangex - free
+            ln = rangex - dist
+        else:
+            dn = rangex - free - dist
+            ln = rangex - free
+        return ln / dn
+    def connection_bandwidth(self, conn):
+        (index, _), _, _, distance, free_range = conn
+        name = self.battlefield["objects"][index][0]
+        bw = self.bandwidth(name, distance, free_range)
+        return bw
+    def bandwidth2(self, pipe):
+        obj = self.battlefield["objects"][pipe[0][0][0]]
+        if len(pipe) == 1:
+            bw = self.bandwidth(obj[0], pipe[0][3], pipe[0][4])
+            hpe = self.battlefield["objects"][pipe[0][0][0]][4]
+            hpo = self.battlefield["objects"][pipe[0][0][1]][4]
+            return *pipe[0][0], bw * hpe * hpo
+        elif len(pipe) == 2:
+            bw0 = self.bandwidth(obj[0], pipe[0][3], pipe[0][4])
+            obj2 = self.battlefield["objects"][pipe[1][0][0]]
+            bw = bw0 * self.bandwidth(obj2[0], pipe[1][3], pipe[1][4])
+            hpe = self.battlefield["objects"][pipe[0][0][0]][4]
+            hpo = self.battlefield["objects"][pipe[1][0][1]][4]
+            return pipe[0][0][0], pipe[1][0][1], bw * hpe * hpo
+        else: raise ValueError("len")
+
+    def find_all_connections2(self, index):
+        obj = self.battlefield["objects"][index]
+        if obj[0] != "developer":
+            for conn in self.find_all_connections(index): yield [conn]
+            return
+        developer_output = {}
+        for oe, xyo, xye, dist, free in self.find_all_connections(index):
+            if self.battlefield["objects"][oe[1]][0] == "repeater":
+                for oe2, xyo2, xye2, dist2, free2 in self.find_all_connections(oe[1]):
+                    #if oe[0] == oe2[1]: continue
+                    conn = [(oe, xyo, xye, dist, free), (oe2, xyo2, xye2, dist2, free2)]
+                    _, _, bw = self.bandwidth2(conn)
+                    if developer_output.get((oe[0], oe2[1]), (0.0, None))[0] < bw:
+                        developer_output[oe[0], oe2[1]] = bw, conn
+            else:
+                conn = [(oe, xyo, xye, dist, free)]
+                _, _, bw = self.bandwidth2(conn)
+                if developer_output.get(oe, (0.0, None))[0] < bw:
+                    developer_output[oe] = bw, conn
+        for _, conn in developer_output.values():
+            yield conn
+
+    def analyze_bw(self, six):
+        olen = len(self.battlefield["objects"])        
+        for i in range(olen):
+            if i == six: continue
+            print(self.battlefield["objects"][i][0:3], "-->")
+            for conn in self.find_all_connections2(i):
+                _, o, bw = self.bandwidth2(conn)
+                out = self.battlefield["objects"][o][0:3]
+                print("----->", out, bw)
+        if six is not None:
+            print(self.battlefield["objects"][six][0:3], "==>>")
+            for conn in self.find_all_connections2(six):
+                _, o, bw = self.bandwidth2(conn)
+                out = self.battlefield["objects"][o][0:3]
+                print("----->", out, bw)
+                
 def inc_object_param5(row, resources):
     if row[5] is not None: 
         ix = (resources.index(row[5]) + 1) % (len(resources) + 1)
@@ -289,6 +339,8 @@ class ObjectWindow(TerrWindow):
             print("##> pointer mode: obj")
             self.pointer_mode = "obj"
             self.graph = self.graph_obj
+            self.selected_object_index2 = None
+            self.selected_object_index = None
             self.painter.reset()
             self.reset_shoosen()
             self.draw_content()
@@ -296,6 +348,8 @@ class ObjectWindow(TerrWindow):
             print("##> pointer mode: obj-new")
             self.pointer_mode = "obj-new"
             self.graph = self.graph_obj
+            self.selected_object_index2 = None
+            self.selected_object_index = None
             self.painter.reset()
             self.reset_shoosen()
             self.draw_content()
@@ -327,8 +381,19 @@ class ObjectWindow(TerrWindow):
             print("##> create new object")
             self.graph.add_object(self.choosen)            
             self.draw_content()        
+        elif key_name == "a" and self.pointer_mode == "obj":
+            links = []
+            if not self.painter.connections:
+                for i, _ in enumerate(self.battlefield["objects"]):
+                    ls = self.graph_obj.find_all_connections(i)
+                    links.extend(ls)
+                    self.painter.connections = links
+            else: self.painter.connections = []
+            self.draw_content()
         elif key_name == "r" and self.pointer_mode == "obj":
-            self.graph_obj.run()
+            self.graph_obj.analyze_bw(self.selected_object_index)
+            rf = RunFrame(self.library, self.battlefield, self.graph_obj)
+            rf.analyze()
         elif key_name == "v" and self.pointer_mode == "obj":
             validate(None, self.library, self.battlefield)
         elif key_name == "s" and self.pointer_mode == "obj":
@@ -413,6 +478,10 @@ class ObjectWindow(TerrWindow):
         index = self.on_click_obj_select(widget, event)
         if index is None: return True
         links = self.graph_obj.find_all_connections(index)
+        for link in links:
+            bw = self.graph_obj.connection_bandwidth(link)
+            name = self.battlefield["objects"][link[0][1]][0]
+            print(f"{name}{link[2]}", "--->", bw)
         self.painter.selected_object_index = index
         self.painter.connections = links
         self.draw_content()

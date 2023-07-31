@@ -131,16 +131,16 @@ class ObjectPainter(TerrPainter):
         
     def draw_input_0(self, context, xloc, yloc, color, hp, resource, amount):
         xloc, yloc = self.calc_render_params(xloc, yloc)
-        r = 18 * self.config["window-zoom"]
+        r = 20 * self.config["window-zoom"]
         
         ob_color = self.get_object_color(hp)
         context.set_source_rgba(*ob_color)
         context.arc(xloc, yloc, r, 0, TWO_PI)
         context.fill()
 
-        xo, yo = xloc, yloc - r/20
-        points = [(xo, yo-r/5), (xo + r*0.8, yo - r/2),
-                  (xo, yo+r), (xo - r*0.8, yo - r/2)]
+        xo, yo = xloc, yloc - r/10
+        points = [(xo, yo), (xo + r*0.75, yo - r/2),
+                  (xo, yo+r), (xo - r*0.75, yo - r/2)]
         self.draw_polygon(context, color, points)
 
         xc = xloc + 16 * self.config["window-zoom"]
@@ -149,16 +149,16 @@ class ObjectPainter(TerrPainter):
 
     def draw_output_0(self, context, xloc, yloc, color, hp, resource, amount):
         xloc, yloc = self.calc_render_params(xloc, yloc)
-        r = 18 * self.config["window-zoom"]
+        r = 20 * self.config["window-zoom"]
 
         ob_color = self.get_object_color(hp)
         context.set_source_rgba(*ob_color)
         context.arc(xloc, yloc, r, 0, TWO_PI)
         context.fill()
 
-        xo, yo = xloc, yloc + r/20
-        points = [(xo, yo+r/5), (xo + r*0.8, yo + r/2),
-                  (xo, yo-r), (xo - r*0.8, yo + r/2)]
+        xo, yo = xloc, yloc + r/10
+        points = [(xo, yo), (xo + r*0.75, yo + r/2),
+                  (xo, yo-r), (xo - r*0.75, yo + r/2)]
         self.draw_polygon(context, color, points)
 
         xc = xloc + 16 * self.config["window-zoom"]
@@ -398,27 +398,26 @@ class ObjectPainter(TerrPainter):
         else: resource = resource = self.library["objects"]["transmitter"]["fuel"]
         self.draw_control(context, xc, yc, ob_color, resource)
 
-    def draw_connection(self, context, xyo, xye, distance, free_range):
+    def draw_connection(self, context, ij, xyo, xye, distance, free_range):
         xo, yo = self.calc_render_params(*xyo)
         xe, ye = self.calc_render_params(*xye)
         w1 = 8 * self.config["window-zoom"]
         w2 = 3 * self.config["window-zoom"]
         w3 = 5 * self.config["window-zoom"]
 
-        # dx = xe - xo
-        # dy = ye - yo
-        # a = math.atan(dy / dx)       
-        # context.set_source_rgba(1.0, 1.0, 1.0, 0.5)
-        # context.arc(xo, yo , free_range* self.config["window-zoom"], a, 1)
-        # context.fill()
-
+        obj = self.battlefield["objects"][ij[0]]
+        name = obj[0]
+        if name in ("mineshaft", "mixer", "store", "output", "input"):
+            color = self.library["resources"][obj[5]]["color"]
+        else: color = 1.0, 1.0, 1.0
+            
         context.set_source_rgba(0.0, 0.0, 0.0)
         context.set_line_width(w1)
         context.move_to(xo, yo)
         context.line_to(xe, ye) 
         context.stroke()
 
-        context.set_source_rgba(0.7, 0.7, 0.7)
+        context.set_source_rgba(*color)
         context.set_line_width(w2)
         context.move_to(xo, yo)
         context.line_to(xe, ye) 
@@ -430,7 +429,7 @@ class ObjectPainter(TerrPainter):
         context.arc(xe, ye , w3, 0, TWO_PI)
         context.fill()
             
-        context.set_source_rgba(0.7, 0.7, 0.7)
+        context.set_source_rgba(*color)
         context.arc(xo, yo , w2, 0, TWO_PI)
         context.fill()
         context.arc(xe, ye , w2, 0, TWO_PI)
@@ -499,6 +498,6 @@ class ObjectPainter(TerrPainter):
             elif shape == "block-0": self.draw_block_0(context, xloc, yloc, color, hp)
             else: raise ValueError(f"Not supported object: {obj}")
         self.draw_cross(context)
-        for _, xyo, xye, distance, free_range in self.connections:
-            self.draw_connection(context, xyo, xye, distance, free_range)
+        for ij, xyo, xye, distance, free_range in self.connections:
+            self.draw_connection(context, ij, xyo, xye, distance, free_range)
 

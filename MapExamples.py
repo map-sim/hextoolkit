@@ -41,8 +41,8 @@ library0 = {
 	"toxic-sea-0": {"desc": "toxic-sea", "color": [0.7, 1.0, 1.0], "level": 0.0, "buildable": False}
     },
     "players": {
-        "Aaa": {"color": [1.0, 1.0, 0.5]},
-        "Bbb": {"color": [1.0, 0.5, 1.0]}
+        "Aaa": {"color": [1.0, 1.0, 0.666]},
+        "Bbb": {"color": [0.666, 1.0, 1.0]}
     }
 }
 
@@ -66,7 +66,7 @@ battlefield0 = {
         ["store", -300, 20, "Aaa", 0.5, "A", 126.0],
         ["store", -280, 120, "Aaa", 0.5, "A", 26.0],
         ["store", -210, 130, "Aaa", 1.0, "A", 26.0],
-        ["mixer", -200, -250, "Aaa", 0.5, None],
+        ["mixer", -170, -250, "Aaa", 0.5, None],
         ["mixer", -200, -450, "Aaa", 0.5, "BC"],
         ["mixer", -100, -450, "Aaa", 1.0, "AB"],
         ["mixer", 0, -450, "Aaa", 0.5, "AC"],
@@ -87,6 +87,7 @@ battlefield0 = {
         ["barrier", -240, 190, "Aaa", 1.0, True],
         ["observer", 50, 430, "Aaa", 1.0, True],
         ["block", 300, 270, "Bbb", 1.0],
+        ["block", 420, -70, "Aaa", 1.0],
     ],
     "resources": {
         (-380, -120): {"A": 0.1, "B": 10.5, "C": 0.4},
