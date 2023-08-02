@@ -16,8 +16,12 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
+VIEW = "__view"
+GLORY = "__glory"
 RADIATION = "__radiation"
 BARRIER = "__barrier"
+DEVEL = "__devel"
+FIRE = "__fire"
 
 class RunFrame(dict):
     def __init__(self, library, battlefield, graph):
@@ -26,6 +30,14 @@ class RunFrame(dict):
         self.graph = graph
         dict.__init__(self)
 
+    def __str__(self):
+        output = "======[RunFrame]======"
+        fsort = lambda kv: kv[1][1]
+        for k, v in sorted(self.items(), key=fsort):
+            output += f"\n{k} -- {v[1]} --> {v[0]}"
+        output += "\n======[RunFrame]======"
+        return output
+        
     def analyze_out_volumes(self):
         olen = len(self.battlefield["objects"])
         tmp_out_bw_sum, tmp_bw = {}, {}
@@ -49,51 +61,123 @@ class RunFrame(dict):
             resrc, volume = obj[5], obj[6]
             assert resrc == resource, "internal error"
             portion = min([objlib["capacity"], volume])
-            self[io] = portion * frac, resource
+            self[io] = [portion * frac, resource]
 
-    def analyze_out_radiator(self):
+    def analyze_out_radiators(self):
         olen = len(self.battlefield["objects"])
         for index in range(olen):
             obj = self.battlefield["objects"][index]
             if obj[0] != "radiator": continue
             if not obj[5]: continue # switch
             objlib = self.library["objects"][obj[0]]
-            portion, resource = 0.0, objlib["fuel"]
+            portion, resource, keys_update = 0.0, objlib["fuel"], []
             for (i, o), (p, res) in self.items():
                 if res != resource: continue
                 if o != index: continue
+                keys_update.append((i, o))
                 portion += p
             player, hp = obj[3], obj[4]
             tech = self.library["players"][player]["technologies"]["radiation-ability"]
-            if portion > objlib["capacity"]: portion = objlib["capacity"]
+            if portion > objlib["capacity"]:
+                back_factor = objlib["capacity"] / portion
+                for k in keys_update: self[k][0] *= back_factor
+                portion = objlib["capacity"]
             radfac = self.library["settings"]["radiation-factor"]
             radiation = portion * (1.0 + tech) * hp * radfac
-            if radiation > 0.0:
-                self[index, player] = radiation, RADIATION 
+            if radiation > 0.0: self[index, player] = [radiation, RADIATION]
 
-    def analyze_out_barrier(self):
+    def analyze_out_barriers(self):
         olen = len(self.battlefield["objects"])
         for index in range(olen):
             obj = self.battlefield["objects"][index]
             if obj[0] != "barrier": continue
             if not obj[5]: continue # switch
             objlib = self.library["objects"][obj[0]]
-            portion, resource = 0.0, objlib["fuel"]
+            portion, resource, keys_update = 0.0, objlib["fuel"], []
             for (i, o), (p, res) in self.items():
                 if res != resource: continue
                 if o != index: continue
+                keys_update.append((i, o))
                 portion += p
             player, hp = obj[3], obj[4]
             tech = self.library["players"][player]["technologies"]["barrier-ability"]
-            if portion > objlib["capacity"]: portion = objlib["capacity"]
+            if portion > objlib["capacity"]:
+                back_factor = objlib["capacity"] / portion
+                for k in keys_update: self[k][0] *= back_factor
+                portion = objlib["capacity"]
             barfac = self.library["settings"]["barrier-factor"]
             protection = portion * (1.0 + tech) * hp * barfac
-            if protection > 0.0:
-                self[index, player] = protection, BARRIER 
+            if protection > 0.0: self[index, player] = [protection, BARRIER]
 
     def calc_suppression(self, index):
-        # radiation
-        return 1.0
+        obj = self.battlefield["objects"][index]
+        total = self.battlefield["natural-radiation"]
+        objlib = self.library["objects"][obj[0]]
+        for (i, player), (p, res) in self.items():
+            if res != BARRIER: continue
+            d, dh, xyo, xye = self.graph.check_objects_connection(i, index)
+            if d is None: continue
+            obj2 = self.battlefield["objects"][i]
+            free_range = self.graph.calc_free_range(obj2, dh)
+            conn = (i, index), xyo, xye, d, free_range
+            bw = self.graph.connection_bandwidth(conn)
+            total -= p * bw            
+        for (i, player), (p, res) in self.items():
+            if res != RADIATION: continue
+            d, dh, xyo, xye = self.graph.check_objects_connection(i, index)
+            if d is None: continue
+            obj2 = self.battlefield["objects"][i]
+            free_range = self.graph.calc_free_range(obj2, dh)
+            conn = (i, index), xyo, xye, d, free_range
+            bw = self.graph.connection_bandwidth(conn)
+            total += p * bw
+        if total <= 0.0 or "suppress-base" not in objlib: return 0.0
+        return total / (total + objlib["suppress-base"])
+
+    def analyze_out_effectors(self):
+        effectors = ["observer", "transmitter", "laboratory", "launcher", "developer"]
+        olen = len(self.battlefield["objects"])
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            objlib = self.library["objects"][obj[0]]
+            if obj[0] not in effectors: continue
+            if obj[5] in (None, False): continue
+            player, hp = obj[3], obj[4]
+            if obj[0] == "laboratory":
+                factor, resource = self.library["settings"]["research-factor"], obj[5]
+                tech = self.library["players"][player]["technologies"]["research-gain"] 
+            elif obj[0] == "transmitter":
+                factor, resource = self.library["settings"]["transsmition-factor"], GLORY
+                tech = self.library["players"][player]["technologies"]["transsmition-gain"]
+            elif obj[0] == "observer":
+                factor, resource = self.library["settings"]["observation-factor"], VIEW
+                tech = self.library["players"][player]["technologies"]["observation-gain"]
+            elif obj[0] == "launcher":
+                factor, resource = self.library["settings"]["fire-factor"], FIRE
+                tech = self.library["players"][player]["technologies"]["launcher-gain"]
+            elif obj[0] == "developer":
+                factor, resource = self.library["settings"]["development-factor"], DEVEL
+                tech = self.library["players"][player]["technologies"]["developer-gain"]
+            else: raise ValueError(f"internal-error {obj[0]}")
+            portion, keys_update  = 0.0, []
+            for (i, o), (p, res) in self.items():
+                if o != index: continue
+                keys_update.append((i, o)); portion += p
+            if portion > objlib["capacity"]:
+                back_factor = objlib["capacity"] / portion
+                for k in keys_update: self[k][0] *= back_factor
+                portion = objlib["capacity"]
+            supress = self.calc_suppression(index)
+            portion = factor * hp * portion * (1 + tech) * (1.0 - supress)
+            if obj[0] == "launcher":
+                links = self.graph.find_all_connections2(index)
+                for bw, link in links:                    
+                    self[link[0][0]] = [bw * portion, resource]
+            elif obj[0] == "developer":
+                links = self.graph.find_all_connections2(index)
+                for bw, link in links:
+                    self[link[0][0][0], link[-1][0][1]] = [bw * portion, resource]
+            else: self[index, player] = [portion, resource]
 
     def analyze_out_mine(self):
         olen = len(self.battlefield["objects"])
@@ -105,8 +189,9 @@ class RunFrame(dict):
             player, hp, resource = obj[3], obj[4], obj[5]
             ore = resources.get(resource, 0.0)
             if ore <= 0.0: continue
+            supress = self.calc_suppression(index)
             tech = self.library["players"][player]["technologies"]["mine-gain"]
-            portion = hp * ore * (1 + tech)
+            portion = hp * ore * (1 + tech) * (1.0 - supress)
             for bw, conn in self.graph.find_all_connections2(index):
                 assert len(conn) == 1, f"volume cannot be forwarded {conn}"
                 tmp_bw[*conn[0][0]] = bw, portion, resource
@@ -117,12 +202,13 @@ class RunFrame(dict):
             frac = bw / tmp_out_bw_sum[io[1]]
             obj = self.battlefield["objects"][io[0]]
             assert resource == obj[5], "internal error"
-            self[io] = portion * frac, resource
+            self[io] = [portion * frac, resource]
 
     def analyze(self):
         self.analyze_out_volumes()
-        self.analyze_out_radiator()
-        self.analyze_out_barrier()
+        self.analyze_out_radiators()
+        self.analyze_out_barriers()
+        self.analyze_out_effectors()
         self.analyze_out_mine()
         print(self)
 
@@ -232,7 +318,7 @@ class ObjectWindow(TerrWindow):
                     self.painter.connections = links
             else: self.painter.connections = []
             self.draw_content()
-        elif key_name == "r" and self.pointer_mode == "obj":
+        elif key_name == "space" and self.pointer_mode == "obj":
             self.graph_obj.analyze_bw(self.selected_object_index)
             rf = RunFrame(self.library, self.battlefield, self.graph_obj)
             rf.analyze()
@@ -251,7 +337,7 @@ class ObjectWindow(TerrWindow):
                 fd.write(pformat(self.battlefield))
             print("Save battlefield:", fmap(cnt))
         elif key_name == "p" and self.pointer_mode == "obj-new":
-            players = list(self.library["players"].keys())            
+            players = list(sorted(self.library["players"].keys()))            
             if self.choosen["player"] is not None:
                 ixp = players.index(self.choosen["player"])
                 self.choosen["player"] = players[(ixp+1) % len(players)]

@@ -159,18 +159,19 @@ class ObjectGraph:
             h = self.height_diff(xo, yo, xe, ye)
             return d, h, (xo, yo), (xe, ye)
         return  None, None, None, None
-    
+
+    def calc_free_range(self, obj, dh):
+        print(obj)
+        dfr2 = self.library["objects"][obj[0]]["free-range"]
+        hf2 = self.library["objects"][obj[0]]["surpass"]            
+        return dfr2 + dh * hf2
+        
     def find_all_connections(self, index):
         output_connections = []
-        dfr = self.library["settings"]["base-free-range"]
-        hf = self.library["settings"]["base-height-factor"]        
-        name = self.battlefield["objects"][index][0]
-        dfr2 = self.library["objects"][name].get("free-range", dfr)
-        hf2 = self.library["objects"][name].get("height-factor", hf)            
         for i in range(len(self.battlefield["objects"])):
-            distance, h, xyo, xye = self.check_objects_connection(index, i)
+            distance, dh, xyo, xye = self.check_objects_connection(index, i)
             if distance is None: continue
-            free_range = dfr2 + h * hf2
+            free_range = self.calc_free_range(self.battlefield["objects"][index], dh)
             row = (index, i), xyo, xye, distance, free_range
             output_connections.append(row)
         return output_connections
@@ -202,7 +203,8 @@ class ObjectGraph:
             if po != pe:
                 t = self.library["players"][pe]["technologies"]["bandwidth-factor"]
                 tech = tech / 2 + t / 2
-            return *pipe[0][0], (1.0 + tech) * bw * hpe * hpo
+            if obj[0] == "launcher": return *pipe[0][0], (1.0 + tech) * bw * hpo
+            else: return *pipe[0][0], (1.0 + tech) * bw * hpe * hpo
         elif len(pipe) == 2:
             bw0 = self.bandwidth(obj[0], pipe[0][3], pipe[0][4])
             obj2 = self.battlefield["objects"][pipe[1][0][0]]
@@ -221,7 +223,11 @@ class ObjectGraph:
             return
         developer_output = {}
         for oe, xyo, xye, dist, free in self.find_all_connections(index):
-            if self.battlefield["objects"][oe[1]][0] == "repeater":
+            if self.battlefield["objects"][oe[1]][0] == "repeater":                
+                conn = [(oe, xyo, xye, dist, free)]
+                _, _, bw = self.bandwidth2(conn)
+                if developer_output.get(oe, (0.0, None))[0] < bw:
+                    developer_output[oe] = bw, conn                
                 for oe2, xyo2, xye2, dist2, free2 in self.find_all_connections(oe[1]):
                     # if oe[0] == oe2[1]: repeater can repair of its developer
                     conn = [(oe, xyo, xye, dist, free), (oe2, xyo2, xye2, dist2, free2)]

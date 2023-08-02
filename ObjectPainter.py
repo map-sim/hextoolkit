@@ -80,7 +80,7 @@ class ObjectPainter(TerrPainter):
         context.arc(xloc, yloc, rr, 0, TWO_PI)
         context.fill()
 
-    def draw_observer_0(self, context, xloc, yloc, color, hp, switch):
+    def draw_observer_0(self, context, xloc, yloc, color, hp, switch, radius):
         xloc, yloc = self.calc_render_params(xloc, yloc)
         r = 25 * self.config["window-zoom"]
         rr = 8 * self.config["window-zoom"]

@@ -1,20 +1,33 @@
 library0 = {
+    "settings": {
+        "fire-factor": 2.0,
+        "barrier-factor": 10.0,
+        "radiation-factor": 10.0,
+        "research-factor": 10.0,
+        "transsmition-factor": 10.0,
+        "observation-factor": 10.0,        
+        "development-factor": 10.0,
+        "natural-radiation-method": "constant",
+        "resourcing-method": "asymptotic-random",
+        "resourcing-points": [(-1240, -205), (1530, 650)],
+        "resourcing-factor": 180.0
+    },
     "objects": {
 	"drill":       {"shape": "drill-0",     "radius": 50, "cost": 10, "structure": 5},
 	"block":       {"shape": "block-0",     "radius": 50, "cost": 10, "structure": 50},
-	"mineshaft":   {"shape": "mineshaft-0", "radius": 50, "cost": 20, "structure": 30, "range": 100},
-	"input":       {"shape": "input-0",     "radius": 50, "cost": 20, "structure": 20, "range": 80, "capacity": 5.0, "volume": 100},
-	"output":      {"shape": "output-0",    "radius": 50, "cost": 20, "structure": 20, "range": 80, "capacity": 4.0, "volume": 100},
-	"store":       {"shape": "store-0",      "radius": 50, "cost": 30, "structure": 30, "range": 160, "capacity": 8.0, "volume": 160},
-	"mixer":       {"shape": "mixer-0",      "radius": 60, "cost": 50, "structure": 50, "range": 160, "capacity": 6.0},
-	"repeater":    {"shape": "repeater-0",    "radius": 50, "cost": 10, "structure": 10, "range": 200},
-	"developer":   {"shape": "developer-0",   "radius": 50, "cost": 60, "structure": 60, "range": 160, "capacity": 5.0, "fuel": "AC"},
-	"transmitter": {"shape": "transmitter-0", "radius": 100, "cost": 150, "structure": 100, "range": 0, "capacity": 6.0, "fuel": "AB"},
-	"laboratory":  {"shape": "laboratory-0",  "radius": 50, "cost": 120, "structure": 100, "range": 0, "capacity": 6.0, "fuel": "AB"},
-        "launcher":    {"shape": "launcher-0",    "radius": 80, "cost": 30, "structure": 30, "range": 400, "capacity": 4.0, "fuel": "AC", "height-factor": 15, "free-range": 200},
-	"radiator":    {"shape": "radiator-0",    "radius": 100, "cost": 120, "structure": 80, "range": 500, "capacity": 2.0, "fuel": "BC", "height-factor": 15, "free-range": 200},
-	"barrier":     {"shape": "barrier-0",     "radius": 50, "cost": 120, "structure": 80, "range": 300, "capacity": 3.0, "fuel": "BC", "height-factor": 5, "free-range": 100},
-	"observer":    {"shape": "observer-0",     "radius": 50, "cost": 40, "structure": 50, "range": 600, "capacity": 1.0, "fuel": "BC", "height-factor": 20, "free-range": 400}
+	"transmitter": {"shape": "transmitter-0", "radius": 100, "cost": 150, "structure": 100, "range": 0,                             "capacity": 6.0, "fuel": "AB", "suppress-base": 10.0},
+	"laboratory":  {"shape": "laboratory-0", "radius": 50, "cost": 120, "structure": 100, "range": 0,                               "capacity": 6.0, "fuel": "AB", "suppress-base": 10.0},
+	"mineshaft":   {"shape": "mineshaft-0", "radius": 50, "cost": 20, "structure": 30, "range": 100, "surpass": 3 ,"free-range": 50,                              "suppress-base": 100.0},
+	"repeater":    {"shape": "repeater-0",  "radius": 50, "cost": 10, "structure": 10, "range": 200, "surpass": 3 ,"free-range": 50},
+	"input":      {"shape": "input-0",     "radius": 50, "cost": 20, "structure": 20, "range": 80, "surpass": 3 ,"free-range": 50, "capacity": 5.0, "volume": 100},
+	"output":     {"shape": "output-0",    "radius": 50, "cost": 20, "structure": 20, "range": 80, "surpass": 3 ,"free-range": 50, "capacity": 4.0, "volume": 100},
+	"store":      {"shape": "store-0",     "radius": 50, "cost": 30, "structure": 30, "range": 160, "surpass": 3 ,"free-range": 50, "capacity": 8.0, "volume": 160},
+	"mixer":      {"shape": "mixer-0",     "radius": 60, "cost": 50, "structure": 50, "range": 160, "surpass": 3 ,"free-range": 50, "capacity": 6.0,               "suppress-base": 10.0},
+	"developer":  {"shape": "developer-0", "radius": 50, "cost": 60, "structure": 60, "range": 160, "surpass": 3 ,"free-range": 50, "capacity": 5.0, "fuel": "AC", "suppress-base": 10.0},
+        "launcher":  {"shape": "launcher-0",  "radius": 80, "cost": 30, "structure": 30, "range": 400, "surpass": 15, "free-range": 200, "capacity": 4.0, "fuel": "AC", "suppress-base": 10.0},
+	"observer":  {"shape": "observer-0",  "radius": 50, "cost": 40, "structure": 50, "range": 650, "surpass": 20, "free-range": 300, "capacity": 1.0, "fuel": "BC", "suppress-base": 10.0},
+	"radiator":  {"shape": "radiator-0", "radius": 100, "cost": 120, "structure": 80, "range": 500, "surpass": 15, "free-range": 200, "capacity": 2.0, "fuel": "BC"},
+	"barrier":    {"shape": "barrier-0",  "radius": 50, "cost": 120, "structure": 80, "range": 300, "surpass": 5, "free-range": 100, "capacity": 3.0, "fuel": "BC"}
     },
     "resources": {
         "A": {"color": [1.0, 0.1, 0.1]},
@@ -24,16 +37,8 @@ library0 = {
         "AC": {"color": [1.0, 0.1, 1.0], "process": {"A": 0.4, "C": 0.6}},
         "BC": {"color": [0.1, 0.9, 0.9], "process": {"C": 0.7, "B": 0.3}}
     },
-    "settings": {
-        "base-free-range": 50.0,
-        "base-height-factor": 3.0,
-        "radiation-factor": 10.0,
-        "barrier-factor": 10.0,
-        "resourcing-method": "asymptotic-random",
-        "resourcing-points": [(-1240, -205), (1530, 650)],
-        "resourcing-factor": 180.0
-    },
-    "technologies": ["volume-factor", "bandwidth-factor", "radiation-ability", "barrier-ability", "mine-gain"],
+    "technologies": ["volume-factor", "bandwidth-factor", "radiation-ability", "barrier-ability", "mine-gain",
+                     "research-gain", "transsmition-gain", "observation-gain", "launcher-gain", "developer-gain"],
     "terrains": {
 	"desert-0": {"desc": "desert", "color": [1.0, 0.95, 0.93], "level": 10.5, "buildable": True},
 	"desert-1": {"desc": "desert", "color": [1.0, 0.9, 0.9], "level": 14.2, "buildable": True},
@@ -46,6 +51,11 @@ library0 = {
                                  "bandwidth-factor": 0.0,
                                  "radiation-ability": 0.0,
                                  "barrier-ability": 0.0,
+                                 "transsmition-gain": 0.0,
+                                 "observation-gain": 0.0,
+                                 "developer-gain": 0.0,
+                                 "research-gain": 0.0,
+                                 "launcher-gain": 0.0,
                                  "mine-gain": 0.0}
                 },
         "Bbb": {"color": [0.5, 1.0, 1.0],
@@ -53,6 +63,11 @@ library0 = {
                                  "bandwidth-factor": 0.0,
                                  "radiation-ability": 0.0,
                                  "barrier-ability": 0.0,
+                                 "transsmition-gain": 0.0,
+                                 "observation-gain": 0.0,
+                                 "developer-gain": 0.0,
+                                 "research-gain": 0.0,
+                                 "launcher-gain": 0.0,
                                  "mine-gain": 0.0}
                 }
     }
@@ -60,7 +75,7 @@ library0 = {
 
 battlefield0 = {
     "iteration": 0,
-    "ratiation": 20.0,
+    "natural-radiation": 20.0,
     "objects": [
         ["mineshaft", -380, -120, "Aaa", 1.0, "A"],
         ["mineshaft", -280, -120, "Bbb", 1.0, "B"],
@@ -87,11 +102,13 @@ battlefield0 = {
         ["store", 80, -500, "Aaa", 0.5, "A", 126.0],
         ["store", 50, -560, "Aaa", 0.5, "C", 126.0],
         ["launcher", 200, 250, "Aaa", 1.0, (300, 270)],
+        ["launcher", 250, 350, "Aaa", 1.0, None],
         ["radiator", 100, 250, "Aaa", 1.0, True],
         ["laboratory", 100, 150, "Aaa", 1.0, "mine-gain"],
         ["barrier", 0, 250, "Aaa", 1.0, True],
         ["developer", 200, 150, "Aaa", 1.0, True],
         ["transmitter", 300, 150, "Aaa", 1.0, True],
+        ["store", 380, 150, "Aaa", 1.0, "AB", 3.0],
         ["store", 150, 350, "Aaa", 0.5, "AC", 126.0],
         ["store", 50, 350, "Aaa", 0.5, "BC", 126.0],
         ["store", -50, 350, "Aaa", 0.5, "AB", 126.0],
@@ -99,10 +116,10 @@ battlefield0 = {
         ["repeater", 300, 50, "Aaa", 1.0, True],
         ["repeater", 250, 40, "Aaa", 1.0, False],
         ["barrier", -240, 190, "Aaa", 1.0, True],
-        ["observer", 50, 430, "Aaa", 1.0, True],
+        ["observer", 50, 430, "Aaa", 1.0, True, 331.12],
         ["output", -10, 430, "Aaa", 1.0, "BC", 4.0],
         ["mixer", 130, 430, "Aaa", 1.0, "BC"],
-        ["block", 300, 270, "Bbb", 1.0],
+        ["block", 300, 270, "Bbb", 0.2],
         ["block", 420, -70, "Aaa", 1.0],
     ],
     "resources": {

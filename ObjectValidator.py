@@ -64,7 +64,7 @@ class LibraryValidator(TypeValidator):
 class BattlefieldValidator(TypeValidator):
     types = {
         "iteration": int,
-        "ratiation": (int, float),
+        "natural-radiation": (int, float),
         "objects": list,
         "resources": dict,
         "terrains": list
@@ -101,7 +101,7 @@ class BattlefieldValidator(TypeValidator):
                 if xy is None: continue
                 for _, x2, y2, _, _, *rest in objects:
                     if xy == (x2, y2): found = True
-                assert found, f"{name}, --> {xy}"
+                assert found, f"{name}, --> {xy} - wrong target"
             if name in ("radiator", "barrier", "observer",
                         "repeater", "developer", "transmitter"):
                 switch = rest[0]
