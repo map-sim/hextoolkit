@@ -204,14 +204,15 @@ class ObjectGraph:
                 t = self.library["players"][pe]["technologies"]["bandwidth-factor"]
                 tech = tech / 2 + t / 2
             if obj[0] == "launcher": return *pipe[0][0], (1.0 + tech) * bw * hpo
-            else: return *pipe[0][0], (1.0 + tech) * bw * hpe * hpo
+            else: return *pipe[0][0], (1.0 + tech) * bw * (hpe * hpo) ** 0.5
         elif len(pipe) == 2:
             bw0 = self.bandwidth(obj[0], pipe[0][3], pipe[0][4])
             obj2 = self.battlefield["objects"][pipe[1][0][0]]
             bw = bw0 * self.bandwidth(obj2[0], pipe[1][3], pipe[1][4])
             hpe = self.battlefield["objects"][pipe[0][0][0]][4]
+            hps = self.battlefield["objects"][pipe[0][0][1]][4]
             hpo = self.battlefield["objects"][pipe[1][0][1]][4]
-            return pipe[0][0][0], pipe[1][0][1], bw * hpe * hpo
+            return pipe[0][0][0], pipe[1][0][1], bw * (hpe * hps * hpo) ** (1/3)
         else: raise ValueError("len")
 
     def find_all_connections2(self, index):

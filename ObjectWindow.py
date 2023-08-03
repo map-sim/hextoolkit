@@ -114,7 +114,7 @@ class RunFrame(dict):
         total = self.battlefield["natural-radiation"]
         objlib = self.library["objects"][obj[0]]
         for (i, player), (p, res) in self.items():
-            if res != BARRIER: continue
+            if obj[3] != player or res != BARRIER: continue
             d, dh, xyo, xye = self.graph.check_objects_connection(i, index)
             if d is None: continue
             obj2 = self.battlefield["objects"][i]
@@ -123,7 +123,7 @@ class RunFrame(dict):
             bw = self.graph.connection_bandwidth(conn)
             total -= p * bw            
         for (i, player), (p, res) in self.items():
-            if res != RADIATION: continue
+            if obj[3] == player or res != RADIATION: continue
             d, dh, xyo, xye = self.graph.check_objects_connection(i, index)
             if d is None: continue
             obj2 = self.battlefield["objects"][i]
@@ -171,7 +171,7 @@ class RunFrame(dict):
             portion = factor * hp * portion * (1 + tech) * (1.0 - supress)
             if obj[0] == "launcher":
                 links = self.graph.find_all_connections2(index)
-                for bw, link in links:                    
+                for bw, link in links:
                     self[link[0][0]] = [bw * portion, resource]
             elif obj[0] == "developer":
                 links = self.graph.find_all_connections2(index)

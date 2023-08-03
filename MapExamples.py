@@ -24,7 +24,7 @@ library0 = {
 	"store":      {"shape": "store-0",     "radius": 50, "cost": 30, "structure": 30, "range": 160, "surpass": 3 ,"free-range": 50, "capacity": 8.0, "volume": 160},
 	"mixer":      {"shape": "mixer-0",     "radius": 60, "cost": 50, "structure": 50, "range": 160, "surpass": 3 ,"free-range": 50, "capacity": 6.0,               "suppress-base": 10.0},
 	"developer":  {"shape": "developer-0", "radius": 50, "cost": 60, "structure": 60, "range": 160, "surpass": 3 ,"free-range": 50, "capacity": 5.0, "fuel": "AC", "suppress-base": 10.0},
-        "launcher":  {"shape": "launcher-0",  "radius": 80, "cost": 30, "structure": 30, "range": 400, "surpass": 15, "free-range": 200, "capacity": 4.0, "fuel": "AC", "suppress-base": 10.0},
+        "launcher":  {"shape": "launcher-0",  "radius": 80, "cost": 30, "structure": 30, "range": 400, "surpass": 15, "free-range": 300, "capacity": 4.0, "fuel": "AC", "suppress-base": 10.0},
 	"observer":  {"shape": "observer-0",  "radius": 50, "cost": 40, "structure": 50, "range": 650, "surpass": 20, "free-range": 300, "capacity": 1.0, "fuel": "BC", "suppress-base": 10.0},
 	"radiator":  {"shape": "radiator-0", "radius": 100, "cost": 120, "structure": 80, "range": 500, "surpass": 15, "free-range": 200, "capacity": 2.0, "fuel": "BC"},
 	"barrier":    {"shape": "barrier-0",  "radius": 50, "cost": 120, "structure": 80, "range": 300, "surpass": 5, "free-range": 100, "capacity": 3.0, "fuel": "BC"}
