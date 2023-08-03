@@ -204,12 +204,22 @@ class RunFrame(dict):
             assert resource == obj[5], "internal error"
             self[io] = [portion * frac, resource]
 
+    def analyze_out_mixers(self):
+        olen = len(self.battlefield["objects"])
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            if obj[0] != "mixer": continue
+            resource = obj[5]
+            if resource is None: continue
+        # TODO
+
     def analyze(self):
         self.analyze_out_volumes()
         self.analyze_out_radiators()
         self.analyze_out_barriers()
         self.analyze_out_effectors()
-        self.analyze_out_mine()
+        self.analyze_out_mines()
+        self.analyze_out_mixers()
         print(self)
 
 def inc_object_param5(row, resources):
