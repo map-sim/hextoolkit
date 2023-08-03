@@ -1,5 +1,6 @@
 library0 = {
     "settings": {
+        "glory-power": 0.5,
         "fire-factor": 2.0,
         "barrier-factor": 10.0,
         "radiation-factor": 10.0,

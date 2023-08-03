@@ -243,6 +243,16 @@ class RunFrame(dict):
             for bw, conn in self.graph.find_all_connections2(index):
                 self[conn[0][0][0], conn[-1][0][1]] = production * bw / sum_bw, resource
 
+    def update_glory(self):
+        glory = {}
+        for (_, player), (res, portion) in self.items():
+            if res != GLORY: continue
+            try: glory[player] += portion
+            except KeyError: glory[player] = portion
+        power = self.library["settings"]["glory-power"]
+        for player, amount in glory.items():
+            self.library["players"][player]["glory"] += amount ** power
+
     def analyze(self):
         self.analyze_out_volumes()
         self.analyze_out_radiators()
@@ -250,6 +260,7 @@ class RunFrame(dict):
         self.analyze_out_effectors()
         self.analyze_out_mines()
         self.analyze_out_mixers()
+        self.update_glory()
         print(self)
 
 def inc_object_param5(row, resources):
