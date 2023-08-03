@@ -250,12 +250,44 @@ class RunFrame(dict):
             try: glory_dict[player] += portion
             except KeyError: glory_dict[player] = portion
         powg = self.library["settings"]["glory-power"]
+        it = self.battlefield["iteration"]
         for player, amount in glory_dict.items():
-            self.library["players"][player]["glory"] += amount ** powg
+            baseg = self.battlefield["statistics"]["glory"][player]
+            self.battlefield["statistics"]["glory"][player] = baseg + amount ** powg
         for player in self.library["players"]:
-            print(f"{player} glory:", self.library["players"][player]["glory"])
+            gv = self.battlefield["statistics"]["glory"][player]
+            print(f"{player} glory:", gv)
 
-    def analyze(self):
+    def update_volumes(self):
+        olen = len(self.battlefield["objects"])
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            objlib = self.library["objects"][obj[0]]
+            if "volume" not in objlib: continue
+            resource, volume = obj[5], obj[6]
+            if resource is None: continue
+        ## TODO
+
+    def update_research(self):
+        research_dict = {}
+        for (_, player), (portion, tech) in self.items():
+            if player not in self.library["players"]: continue
+            if tech not in self.library["technologies"]: continue
+            try: research_dict[player, tech] += portion
+            except KeyError:
+                research_dict[player, tech] = portion
+        tech_base = self.library["settings"]["research-base"]
+        tech_power = self.library["settings"]["research-power"]
+        for (player, tech), amount in research_dict.items():
+            tech_level = self.library["players"][player]["technologies"][tech]
+            tech_amount = tech_level * tech_base / (1.0 - tech_level)
+            tech_amount += amount ** tech_power
+            tech_level = tech_amount / (tech_amount + tech_base)
+            self.library["players"][player]["technologies"][tech] = tech_level
+            print(f"{player} / {tech}:", tech_level)
+
+    def run(self):
+        self.battlefield["iteration"] += 1        
         self.analyze_out_volumes()
         self.analyze_out_radiators()
         self.analyze_out_barriers()
@@ -263,6 +295,8 @@ class RunFrame(dict):
         self.analyze_out_mines()
         self.analyze_out_mixers()
         self.update_glory()
+        self.update_volumes()
+        self.update_research()
         print(self)
 
 def inc_object_param5(row, resources):
@@ -374,7 +408,7 @@ class ObjectWindow(TerrWindow):
         elif key_name == "space" and self.pointer_mode == "obj":
             self.graph_obj.analyze_bw(self.selected_object_index)
             rf = RunFrame(self.library, self.battlefield, self.graph_obj)
-            rf.analyze()
+            rf.run()
         elif key_name == "v" and self.pointer_mode == "obj":
             validate(None, self.library, self.battlefield)
         elif key_name == "s" and self.pointer_mode == "obj":

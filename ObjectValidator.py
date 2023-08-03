@@ -66,6 +66,7 @@ class BattlefieldValidator(TypeValidator):
         "iteration": int,
         "natural-radiation": (int, float),
         "objects": list,
+        "statistics": dict,
         "resources": dict,
         "terrains": list
     }

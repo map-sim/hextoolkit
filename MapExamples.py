@@ -4,10 +4,12 @@ library0 = {
         "fire-factor": 2.0,
         "barrier-factor": 10.0,
         "radiation-factor": 10.0,
-        "research-factor": 10.0,
         "transsmition-factor": 10.0,
         "observation-factor": 10.0,        
         "development-factor": 10.0,
+        "research-factor": 10.0,
+        "research-power": 0.5,        
+        "research-base": 1000.0,        
         "natural-radiation-method": "constant",
         "resourcing-method": "asymptotic-random",
         "resourcing-points": [(-1240, -205), (1530, 650)],
@@ -60,8 +62,9 @@ library0 = {
                 "research-gain": 0.0,
                 "launcher-gain": 0.0,
                 "mixing-gain": 0.0,
-                "mine-gain": 0.0},
-            "glory": 0.0},
+                "mine-gain": 0.0
+            }
+        },
         "Bbb": {
             "color": [0.5, 1.0, 1.0],
             "technologies": {
@@ -75,8 +78,9 @@ library0 = {
                 "research-gain": 0.0,
                 "launcher-gain": 0.0,
                 "mixing-gain": 0.0,
-                "mine-gain": 0.0},
-            "glory": 0.0}
+                "mine-gain": 0.0
+            }
+        }
     }
 }
 
@@ -137,6 +141,12 @@ battlefield0 = {
         (-280, -120): {"A": 5.4, "B": 5.5, "C": 0.1},
         (-180, -120): {},
         (-480, -120): {"A": 5.4, "B": 5.5, "C": 0.1}
+    },
+    "statistics": {
+        "glory": {
+            "Aaa":  0.0,
+            "Bbb":  0.0            
+        }
     },
     "terrains": [
         ("base", "desert-0"),
