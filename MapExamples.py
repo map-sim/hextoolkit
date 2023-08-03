@@ -46,32 +46,36 @@ library0 = {
 	"toxic-sea-0": {"desc": "toxic-sea", "color": [0.7, 1.0, 1.0], "level": 0.0, "buildable": False}
     },
     "players": {
-        "Aaa": {"color": [1.0, 1.0, 0.5],
-                "technologies": {"volume-factor": 0.0,
-                                 "bandwidth-factor": 0.0,
-                                 "radiation-ability": 0.0,
-                                 "barrier-ability": 0.0,
-                                 "transsmition-gain": 0.0,
-                                 "observation-gain": 0.0,
-                                 "developer-gain": 0.0,
-                                 "research-gain": 0.0,
-                                 "launcher-gain": 0.0,
-                                 "mixing-gain": 0.0,
-                                 "mine-gain": 0.0}
-                },
-        "Bbb": {"color": [0.5, 1.0, 1.0],
-                "technologies": {"volume-factor": 0.0,
-                                 "bandwidth-factor": 0.0,
-                                 "radiation-ability": 0.0,
-                                 "barrier-ability": 0.0,
-                                 "transsmition-gain": 0.0,
-                                 "observation-gain": 0.0,
-                                 "developer-gain": 0.0,
-                                 "research-gain": 0.0,
-                                 "launcher-gain": 0.0,
-                                 "mixing-gain": 0.0,
-                                 "mine-gain": 0.0}
-                }
+        "Aaa": {
+            "color": [1.0, 1.0, 0.5],
+            "technologies": {
+                "volume-factor": 0.0,
+                "bandwidth-factor": 0.0,
+                "radiation-ability": 0.0,
+                "barrier-ability": 0.0,
+                "transsmition-gain": 0.0,
+                "observation-gain": 0.0,
+                "developer-gain": 0.0,
+                "research-gain": 0.0,
+                "launcher-gain": 0.0,
+                "mixing-gain": 0.0,
+                "mine-gain": 0.0},
+            "glory": 0.0},
+        "Bbb": {
+            "color": [0.5, 1.0, 1.0],
+            "technologies": {
+                "volume-factor": 0.0,
+                "bandwidth-factor": 0.0,
+                "radiation-ability": 0.0,
+                "barrier-ability": 0.0,
+                "transsmition-gain": 0.0,
+                "observation-gain": 0.0,
+                "developer-gain": 0.0,
+                "research-gain": 0.0,
+                "launcher-gain": 0.0,
+                "mixing-gain": 0.0,
+                "mine-gain": 0.0},
+            "glory": 0.0}
     }
 }
 

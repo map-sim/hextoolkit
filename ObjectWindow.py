@@ -35,7 +35,11 @@ class RunFrame(dict):
         fsort = lambda kv: kv[1][1]
         for k, v in sorted(self.items(), key=fsort):
             obj = self.battlefield["objects"][k[0]]
-            output += f"\nfrom {obj[0]}: {k} -- {v[1]} --> {v[0]}"
+            if isinstance(k[1], str):
+                output += f"\nfrom {obj[0]}({k[0]}) by {k[1]}: {v[1]} --> {v[0]}"
+            elif isinstance(k[1], int):
+                obj2 = self.battlefield["objects"][k[1]]                
+                output += f"\nfrom {obj[0]}({k[0]}) to {obj2[0]}({k[1]}): {v[1]} --> {v[0]}"
         output += "\n======[RunFrame]======"
         return output
         
@@ -164,6 +168,7 @@ class RunFrame(dict):
             for (i, o), (p, res) in self.items():
                 if o != index: continue
                 keys_update.append((i, o)); portion += p
+            if portion <= 0.0: continue
             if portion > objlib["capacity"]:
                 back_factor = objlib["capacity"] / portion
                 for k in keys_update: self[k][0] *= back_factor
