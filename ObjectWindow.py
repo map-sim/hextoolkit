@@ -244,14 +244,16 @@ class RunFrame(dict):
                 self[conn[0][0][0], conn[-1][0][1]] = production * bw / sum_bw, resource
 
     def update_glory(self):
-        glory = {}
-        for (_, player), (res, portion) in self.items():
+        glory_dict = {}
+        for (_, player), (portion, res) in self.items():
             if res != GLORY: continue
-            try: glory[player] += portion
-            except KeyError: glory[player] = portion
-        power = self.library["settings"]["glory-power"]
-        for player, amount in glory.items():
-            self.library["players"][player]["glory"] += amount ** power
+            try: glory_dict[player] += portion
+            except KeyError: glory_dict[player] = portion
+        powg = self.library["settings"]["glory-power"]
+        for player, amount in glory_dict.items():
+            self.library["players"][player]["glory"] += amount ** powg
+        for player in self.library["players"]:
+            print(f"{player} glory:", self.library["players"][player]["glory"])
 
     def analyze(self):
         self.analyze_out_volumes()
