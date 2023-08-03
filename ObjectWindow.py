@@ -34,7 +34,8 @@ class RunFrame(dict):
         output = "======[RunFrame]======"
         fsort = lambda kv: kv[1][1]
         for k, v in sorted(self.items(), key=fsort):
-            output += f"\n{k} -- {v[1]} --> {v[0]}"
+            obj = self.battlefield["objects"][k[0]]
+            output += f"\nfrom {obj[0]}: {k} -- {v[1]} --> {v[0]}"
         output += "\n======[RunFrame]======"
         return output
         
@@ -179,7 +180,7 @@ class RunFrame(dict):
                     self[link[0][0][0], link[-1][0][1]] = [bw * portion, resource]
             else: self[index, player] = [portion, resource]
 
-    def analyze_out_mine(self):
+    def analyze_out_mines(self):
         olen = len(self.battlefield["objects"])
         tmp_out_bw_sum, tmp_bw = {}, {}
         for index in range(olen):
@@ -211,7 +212,31 @@ class RunFrame(dict):
             if obj[0] != "mixer": continue
             resource = obj[5]
             if resource is None: continue
-        # TODO
+            player, hp = obj[3], obj[4]
+            objlib = self.library["objects"][obj[0]]
+            proc = self.library["resources"][resource]["process"]
+            substracts, keys_update, tmp_dict = {}, [], {}
+            for (i, o), (p, res) in self.items():
+                if o != index: continue
+                try: substracts[res] += p
+                except KeyError: substracts[res] = p
+                keys_update.append((i, o))
+            for k, v in proc.items():
+                try: tmp_dict[k] = substracts.get(k, 0.0) / v
+                except ZeroDivisionError: pass
+            if not tmp_dict: continue
+            mink = min(tmp_dict, key=tmp_dict.get)
+            production = tmp_dict[mink] * hp
+            if production > objlib["capacity"]:
+                production = objlib["capacity"]
+            used = {k: production * v for k, v in proc.items()}
+            for i, o in keys_update:
+                self[i, o][0] = used.get(self[i, o][1], 0.0)
+            tech = self.library["players"][player]["technologies"]["mixing-gain"]
+            production, sum_bw = production * (1 + tech), 0.0
+            for bw, conn in self.graph.find_all_connections2(index): sum_bw += bw            
+            for bw, conn in self.graph.find_all_connections2(index):
+                self[conn[0][0][0], conn[-1][0][1]] = production * bw / sum_bw, resource
 
     def analyze(self):
         self.analyze_out_volumes()

@@ -37,7 +37,7 @@ library0 = {
         "AC": {"color": [1.0, 0.1, 1.0], "process": {"A": 0.4, "C": 0.6}},
         "BC": {"color": [0.1, 0.9, 0.9], "process": {"C": 0.7, "B": 0.3}}
     },
-    "technologies": ["volume-factor", "bandwidth-factor", "radiation-ability", "barrier-ability", "mine-gain",
+    "technologies": ["volume-factor", "bandwidth-factor", "radiation-ability", "barrier-ability", "mine-gain", "mixing-gain",
                      "research-gain", "transsmition-gain", "observation-gain", "launcher-gain", "developer-gain"],
     "terrains": {
 	"desert-0": {"desc": "desert", "color": [1.0, 0.95, 0.93], "level": 10.5, "buildable": True},
@@ -56,6 +56,7 @@ library0 = {
                                  "developer-gain": 0.0,
                                  "research-gain": 0.0,
                                  "launcher-gain": 0.0,
+                                 "mixing-gain": 0.0,
                                  "mine-gain": 0.0}
                 },
         "Bbb": {"color": [0.5, 1.0, 1.0],
@@ -68,6 +69,7 @@ library0 = {
                                  "developer-gain": 0.0,
                                  "research-gain": 0.0,
                                  "launcher-gain": 0.0,
+                                 "mixing-gain": 0.0,
                                  "mine-gain": 0.0}
                 }
     }
