@@ -1,12 +1,12 @@
 library0 = {
     "settings": {
         "glory-power": 0.5,
-        "fire-factor": 2.0,
+        "fire-factor": 0.2,
         "barrier-factor": 10.0,
         "radiation-factor": 10.0,
         "transsmition-factor": 10.0,
+        "development-factor": 1.5,
         "observation-factor": 10.0,        
-        "development-factor": 10.0,
         "research-factor": 10.0,
         "research-power": 0.5,        
         "research-base": 1000.0,        
@@ -123,7 +123,7 @@ battlefield0 = {
         ["store", 150, 350, "Aaa", 0.5, "AC", 126.0],
         ["store", 50, 350, "Aaa", 0.5, "BC", 126.0],
         ["store", -50, 350, "Aaa", 0.5, "AB", 126.0],
-        ["store", 150, 50, "Aaa", 0.5, "AB", 126.0],
+        ["store", 150, 50, "Aaa", 0.2, "AB", 126.0],
         ["repeater", 300, 50, "Aaa", 1.0, True],
         ["repeater", 250, 40, "Aaa", 1.0, False],
         ["barrier", -240, 190, "Aaa", 1.0, True],

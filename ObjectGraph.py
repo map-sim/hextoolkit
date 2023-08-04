@@ -123,6 +123,7 @@ class ObjectGraph:
             return d, h, (xo, yo), (xe, ye)
         elif no == "developer" and ne == "repeater":
             if po != pe: return None, None, None, None
+            if not objects[i1][5]: return None, None, None, None
             d = math.sqrt((xo-xe) **2 + (yo-ye) **2)
             if d > do: return None, None, None, None
             h = self.height_diff(xo, yo, xe, ye)

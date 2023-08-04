@@ -258,6 +258,42 @@ class RunFrame(dict):
             gv = self.battlefield["statistics"]["glory"][player]
             print(f"{player} glory:", gv)
 
+    def update_developers(self):
+        for (i, o), (p, res) in self.items():
+            if res != DEVEL: continue
+            obj = self.battlefield["objects"][o]
+            objlib = self.library["objects"][obj[0]]
+            if obj[4] >= 1.0: continue
+            struct= objlib["structure"] * obj[4]
+            newhp = (struct + p) / objlib["structure"]
+            if newhp >= 1.0: newhp = 1.0
+            obj[4] = newhp
+
+    def update_launchers(self):
+        for (i, o), (p, res) in self.items():
+            if res != FIRE: continue
+            obj = self.battlefield["objects"][o]
+            objlib = self.library["objects"][obj[0]]
+            if obj[4] < 0.0: continue
+            struct= objlib["structure"] * obj[4]
+            newhp = (struct - p) / objlib["structure"]
+            obj[4] = newhp
+        olen = len(self.battlefield["objects"])
+        torm_i, torm_xy = [], []
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            if obj[4] < 0.0:
+                torm_xy.append((obj[1], obj[2]))
+                torm_i.append(index)
+        for index in range(olen):
+            obj = self.battlefield["objects"][index]
+            if obj[0] == "launcher":
+                if obj[5] in torm_xy: obj[5] = None
+        for index in reversed(sorted(torm_i)):
+            obj = self.battlefield["objects"][index]
+            print("Destroyed:", obj)
+            del self.battlefield["objects"][index]
+            
     def update_volumes(self):
         olen = len(self.battlefield["objects"])
         for index in range(olen):
@@ -286,7 +322,7 @@ class RunFrame(dict):
             self.library["players"][player]["technologies"][tech] = tech_level
             print(f"{player} / {tech}:", tech_level)
 
-    def run(self):
+    def increment_iteration(self):
         self.battlefield["iteration"] += 1        
         self.analyze_out_volumes()
         self.analyze_out_radiators()
@@ -294,9 +330,11 @@ class RunFrame(dict):
         self.analyze_out_effectors()
         self.analyze_out_mines()
         self.analyze_out_mixers()
-        self.update_glory()
+        self.update_developers()
         self.update_volumes()
         self.update_research()
+        self.update_launchers()
+        self.update_glory()
         print(self)
 
 def inc_object_param5(row, resources):
@@ -408,7 +446,8 @@ class ObjectWindow(TerrWindow):
         elif key_name == "space" and self.pointer_mode == "obj":
             self.graph_obj.analyze_bw(self.selected_object_index)
             rf = RunFrame(self.library, self.battlefield, self.graph_obj)
-            rf.run()
+            rf.increment_iteration()
+            self.draw_content()
         elif key_name == "v" and self.pointer_mode == "obj":
             validate(None, self.library, self.battlefield)
         elif key_name == "s" and self.pointer_mode == "obj":
