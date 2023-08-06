@@ -1,0 +1,82 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in,footskip=0.25in]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amssymb,amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage[OT4]{fontenc}
+\usepackage{graphicx}
+
+
+\begin{document}
+\title{Colonies - draft}
+\author{Krzysztof Czarnecki}
+\date{Sierpień, 2023}
+\maketitle
+
+\section{Wstęp}
+
+Koniec XXV wieku to okres szybkiego rozwoju górnictwa kosmicznego. Ludzkość intensywnie eksploatuje pobliskie planetoidy oraz planety i ich naturalne satelity, w tym głównie Księzyc, Mars, Wenus, oraz księżyce Jowisza i Saturna. Ważnym źródłem surowców, są także komety przelatujące w poblizu Ziemii. Tu jednak okno czasowe pozwalające na operowanie na ich powieszchnii jest ograniczone do kilku miesięcy ze względu na relatywnie krótki czas przebywania w pobliżu Słońca, które zapewnia na powieszchni tych ciał niebieskich akceptowaną temperaturę dla pracy infrastruktury wydobywczej. Sektor górnictwa kosmicznego zmonopolizowały prywatne przedsiębiorstwa głównie ze Stanów Zjednoczonych i Chin, ale znana jest również znaczna liczba międzynarodowych konsorcjów tworzonych przez firmy ze wszystkich kontynentów świata poza Antrktydą. Te prywatne korporacje zaczeły organizować się na wzór kolonialnych kopanii handlowych znanych z XVII, XVII i XIX wieku. Mają swoje własne technologie, swoje kosmiczne oddziały militarne, oraz wysoką autonomie od państw macierzystych z racji działanlości poza juryzdykcją prawną tych państw.  
+
+Górnictwo kosmiczne zapewnia ogromne zyski, ale jest też przedsięwzięciem szalenie niebezpiecznym i ze względu na odległość trudnym do kontroli z Ziemii. To powoduje pokusę, aby korporacje kosmiczne stosowały wroge oddziaływania miltarne na konkurentów działających na tych samych złożach surowców. Włączając w to fizyczną eliminację persolelu i infrastruktury wraz z jej siłowym przejmowaniem. Aby, ograniczyć ryzyko takich działań, w roku 2499 wszystkie liczące się w branży kosmicznej państwa na Ziemii podpisały tzw. \textbf{Traktat Pekiński}, który zabrania wynoszenia do przestrzeni kosmicznej bronii ofensywanej rozumianej jako mobilne systemy rażenia. Sygnotariusze tego porozumienia mają obowiązek kontroli działających na ich obszarze korporacji i powinny uniemożliwić wynoszenia takich środków walki do przestrzeni kosmicznej. W rezultacie głównymi systemami militarnymi występującymi na stacjach wydobywczych stały się stacjonarne wyrzutnie rakiet przeznaczone do obrony. Czy jednak inżynierowie i dowódcy tych jednostek będą je wykorzystywać zgodnie z przeznaczeniem? Na to pytanie odpowie czas i zarządy korporacji kosmicznych...
+
+\section{Spis Budynków}
+
+\begin{enumerate}
+\item Ekonomiczne
+  \begin{enumerate}
+  \item Kopalnia (mine) \begin{picture}(10, 10)(7,10)
+    \put(15,15){\color{blue}\circle{13}}
+    \put(15,15){\color{blue}\circle*{4}}
+  \end{picture}
+  \item Magazyn (storage) \begin{picture}(10, 10)(8,15)
+    \put(15,20){\color{blue}\line(1, 0){10}}
+    \put(15,15){\color{blue}\line(1, 0){10}}
+    \put(15,25){\color{blue}\line(1, 0){10}}
+    \put(25,15){\color{blue}\line(0, 1){10}}
+    \put(20,15){\color{blue}\line(0, 1){10}}
+    \put(15,15){\color{blue}\line(0, 1){10}}
+  \end{picture}
+  \item Mikser (mixer) \begin{picture}(10, 10)(6,12)
+    \put(15,15){\color{blue}\circle{13}}
+    \put(10,10){\color{blue}\line(1, 1){10}}
+    \put(10,20){\color{blue}\line(1, -1){10}}
+  \end{picture}
+  \end{enumerate}
+\item Efektory
+  \begin{enumerate}
+  \item Laboratorium (laboratory) \begin{picture}(10, 10)(8,5)
+    \put(25,10){\color{blue}\circle{7}}
+    \put(15,10){\color{blue}\line(1, 1){10}}
+    \put(15,10){\color{blue}\line(1, -1){10}}
+    \put(35,10){\color{blue}\line(-1, 1){10}}
+    \put(35,10){\color{blue}\line(-1, -1){10}}
+  \end{picture}
+  \item Transmiter (transsmiter) \begin{picture}(10, 10)(8,5)
+    \put(25,5){\color{blue}\circle{13}}
+    \put(22,0){\color{blue}\rotatebox{90}{$\gg$}}
+  \end{picture}
+  \item Deweloper (developer) \begin{picture}(10, 10)(8,5)
+    \put(25,5){\color{blue}\circle{13}}
+    \put(21.5,10){\color{blue}\rotatebox{-90}{$\gg$}}
+  \end{picture}
+  \item Launcher (launcher) \begin{picture}(10, 10)(6,12)
+    \put(15,15){\color{blue}\circle{13}}
+    \put(15,6){\color{blue}\line(0, 1){18}}
+    \put(6,15){\color{blue}\line(1, 0){18}}
+  \end{picture}
+  \end{enumerate}
+\end{enumerate}
+
+\section{Spis Zaawansowanych Technologii}
+\begin{enumerate}
+\item \textbf{Advanced Mining}: +50\% szansy na wydobycie dodatkowego surowca w kopalni (1 $\to$ 2; rzut kością K6)
+\item \textbf{Advanced Processing}: +50\% szansy na wytworzenie dodatkowego surowca w mikserze przy tym samym koszcie (1 $\to$ 2; rzut kością K6)
+\item \textbf{Effective Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5)
+\item \textbf{Fast Transsimision}: +50\% szansy na dodatkowy wyrzut w transmiterze przy tej samej szansie wyrzutu (1 $\to$ 2; rzut kością K6)
+\item \textbf{Construction Recovery}: dodatkowa próba budowy przez dewelopera, gdy poprzednia zakonczyła sie niepowodzeniem (1 surowiec i tak jest tracony)
+\item \textbf{Missile Salvo}: dodatkowy strzał w launcherze (2 $\to$ 3; w dalszym ciągu jeden launcher może zniszczyć tylko jedną część jednego budynku)
+\end{enumerate}
+
+
+\end{document}
+
