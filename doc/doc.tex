@@ -31,7 +31,14 @@ Gracze mogą wydobywać proste surowce oznaczane pojedynczymi literami alfabetu:
 \item wytwarzanie rakiet dla wyrzutni przeznaczonych do niszczenia innych budynków,
 \item lub odkrywanie zaawansowanych technologii.
 \end{itemize}
-\section{Spis Budynków}
+
+\section{Elementy Mapy}
+
+Mapa składa się z 2 rodzajów elementów: powieszchnie terenowe i objekty infrastruktury. Objekty infrastruktury należą do konkretnego gracza, który ma nad nimi pełną kontrolę. Gracz może zniszczyć każdy swój budynek na początku tury (oznacza to wysadzenie go i ewakuacje personelu; nie przynosi to żadnych korzyści graczowi, ale może być wykorzystane do negocjacji w ramach umów pomiędzy graczami -- przy czym należy pamiętać, że ustne umowy nie są wiążące). Oraz co oczywiste, każdy objekt, jeżeli jest zasilany, może realizować swoje podstawowe funkcje opisane w następnej sekcji.  
+
+Drugim rodzajem elementów mapy są tereny. Na mapie, można znaleźć m.in. zakreślone obszary, w których znajduja się złoża surowców prostych. Właściwością takich terenów są nazwy surowców, które można tu wydobywać. Inną właściwością terenu jest możliwść lub brak możliwości budowania objektów (np. brak możliwości budowy na terenach płynnych, stromych lub silnie toksycznych). Kolejną możliwością, są strefy aktywne sejsmicznie lub niestabilne z innych powodów, które z określonym prawdopodobieństwem powodują uszkodzenia modułom budynków. Dokładniejsze opisy poszczególnych właściwości terenów powinny być dostarczone wraz ze scenaruszem rozgrywki.
+
+\section{Objekty Infrastruktury}
 
 \subsection{Ekonomiczne (backend)}
 \begin{center}
@@ -125,12 +132,13 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 \subsection{Spis Zaawansowanych Technologii}
 \begin{enumerate}
 \item \textbf{Advanced Mining}: +50\% szansy na wydobycie dodatkowego surowca w kopalni, dodatkowy surowiec musi być tego samego typu co pierwszy (1 $\to$ 2; rzut kością K6).
-\item \textbf{Advanced Processing}: +50\% szansy na wytworzenie dodatkowego surowca w nieuszkodzonym mikserze przy tym samym koszcie (1 $\to$ 2; rzut kością K6).
-\item \textbf{Effective Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5).
+\item \textbf{Advanced Processing}: +50\% szansy na wytworzenie dodatkowego surowca w nieuszkodzonym mikserze (1 $\to$ 2; rzut kością K6; udana próba podwaja koszt substratów).
+\item \textbf{Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5).
 \item \textbf{Fast Transsimision}: +50\% szansy na dodatkowy wyrzut w nieuszkodzonym transmiterze przy tej samej szansie wyrzutu (1 $\to$ 2; rzut kością K6).
-\item \textbf{Construction Recovery}: dodatkowa próba budowy przez dewelopera, gdy poprzednia zakonczyła sie niepowodzeniem (1 surowiec i tak jest tracony).
 \item \textbf{Missile Salvo}: dodatkowy strzał z nieuszkodzonej wyrzutni rakietowej (2 $\to$ 3; w dalszym ciągu jeden launcher może zniszczyć tylko jedną część jednego budynku).
-\item \textbf{Energy Recovery}: +20\% wiecej budynków zasilanych jednocześnie przez nieuszkodzony reaktor atomowy niż wynika to z nominalnej mocy reaktora (zaokrąglając w górę).
+\item \textbf{Energy Recovery}: +20\% wiecej budynków zasilanych jednocześnie przez nieuszkodzony reaktor atomowy, niż wynika to z nominalnej mocy reaktora (zaokrąglając w górę).
+\item \textbf{Recycling}: konstruktor może zniszczyć pojedynczy moduł dowolnego budynku i odzyskać jeden surowiec, z którego był zbudowany (2 $\to$ 1) -- jest to jedyna operacja tego konstruktora podczas tury. Ten surowiec musi być umieszczony w magazynie w zasięgu tego konstruktora, a następnie może być wykorzystany w tej turze. Jeżeli konstruktor jest uszkodzony to prawdopodobieństwo odzyskania towaru spada do 66.(6)\% i 33.(3)\% w zaleznosci od tego czy 1 czy 2 moduły są zniszczone (rzut kością K6).
+\item \textbf{Construction Recovery}: dodatkowa próba budowy przez konstruktora, gdy poprzednia zakończyła sie niepowodzeniem (1 surowiec i tak jest tracony). W przypadku odzyskiwania surowców, ta technologa pozwala na dodatkową próbę, gdy wcześniejsza zakończyła się niepowodzeniem z powodu uszkodzenia konstruktora. 
 \end{enumerate}
 
 
