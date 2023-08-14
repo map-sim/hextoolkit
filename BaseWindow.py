@@ -10,21 +10,30 @@ from gi.repository import Gdk
 
 class BaseWindow(Gtk.Window):
     def __init__(self, title, width, height):
-        assert int(height) > 0, "height <= 0"
-        assert int(width) > 0, "width <= 0"
-
-        self.width = int(width)
-        self.height = int(height)
+        assert int(height) >= 0, "height <= 0"
+        assert int(width) >= 0, "width <= 0"
 
         Gtk.Window.__init__(self, title=str(title))
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         self.connect("key-press-event",self.on_press)
 
+        if width == 0 or height == 0:
+            screen = Gdk.Screen.get_default()
+            if width == 0:
+                self.width = screen.get_width()
+            else: self.width = int(width)
+            if height == 0:
+                self.height = screen.get_height()
+            else: self.height = int(height)
+        else:
+            self.width = int(width)
+            self.height = int(height)
+                    
         self.fix = Gtk.Fixed()
         self.add(self.fix)
 
         self.drawing_area = Gtk.DrawingArea()
-        self.drawing_area.set_size_request(width, height)
+        self.drawing_area.set_size_request(self.width, self.height)
         self.fix.put(self.drawing_area, 0, 0)
 
         event_mask = Gdk.EventMask.BUTTON_PRESS_MASK

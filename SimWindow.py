@@ -56,6 +56,11 @@ class SimWindow(TerrWindow):
             self.mode = "admin"
             self.draw_content()
 
+        elif key_name == "i" and self.mode == "admin":
+            for key, val in self.config.items():
+                print(f"config {key}", "-->", val)
+            print("window width", "-->", self.width)
+            print("window height", "-->", self.height)
         elif key_name == "c" and self.mode == "admin":
             self.set_mode_label("admin: check")
             validator = SimValidator()
@@ -80,7 +85,8 @@ class SimWindow(TerrWindow):
 def run_example():
     example_config = {
         "window-title": "mode-window",
-        "window-size": (1800, 820),
+        #"window-size": (1800, 820),
+        "window-size": (0, 0),
         "window-offset": (750, 400),
         "window-zoom": 0.366,
         "move-sensitive": 50
@@ -108,4 +114,7 @@ def run_example():
     try: Gtk.main()
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
+
+# broadwayd :5
+# GDK_BACKEND=broadway BROADWAY_DISPLAY=:5 python3 ...
 if __name__ == "__main__": run_example()

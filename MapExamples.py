@@ -1,5 +1,12 @@
 library1 = {
-    "players": {},
+    "players": {
+        "Aaa": {
+            "color": [1.0, 1.0, 0.5],
+        },
+        "Bbb": {
+            "color": [0.5, 1.0, 1.0],
+        }
+    },
     "objects": {},
     "terrains": {
 	"desert-0":     {"color": [1.0, 0.95, 0.93], "buildable": True, "risk": 0.0, "desc": "desert", "resources":{}},

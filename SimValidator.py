@@ -31,8 +31,7 @@ class LibraryValidator(TypeValidator):
         self.validate_types("library", library)
 
         assert self.library["terrains"], "no terrain"
-        #assert self.library["objects"], "no object"
-        #assert self.library["players"], "no player"
+        assert self.library["players"], "no player"
         
 class MapValidator(TypeValidator):
     types = {
