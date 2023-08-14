@@ -1,11 +1,18 @@
 library1 = {
+    "players": {},
+    "objects": {},
     "terrains": {
-	"desert-0": {"desc": "desert", "color": [1.0, 0.95, 0.93], "buildable": True, "resources":{}},
-	"deposit-ab-0": {"desc": "deposit-a", "color": [1.0, 0.9, 0.9], "buildable": True, "resources":{"A": 0.1, "B": 0.15}},
-	"toxic-sea-0": {"desc": "toxic-sea", "color": [0.7, 1.0, 1.0], "buildable": False, "resources":{}}
+	"desert-0":     {"color": [1.0, 0.95, 0.93], "buildable": True, "risk": 0.0, "desc": "desert", "resources":{}},
+	"deposit-ab-0": {"color": [1.0, 0.9, 0.9], "buildable": True, "risk": 0.0, "desc": "deposit-ab", "resources":{"C": 0.3}},
+	"deposit-c-0":  {"color": [0.9, 0.9, 1.0], "buildable": True, "risk": 0.05, "desc": "deposit-c", "resources":{"A": 0.1, "B": 0.15}},
+	"toxic-sea-0":  {"color": [0.4, 1.0, 1.0], "buildable": False, "risk": 0.0,"desc": "toxic-sea", "resources":{}}
     },
 }
 battlefield1 = {
+    "iteration": 0,
+    "radiation": 1.666,
+    "objects": [
+    ],    
     "terrains": [
         ("base", "desert-0"),
         ("polygon", "toxic-sea-0",
@@ -47,6 +54,24 @@ battlefield1 = {
          (2131.15, 510.93),
          (2273.22, 300.55),
          (2273.22, -49.18),
+         ),
+        ("polygon", "deposit-c-0",         
+         (-221.9, -367.61),
+         (-284.07, -317.87),
+         (-225.01, -258.81),
+         (-66.46, -205.96),
+         (33.01, -255.7),
+         (138.71, -361.39),
+         (108.71, -411.3),
+         ),
+        ("polygon", "deposit-c-0",         
+         (510.36, 845.81),
+         (520.36, 785.81),
+         (607.55, 785.81),
+         (862.43, 940.08),
+         (942.91, 1047.39),
+         (862.43, 1094.34),
+         (634.38, 1087.64),
         )
     ]
 }

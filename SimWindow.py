@@ -1,3 +1,4 @@
+from SimValidator import SimValidator
 from TerrWindow import TerrPainter
 from TerrWindow import TerrWindow
 
@@ -9,7 +10,8 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
-class ModePainter(TerrPainter):
+        
+class SimPainter(TerrPainter):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
         self.battlefield =  battlefield
@@ -19,7 +21,7 @@ class ModePainter(TerrPainter):
     def draw(self, context):
         self.terr_painter.draw(context)
 
-class ModeWindow(TerrWindow):
+class SimWindow(TerrWindow):
 
     def __init__(self, config, library, battlefield):
         self.mode_label = Gtk.Label()
@@ -30,7 +32,7 @@ class ModeWindow(TerrWindow):
         self.fix.put(self.mode_label, 0, 0)
         self.show_all()
 
-        self.painter = ModePainter(config, library, battlefield)
+        self.painter = SimPainter(config, library, battlefield)
         self.config_backup = copy.deepcopy(config)
 
     def set_mode_label(self, text):
@@ -54,6 +56,12 @@ class ModeWindow(TerrWindow):
             self.mode = "admin"
             self.draw_content()
 
+        elif key_name == "c" and self.mode == "admin":
+            self.set_mode_label("admin: check")
+            validator = SimValidator()
+            validator.validate_config(self.config)
+            validator.validate_library(self.library)
+            validator.validate_map(self.library, self.battlefield)
         elif key_name == "s" and self.mode == "admin":
             self.set_mode_label("admin: save")
             cnt, libname, mapname = 0, "lib", "map"
@@ -91,7 +99,11 @@ def run_example():
         with open(sys.argv[2], "r", encoding="utf-8") as fd:
             library1 = ast.literal_eval(fd.read())
     
-    ModeWindow(example_config, library1, battlefield1)
+    validator = SimValidator()
+    validator.validate_library(library1)
+    validator.validate_config(example_config)
+    validator.validate_map(library1, battlefield1)
+    SimWindow(example_config, library1, battlefield1)
 
     try: Gtk.main()
     except KeyboardInterrupt:
