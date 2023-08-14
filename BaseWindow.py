@@ -20,12 +20,12 @@ class BaseWindow(Gtk.Window):
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         self.connect("key-press-event",self.on_press)
 
-        fix = Gtk.Fixed()
-        self.add(fix)
+        self.fix = Gtk.Fixed()
+        self.add(self.fix)
 
         self.drawing_area = Gtk.DrawingArea()
         self.drawing_area.set_size_request(width, height)
-        fix.put(self.drawing_area, 0, 0)
+        self.fix.put(self.drawing_area, 0, 0)
 
         event_mask = Gdk.EventMask.BUTTON_PRESS_MASK
         event_mask |= Gdk.EventMask.SCROLL_MASK

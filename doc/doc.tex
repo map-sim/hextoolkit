@@ -7,6 +7,76 @@
 \usepackage{graphicx}
 \usepackage{multicol}
 
+\newcommand{\elektrownia}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(15,15){\color{blue}\circle{13}}    
+    \put(12.5,12.5){\color{blue}\circle{5}}    
+    \put(17.5,12.5){\color{blue}\circle{5}}    
+    \put(17.5,17.5){\color{blue}\circle{5}}    
+    \put(12.5,17.5){\color{blue}\circle{5}}    
+    \put(-7,-2){\scriptsize \color{blue}#2}    
+  \end{picture}  
+}
+\newcommand{\kopalnia}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(15,15){\color{blue}\circle{13}}
+    \put(15,15){\color{blue}\circle*{4}}
+    \put(-1.5,-2){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+\newcommand{\magazyn}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(15,20){\color{blue}\line(1, 0){10}}
+    \put(15,15){\color{blue}\line(1, 0){10}}
+    \put(15,25){\color{blue}\line(1, 0){10}}
+    \put(25,15){\color{blue}\line(0, 1){10}}
+    \put(20,15){\color{blue}\line(0, 1){10}}
+    \put(15,15){\color{blue}\line(0, 1){10}}
+    \put(4,3){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+\newcommand{\mikser}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(15,15){\color{blue}\circle{13}}
+    \put(10,10){\color{blue}\line(1, 1){10}}
+    \put(10,20){\color{blue}\line(1, -1){10}}
+    \put(2,-2){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+\newcommand{\laboratorium}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(25,10){\color{blue}\circle{7}}
+    \put(15,10){\color{blue}\line(1, 1){10}}
+    \put(15,10){\color{blue}\line(1, -1){10}}
+    \put(35,10){\color{blue}\line(-1, 1){10}}
+    \put(35,10){\color{blue}\line(-1, -1){10}}
+    \put(20.5,-8){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+
+\newcommand{\transmiter}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(25,5){\color{blue}\circle{13}}
+    \put(22,0){\color{blue}\rotatebox{90}{$\gg$}}
+    \put(4,-13){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+\newcommand{\deweloper}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(25,5){\color{blue}\circle{13}}
+    \put(21.5,10){\color{blue}\rotatebox{-90}{$\gg$}}
+    \put(6,-13){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+\newcommand{\wyrzutnia}[2]{
+  \begin{picture}(20, 20)(#1)
+    \put(15,15){\color{blue}\circle{13}}
+    \put(15,6){\color{blue}\line(0, 1){18}}
+    \put(6,15){\color{blue}\line(1, 0){18}}
+    \put(-3,-3){\scriptsize \color{blue}#2}    
+  \end{picture}
+}
+
 \begin{document}
 \title{Draft: Interplanetary Exploatation Companies}
 \author{Krzysztof Czarnecki}
@@ -22,21 +92,30 @@ Górnictwo kosmiczne zapewnia ogromne zyski, ale jest też przedsięwzięciem sz
 
 \section{Surowce i Processy}
 
-Gracze mogą wydobywać proste surowce oznaczane pojedynczymi literami alfabetu: $A$, $B$ i $C$ dzięki kopalniom umieszczonym na złożach. Złoża charakteryzują się prawdopodobieństwem wydobycia pojedynczego surowca -- test wydobycia przeprowadza się kostką K6. Jedno złoże może być zdolne do dostarczenia więcej niż jednego rodzaju surowca. Dokładnej ta procedura jest opisana przy okazji omówienia objeku kopalni. Te proste surowce są dalej wykorzystywane w mikserach jako substraty do produkcji towarów złożonych oznaczonych zwiazkami liter: $AB$, $BC$, oraz $AC$. A zatem kompanie kosmiczne przetwarzają surowce już na powieszchni ciał niebieskich, na których operują. Finalnie, złożone towary są wykorzystywane jako substraty w tzw. efektorach do produkcji konkretnych środków przydatnych w grze:
+Gracze mogą wydobywać proste surowce oznaczane pojedynczymi literami alfabetu: $A$, $B$ i $C$ dzięki kopalniom umieszczonym na złożach. Złoża charakteryzują się prawdopodobieństwem wydobycia pojedynczego surowca -- test wydobycia przeprowadza się kostką K6. Jedno złoże może być zdolne do dostarczenia więcej niż jednego rodzaju surowca. Dokładnej ta procedura jest opisana przy okazji omówienia objektu kopalni. Te proste surowce są dalej wykorzystywane w mikserach jako substraty do produkcji towarów złożonych oznaczonych zwiazkami liter: $AB$, $BC$, oraz $AC$. A zatem kompanie kosmiczne przetwarzają surowce już na powieszchni ciał niebieskich, na których operują. Finalnie, złożone towary są wykorzystywane jako substraty w tzw. efektorach do produkcji konkretnych środków przydatnych w grze (z określonym prawdopodobieństwem sukcesu wytworzenia):
 \begin{itemize}
   \setlength{\parskip}{0pt}
   \setlength{\itemsep}{0pt plus 1pt}
 \item transmisja towarów na ziemie (punkty zwycięstwa),
 \item budowanie nowych budynków lub odbudowywanie zniszczonych modułów,
 \item wytwarzanie rakiet dla wyrzutni przeznaczonych do niszczenia innych budynków,
+\item \textcolor{orange}{wytwarzanie min przeznaczonych do niszczenia budynków (dodatek)}
 \item lub odkrywanie zaawansowanych technologii.
 \end{itemize}
 
+\elektrownia{4,12}{elektrownia} $\to\to \Big($ \kopalnia{4,12}{kopalnia} $\to$ \magazyn{8,17}{magazyn} $\to$ \mikser{6,12}{mikser} $\to$ \magazyn{8,17}{magazyn} $\to\big($ \laboratorium{14,7}{lab} $||$ \transmiter{14,2}{transmiter} $||$ \deweloper{14,2}{deweloper} $||$ \wyrzutnia{3,12}{wyrzutnia} $\big)\Big)$
+
+\rule{0cm}{1cm}Diagram dozwolonego przesuwania surowców jest zaprezentowany powyżej. $\to\to$ oznacza bycie zasilanym przez elektrownie (dostępne jest jedno źródło zasilania -- reaktor nuklearny). $\to$ oznacza normalne przemieszczenie surowca. $||$ oznacza alternatywne efektory.
+
 \section{Elementy Mapy}
 
-Mapa składa się z 2 rodzajów elementów: powieszchnie terenowe i objekty infrastruktury. Objekty infrastruktury należą do konkretnego gracza, który ma nad nimi pełną kontrolę. Gracz może zniszczyć każdy swój budynek na początku tury (oznacza to wysadzenie go i ewakuacje personelu; nie przynosi to żadnych korzyści graczowi, ale może być wykorzystane do negocjacji w ramach umów pomiędzy graczami -- przy czym należy pamiętać, że ustne umowy nie są wiążące). Oraz co oczywiste, każdy objekt, jeżeli jest zasilany, może realizować swoje podstawowe funkcje opisane w następnej sekcji.  
+Mapa składa się z 2 rodzajów elementów: powieszchnie terenowe i objekty infrastruktury. Objekty infrastruktury należą do konkretnego gracza, który ma nad nimi pełną kontrolę. Gracz może zniszczyć każdy swój budynek na początku tury (oznacza to wysadzenie go i ewakuacje personelu; nie przynosi to żadnych korzyści graczowi, ale może być wykorzystane do negocjacji w ramach umów pomiędzy graczami -- przy czym należy pamiętać, że ustne umowy nie są wiążące). Oraz co oczywiste, każdy objekt, jeżeli jest zasilany, może realizować swoje podstawowe funkcje opisane w następnej sekcji.
 
-Drugim rodzajem elementów mapy są tereny. Na mapie, można znaleźć m.in. zakreślone obszary, w których znajduja się złoża surowców prostych. Właściwością takich terenów są nazwy surowców, które można tu wydobywać. Inną właściwością terenu jest możliwść lub brak możliwości budowania objektów (np. brak możliwości budowy na terenach płynnych, stromych lub silnie toksycznych). Kolejną możliwością, są strefy aktywne sejsmicznie lub niestabilne z innych powodów, które z określonym prawdopodobieństwem powodują uszkodzenia modułom budynków. Dokładniejsze opisy poszczególnych właściwości terenów powinny być dostarczone wraz ze scenaruszem rozgrywki.
+Drugim rodzajem elementów mapy są tereny. Na mapie, można znaleźć m.in. zakreślone obszary, w których znajduja się złoża surowców prostych. Właściwością takich terenów są nazwy surowców, które można tu wydobywać. Inną właściwością terenu jest możliwść lub brak możliwości budowania objektów (np. brak możliwości budowy na terenach płynnych, stromych lub silnie toksycznych). Kolejną możliwością, są strefy aktywne sejsmicznie lub niestabilne z innych powodów, które z określonym prawdopodobieństwem powodują uszkodzenia modułów budynków. Dokładniejsze opisy poszczególnych właściwości terenów powinny być dostarczone wraz ze scenaruszem rozgrywki.
+
+Dodatkowym elementem gry jest tzw. \underline{naturalna radiacja} (zawsze w przedziale od 1 do 12), która wpływa na działanie niektórych efektorów -- jej wpływ jest zdefiniowany przy opisie budynków. Opis wyznaczania radiacji powinien być zawarty w kazdym scenariuszu.
+
+\newpage
 
 \subsection{Sposób Losowego Rozmieszczenia Złóż}
 
@@ -65,13 +144,13 @@ Drugim rodzajem elementów mapy są tereny. Na mapie, można znaleźć m.in. zak
         \item $50\% B$
         \item $50\% B$, $33.(3)\% C$
         \end{itemize}
-      \item Losowe przyporządkowanie złoża do jednego obszaru (I, II, lub III), następuje w chwili budowy kopalni na tym terenie.
-      \item Raz przyporządkowane złoże pozostaje do końca gry i nie można go przyporządkować w innym miejscu.
+      \item Należy losowo przyporządkować po 2 złoża do każdego obszaru (I, II, lub III) -- gracze nie znają tego przyporządkowania do chwili budowy pierwszej kopalni.
+      \item Przyporządkowanie jednego tylko złoża (z~2) do terenu następuje w chwili, gdy gracz zbuduje pierwszą kopalnie na tym terenie -- wybiera je losowo.
       \end{enumerate}
     \end{minipage}
   }
 \end{picture}
-  
+
 \section{Objekty Infrastruktury}
 
 W poniższych tabelach przedstawiono budynki, które mogą występować w grze. Pierwsze 2 kolumny oznaczają nzwę budynku w języku polskim oraz angielskim. Trzecia kolumna definiuje z ilu modułów składa się każdy budynek -- moduły mozna interpretować jako liczbę trafień możliwych do odebrania przez przez budynek w wyniku ostrzału rakietowego. W czwartej komunie naszkicowano reprezentacje graficzne budynku umieszczane na mapie. Kolejna kolumna o tytule zasięg określa jaka jest maksymalna odległosc oddziaływania danego budynku. Kolumna o tytule interval definiuje promień w jakim nie może powstać żaden inny budynek. W przypadku efektorów wprowadzona jest dodatkowa kolumna o nazwie substraty, która określa jakie surowce są akceptowane przez dany budynek.
@@ -83,33 +162,13 @@ W poniższych tabelach przedstawiono budynki, które mogą występować w grze. 
   \textbf{nazwa PL} & \textbf{nazwa EN} & \textbf{moduły} & 
   \textbf{rysunek} & \textbf{zasięg} & \textbf{interwał}\\
   \hline
-  reaktor nuklearny & nuclear reactor & 8 & \begin{picture}(20, 20)(7,8)
-    \put(15,15){\color{blue}\circle{13}}    
-    \put(12.5,12.5){\color{blue}\circle{5}}    
-    \put(17.5,12.5){\color{blue}\circle{5}}    
-    \put(17.5,17.5){\color{blue}\circle{5}}    
-    \put(12.5,17.5){\color{blue}\circle{5}}    
-  \end{picture} & $\infty$ & 5 cm \\  
+  reaktor nuklearny & nuclear reactor & 8 & \elektrownia{6,8}{} & $\infty$ & 5 cm \\  
   \hline
-  kopalnia & mine & 1 & \begin{picture}(20, 20)(7,8)
-    \put(15,15){\color{blue}\circle{13}}
-    \put(15,15){\color{blue}\circle*{4}}
-  \end{picture} & 4 cm & 2 cm\\  
+  kopalnia & mine & 1 & \kopalnia{7,8}{} & 4 cm & 2 cm\\  
   \hline
-  magazyn & storage & 2 & \begin{picture}(20, 20)(12,13)
-    \put(15,20){\color{blue}\line(1, 0){10}}
-    \put(15,15){\color{blue}\line(1, 0){10}}
-    \put(15,25){\color{blue}\line(1, 0){10}}
-    \put(25,15){\color{blue}\line(0, 1){10}}
-    \put(20,15){\color{blue}\line(0, 1){10}}
-    \put(15,15){\color{blue}\line(0, 1){10}}
-  \end{picture} & 6 cm & 2 cm\\
+  magazyn & storage & 2 & \magazyn{12,13}{} & 6 cm & 2 cm\\
   \hline
-  mikser & mixer & 2 & \begin{picture}(20, 20)(6,8)
-    \put(15,15){\color{blue}\circle{13}}
-    \put(10,10){\color{blue}\line(1, 1){10}}
-    \put(10,20){\color{blue}\line(1, -1){10}}
-  \end{picture} & 4 cm & 2 cm\\
+  mikser & mixer & 2 & \mikser{6,8}{} & 4 cm & 2 cm\\
   \hline
 \end{tabular}
 \end{center}
@@ -121,44 +180,32 @@ W poniższych tabelach przedstawiono budynki, które mogą występować w grze. 
     \textbf{nazwa PL} & \textbf{nazwa EN} & \textbf{moduły} & \textbf{rysunek} &
     \textbf{zasięg} & \textbf{interwał} & \textbf{substraty} \\
     \hline
-    laboratorium & laboratory & 2 & \begin{picture}(20, 20)(14,2)
-      \put(25,10){\color{blue}\circle{7}}
-      \put(15,10){\color{blue}\line(1, 1){10}}
-      \put(15,10){\color{blue}\line(1, -1){10}}
-      \put(35,10){\color{blue}\line(-1, 1){10}}
-      \put(35,10){\color{blue}\line(-1, -1){10}}
-    \end{picture} & -- & 2 cm & $BC+AC$\\
+    laboratorium & laboratory & 2 & \laboratorium{14,2}{} & -- & 2 cm & $BC+AC$\\
     \hline
-    transmiter & transsmiter & 2 & \begin{picture}(20, 20)(14,-2)
-      \put(25,5){\color{blue}\circle{13}}
-      \put(22,0){\color{blue}\rotatebox{90}{$\gg$}}
-    \end{picture} & -- & 3 cm & $BC$\\    
+    transmiter & transsmiter & 2 & \transmiter{14,-2}{} & -- & 3 cm & $BC$\\    
     \hline
-    konstruktor & developer & 3 & \begin{picture}(20, 20)(14,-2)
-      \put(25,5){\color{blue}\circle{13}}
-      \put(21.5,10){\color{blue}\rotatebox{-90}{$\gg$}}
-    \end{picture} & 6cm & 2 cm & $AB$\\    
+    konstruktor & developer & 3 & \deweloper{14,-2}{} & 6cm & 2 cm & $AB$\\    
     \hline
-    wyrzutnia rakietowa & launcher & 3 & \begin{picture}(20, 20)(5,8)
-      \put(15,15){\color{blue}\circle{13}}
-      \put(15,6){\color{blue}\line(0, 1){18}}
-      \put(6,15){\color{blue}\line(1, 0){18}}
-    \end{picture} & 20 cm & 3 cm & $AC$\\
+    wyrzutnia rakietowa & launcher & 3 & \wyrzutnia{5,8}{} & 20 cm & 3 cm & $AC$\\
     \hline
   \end{tabular}
 \end{center}
 
-\subsection{Reaktor Nuklearny $/$ Nuclear Reactor}
+\subsection{Opis Wszystkich Budynków}
+
+\subsubsection{Reaktor Nuklearny $/$ Nuclear Reactor}
 
 Pojedynczy reaktor nuklearny jest małą modułową elektrownią atomową -- może zasilać jednocześnie $X$ budynków (sam reaktor atomowy również musi być zasilany, a zatem wchodzi w skład tej liczby). W przypadku przekroczenia wspomnianej liczby na skutek, czy to zniszczenia reaktora, czy zbudowania zbyt wielu budynków gracz musi wybrać, które budynki są zasilane a które nie. Niezasilane budynki pozostają nieaktywne do chwili powtórnego przywrócenia zasilania -- można zmieniać konfigurację zasilanych budynków w każdej turze rozgrywki. Reaktor atomowy zaczyna produkować energię elektryczną dopiero wtedy, gdy zbydowano wszystkie jego moduły. Działający reaktor przestaje zasilać dopiero wtedy, gdy zostały zniszczone wszystkie jego moduły. Wystarczy choćby jeden sprawny moduł, aby zasilać nominalną liczbę budynków $X$. Zniszczenie wszystkich reaktorów atomowych, co oznacza wyłączenie możliwości zasilania dla wszystkich budynków, powoduje natychmiastowe wyeliminowanie gracza z rozgrywki -- jego punkty za dotychczasowo wytransmitowane towary są dzielone przez 2. Każdy gracz może wspomagać dowolnego innego gracza w zasilaniu jego infrastruktury pod warunkiem, że któryś z nich odkrył technologię na to pozwalającą -- w takim wariancie gracz może dalej uczestniczyć w rozgrywce. Należy jednak pamietać, że zasilanie budynków innego gracza powoduje zmiejszenie możlwości zasilania swoich własnych budynków. Gracz udzielający pomocy decyduje ile budynków otrzymuje zasilanie, natomiast to właściciel infrastruktury zawsze decyduje, które budynki są zasilane, a które nie. Reaktor nuklearny powinien znajdować się w startowym zestawie budynków, chyba, że rozgrywany scenariusz mówi inaczej.
 
-\section{Wojna Minowa (inspiracja wojną UA-RUS'23)}
+\subsubsection{Wyrzutnia Rakietowa $/$ Launcher}
 
-Mapa jest pozielona na kwadraty ze współrzędnymi. Wymiary kwadratu to 2 cm $\times$ 2 cm. Szachownica ta służy głównie do określenia współrzędnych na cele wojny minowej. Każdy gracz w początkowej fazie tury może umieścić do 3 zakrytych kartoników na mapie. Jeden z rozłożonych kartoników musi być prawdziwą miną, pozostałe to miny fałszywe. Informacje o tym, które miny są prawdziwe, a które nie zna tylko gracz je rozkladający. Każdy gracz posiada limit $M$ min, które może rozłozyć w całej rozgrywce -- ta liczba zależy od rozgrywanego scenariusza i można ją zwiekszyć dzięki jednej z zaawansowanych technologii. Zbudowanie prawdziwej miny kosztuje jeden surowiec $AC$. Gracz w ramach minowania zamiast wykładania do 3 kartoników może przełożyć jeden wybrany swój kartonik do innego dozwolonego kwadratu.
+Podstawową rolą wyrzutni rakietowej jest rażenie wrogich budynków na dystansie, ale maksymalnie w podwojonym bazowym zasięgu wyrzutni. Wyrzutnia w bazowej konfiguracji może wystrzeliwać 2 pociski na turę i trafia z prawdopodobieństwem 66.(6)\% każdy z nich w podstawowym zasięgu. W rozszerzonym zasięgu (czyli od bazowego zasięgu do podwojonego bazowego zasiegu) prawdopodobieństwo to spada do 50\%. Koszt każdego pocisku to jeden surowiec $AC$. Wyrzutnia rakietowa może być ulepszona dzięki kilku zaawansowanych technologii.
 
-Położenie kartonika z miną w danym kwadracie oznacza jego zaminowanie. Właściciel min może choć nie musi je aktywować, szczególnie gdy inni gracze rozpoczeli budowanie budynków w zaminowanym kwadracie. Po aktywacji miny należy ją odwócić tak żeby każdy gracz ją widział i następuje test jej detonacji przy pomocy kostki K6. Każda mina ma 33.(3)\% szansy na detonacje (chyba że gracz posiada technologie zmieniające ten współczynnik). Test przeprowadza się osobno dla każdego budynku. Jeżeli mina wybuchła to należy zdjąć jej kartonik i uznać pole za rozminowane -- należy jednak rozpatrzeć testy detonacji dla wszystkich budynków w danym kwadracie w tej fazie. Jeżeli mina nie została zdetonowana to kartonik należy spowrotem zakryć i wraz z miną pozostaje w tym kwadracie do kolejnej fazy aktywacji min w następnej turze.
+\section{\textcolor{orange}{Wojna Minowa (dodatek; inspiracja wojną UA-RUS'23)}}
 
-Każdy gracz może położyć jeden kartonik w danym kwadracie, czyli maksymalna liczba kartoników w kwadracie jest równa liczbie graczy biorących udział w rozgrywce. Detonacja jednej miny powoduje zdjęcie wszystkich kartoników w tym kwadracie (bez ujawniania czy były minami prawdziwymi czy sztucznymi; miny wracaja do puli niewykorzystanych).
+\textcolor{orange}{Mapa jest pozielona na kwadraty o wymiarach 2 cm $\times$ 2 cm. Szachownica ta służy głównie do określenia obszarów na cele wojny minowej. Każdy gracz w początkowej fazie tury może umieścić do 3 zakrytych kartoników na mapie w wydzielonych kwadratach. Jeden z rozłożonych kartoników musi być prawdziwą miną, pozostałe to miny fałszywe. Informacje o tym, które miny są prawdziwe, a które nie, zna tylko gracz je rozkladający. Każdy gracz posiada limit $M$ min, które może rozłozyć w całej rozgrywce -- ta liczba zależy od rozgrywanego scenariusza i można ją zwiekszyć dzięki jednej z zaawansowanych technologii. Zbudowanie prawdziwej miny kosztuje jeden surowiec $AC$. Gracz może rozłożyć miny w odległości podwojonego zasięgu dewelopera oraz magazynu pod warunkiem posiadania tam surowca $AC$ oraz w kwadracie, w którym nie ma jeszcze ani jednego budynku. Gracz w ramach minowania zamiast wykładania do 3 kartoników może przełożyć jeden wybrany swój kartonik do innego dozwolonego kwadratu bez ponoszenia kosztu surowcowego.}
+
+\textcolor{orange}{Położenie kartonika z miną w danym kwadracie oznacza jego zaminowanie. Właściciel min może choć nie musi je aktywować, szczególnie gdy inni gracze rozpoczeli budowanie budynków w zaminowanym kwadracie. Po aktywacji miny należy ją odwócić tak żeby każdy gracz ją widział i następuje test jej detonacji przy pomocy kostki K6. Każda mina ma 33.(3)\% szansy na detonacje (chyba że gracz posiada technologie zmieniające ten współczynnik). Test przeprowadza się osobno dla każdego budynku. Jeżeli mina wybuchła to należy zdjąć jej kartonik -- należy jednak rozpatrzeć testy detonacji dla wszystkich budynków w danym kwadracie w tej fazie (może się tak zdarzyć przy gęstej zabudowie). Zdetonowanie miny w poblizu budynku powoduje zniszczenie jednego jego modułu. Jeżeli mina nie została zdetonowana to kartonik  wraz z miną pozostaje w tym kwadracie do kolejnej fazy aktywacji min w następnych turach (pozostaje odkryty jezeli mina była aktywowana). Każdy gracz może położyć jeden kartonik w danym kwadracie, czyli maksymalna liczba kartoników w kwadracie jest równa liczbie graczy biorących udział w rozgrywce.  Po detonacji miny nalezy odłozyć jej kartonik do puli min zużytych.}
 
 \section{Zaawansowane Technologie}
 
@@ -175,21 +222,25 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 
 \subsection{Spis Zaawansowanych Technologii}
 \begin{enumerate}
-\item \textbf{Super Computer}: koszt odkrywania kolejnych technologii jest zredukowany o 2 przyrostowe poziomy  ($T+kQ \to T+(k-2)Q$), ale zawsze minimalnie jest to $T$.
-\item \textbf{Flexible Order}: gracz może zignorować domyślną kolejność graczy i wybrać chwilę swojej akcji w ramach każdej fazy tury (w sytuacji gdy następuje kolizja i inni gracze również dysponują tą technologią o wyborze kolejności decyduje rzut kością; gracz który wyrzucił niższy wynik pierwszy decyduje o swojej kolejności, gracz o najwyższym wyniku ostatni podejmuje tę decyzję, a zatem nikt już nie może go przesunąć w kolejce).
-\item \textbf{Intergrid Transformation}: technologia umożliwa wysyłanie lub odbieranie energii elektrycznej pomiędzy graczami (wystarczy, że tylko jeden gracz ją odkrył, aby przesył energii był możliwy). Wysłanie enrgii innemu graczowi powoduje obniżenie możliwości zasilania własnej infrastruktury.
-\item \textbf{Advanced Mining}: +50\% szansy na wydobycie dodatkowego surowca w kopalni, dodatkowy surowiec musi być tego samego typu co pierwszy (1 $\to$ 2; rzut kością K6).
-\item \textbf{Advanced Processing}: +50\% szansy na wytworzenie dodatkowego surowca w nieuszkodzonym mikserze (1 $\to$ 2; rzut kością K6; udana próba podwaja koszt substratów).
-\item \textbf{Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5).
-\item \textbf{Fast Transsimision}: +50\% szansy na dodatkowy wyrzut w nieuszkodzonym transmiterze przy tej samej szansie wyrzutu (1 $\to$ 2; rzut kością K6).
-\item \textbf{Missile Salvo}: dodatkowy strzał z nieuszkodzonej wyrzutni rakietowej (2 $\to$ 3; w dalszym ciągu jedna wyrzutnia może zniszczyć tylko jeden moduł jednego budynku).
-\item \textbf{Multiple Targets}: każda nieuszkodzona wyrzutnia rakietowa może brać za cel jednocześnie 2 obiekty w ramach dostępnych strzałów (1 $\to$ 2; jedena wyrzutnia może niszczyć po jednym module w 2 budynkach, gracz musi zadeklarować przed rzutem, liczbę rakiet wystrzelonych w każdy cel).
-\item \textbf{Energy Recovery}: +20\% wiecej budynków zasilanych jednocześnie przez nieuszkodzony reaktor atomowy, niż wynika to z nominalnej mocy reaktora (zaokrąglając w górę).
-\item \textbf{Recycling}: konstruktor może zniszczyć pojedynczy moduł dowolnego budynku i odzyskać jeden surowiec, z którego był zbudowany (2 $\to$ 1) -- jest to jedyna operacja tego konstruktora podczas tury. Ten surowiec musi być umieszczony w magazynie w zasięgu tego konstruktora, a następnie może być wykorzystany w tej turze. Jeżeli konstruktor jest uszkodzony to prawdopodobieństwo odzyskania towaru spada do 66.(6)\% i 33.(3)\% w zaleznosci od tego czy 1 czy 2 moduły są zniszczone (rzut kością K6). Tylko nieuszkodzony konstruktor może odzyskiwać surowce ze swoich własnych modułów -- tak jak w przypadku innych budynków, oznacza to jego uszkodzenie.
-\item \textbf{Construction Recovery}: dodatkowa próba budowy przez konstruktora, gdy poprzednia zakończyła sie niepowodzeniem (1 surowiec i tak jest tracony). W przypadku odzyskiwania surowców, ta technologa pozwala na dodatkową próbę, gdy wcześniejsza zakończyła się niepowodzeniem z powodu uszkodzenia konstruktora.
-\item \textbf{Scatter Mines}: Prwadopodobieństwo zniszczenia modułu w aktualnej turze jest zwiększone (33.(3)\% $\to$ 50\%, rzut kością K6).  
-\item \textbf{Total Mine War}: Liczba dostępnych min jest zwiększona o 50\% ($M \to 1.5 M$).
-\item \textbf{Minesweepers}: Gracz może bezkosztowo rozminować jeden teren. Jeżeli były tam prawdziwe miny to trafiają one do puli min zużytych.
+\item \textbf{Zdalne Odwierty $/$ Remote Drilling}: gracz może podejrzeć jakie złoża przyporządkowane są do danego terenu przed jego odkryciem -- tylko jeden dowolny teren może być podejrzany w danej turze. Dodatkowo w chwili odkrycia gracz może wybrać jedno z 2 przyporządkowanych złóż ($1 \to 2$) -- bez tej technologii wybiera losowo.
+\item \textbf{Super Komputer $/$ Super Computer}: koszt odkrywania kolejnych technologii jest zredukowany o 2 przyrostowe poziomy  ($T+kQ \to T+(k-2)Q$).
+\item \textbf{Elastyczna Kolejka $/$ Flexible Order}: gracz może zignorować domyślną kolejność graczy i wybrać jedną z trzech opcji niezależnie w ramach \underline{każdej fazy} tury: pierwszy, ostatni lub bez zmian (w sytuacji gdy następuje kolizja i inni gracze również dysponują tą technologią o wyborze kolejności decyduje rzut kością; gracz który wyrzucił niższy wynik pierwszy decyduje o swojej kolejności, gracz o najwyższym wyniku ostatni podejmuje tę decyzję, a zatem nikt już nie może go przesunąć w kolejce).
+\item \textbf{Transformacja Międzysieciowa $/$ Intergrid Transformation}: technologia umożliwa wysyłanie lub odbieranie energii elektrycznej pomiędzy graczami (wystarczy, że tylko jeden gracz ją odkrył, aby przesył energii był możliwy). Wysłanie enrgii innemu graczowi powoduje obniżenie możliwości zasilania własnej infrastruktury.
+\item \textbf{Zaawansowane Kopalnie $/$ Advanced Mining}: +50\% szansy na wydobycie dodatkowego surowca w kopalni, dodatkowy surowiec musi być tego samego typu co pierwszy (1 $\to$ 2; rzut kością K6).
+\item \textbf{Zaawansowane Przetwarzanie $/$ Advanced Processing}: +50\% szansy na wytworzenie dodatkowego surowca w nieuszkodzonym mikserze (1 $\to$ 2; rzut kością K6; koszt substratów obliczne są normalnie dla tego dodatkowego surowca).
+\item \textbf{Kompresja$/$Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5).
+\item \textbf{Szybka Transmisja $/$ Fast Transsimision}: +50\% szansy na dodatkowy wyrzut w nieuszkodzonym transmiterze przy tej samej szansie wyrzutu (1 $\to$ 2; rzut kością K6).
+\item \textbf{Salwa Pocisków $/$ Missile Salvo}: dodatkowy strzał z nieuszkodzonej wyrzutni rakietowej (2 $\to$ 3; w dalszym ciągu jedna wyrzutnia może zniszczyć tylko jeden moduł jednego budynku chyba, że inna zasada pozwala na rozdzielanie pocisków do różnych celów).
+\item \textbf{Wiele Celów $/$ Multiple Targets}: każda nieuszkodzona wyrzutnia rakietowa może brać za cel jednocześnie 2 obiekty w ramach dostępnych strzałów (1 $\to$ 2; jedena wyrzutnia może niszczyć po jednym module w 2 budynkach, gracz musi zadeklarować przed rzutem, liczbę rakiet wystrzelonych w każdy cel).
+\item \textbf{System Przeciw Rakietowy $/$ Anti-Missile System}: Każda nieuszkodzona wyrzutnia rakietowa może podjąć jedną próbę (na turę) anulowania wrogiego trafienia, jeżeli potencjalnie trafiony budynek znajduje się w jej zasięgu. Koszt takiej próby to jeden surowiec $AC$, który musi być do dyspozycji w sąsiadującym magazynie. Prawdopodobieństwo zestrzelenia wrogiej rakiety to 50\% i może być obnizone do 33.(3)\% w sytuacji wysokiej radiacji (większej niż~6).
+\item \textbf{Satelitarny System Pozycjonowania $/$ Satellite Positioning System}: Prawdopodobieństwo trafienia rakietą przez nieuszkodzoną wyrzutnie rakietową w rozszerzonym zasięgu wzrasta do 66.(6)\%, jeżeli naturalna radiacja jest mniejsza równa niż 6.
+\item \textbf{Odzyskiwanie Energi $/$ Energy Recovery}: +20\% wiecej budynków zasilanych jednocześnie przez nieuszkodzony reaktor atomowy, niż wynika to z nominalnej mocy reaktora (zaokrąglając w górę).
+\item \textbf{Recykling$/$Recycling}: konstruktor może zniszczyć pojedynczy moduł dowolnego budynku i odzyskać jeden surowiec, z którego był zbudowany (2 $\to$ 1) -- jest to jedyna operacja tego konstruktora podczas tury. Ten surowiec musi być umieszczony w magazynie w zasięgu tego konstruktora, a następnie może być wykorzystany w tej turze. Jeżeli konstruktor jest uszkodzony to prawdopodobieństwo odzyskania towaru spada do 66.(6)\% i 33.(3)\% w zaleznosci od tego czy 1 czy 2 moduły są zniszczone (rzut kością K6). Tylko nieuszkodzony konstruktor może odzyskiwać surowce ze swoich własnych modułów -- tak jak w przypadku innych budynków, oznacza to jego uszkodzenie.
+\item \textbf{Rekonstrukcja $/$ Construction Recovery}: dodatkowa próba budowy przez konstruktora, gdy poprzednia zakończyła sie niepowodzeniem (1 surowiec i tak jest tracony). W przypadku odzyskiwania surowców, ta technologa pozwala na dodatkową próbę, gdy wcześniejsza zakończyła się niepowodzeniem z powodu uszkodzenia konstruktora.
+\item \textbf{Rządowa Dotacja $/$ Government Subsidy}: Gracz może dostawić 2 moduły nowego budynku w nowym miejscu w 5 lub późniejszej turze gry (moduły są zakupione przez rząd wspierający danego gracza i lądują z orbity podczas fazy wyboru technologi).
+\item \textcolor{orange}{\textbf{Minowanie Narzutowe $/$ Scatter Mines}: Prwadopodobieństwo zniszczenia modułu przez pole minowe w aktualnej turze jest zwiększone (33.(3)\% $\to$ 50\%, rzut kością K6).}  
+\item \textcolor{orange}{\textbf{Totalna Wojna Minowa $/$ Total Mine War}: Liczba dostępnych min jest zwiększona o 50\% ($M \to 1.5 M$) oraz możliwosć budowania 2 prawdziwych min w koszcie jednej miny w ramach jednej tury gry ($1 \to 2$).}
+\item \textcolor{orange}{\textbf{Trał Minowy $/$ Minesweepers}: Gracz może bezkosztowo rozminować jeden teren. Jeżeli były tam prawdziwe miny to trafiają one do puli min zużytych.}
   
 \end{enumerate}
 
@@ -198,7 +249,7 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 
 \subsection{Kolejnosć graczy w fazie}
 
-W pierwszej kolejności swoje akcje wykonują gracze, którzy wytransferowali większą liczbę jednostek surowcowych na Ziemię (ci o najwyższej punktacji zwycięstwa). Chyba, że któryś z graczy posiada odpowiednią technologię zmiany tej kolejności, wtedy należy postępować zgodnie z treścią tej technologii.
+W pierwszej kolejności swoje akcje wykonują gracze, którzy wytransferowali większą liczbę jednostek surowcowych na Ziemię (ci o najwyższej punktacji zwycięstwa). Chyba, że któryś z graczy posiada odpowiednią technologię zmiany tej kolejności, wtedy należy postępować zgodnie z treścią tej technologii. Każdą kolizje kolejności gracze powinni rozstrzygnąć rzucając kośćmi 2 $\times$ K6 (aż do rozstrzygnięcia).
 
 \subsection{Kolejnosć faz w turze}
 
@@ -208,8 +259,8 @@ W pierwszej kolejności swoje akcje wykonują gracze, którzy wytransferowali wi
 \item Ustalanie naturalnej radiacji
 \item Rozpatrywanie wpływu czynników naturalnych na infrastrukurę
 \item Ustalenie zasilania budynków (w tym deklaracja wspomagania zasilania przez innych graczy; wybrane budynki posiadają zasilanie do końca tej tury nawet jeżeli elektrownia zostanie zniszczona)
-\item W zasięgu dowolnego budynku: rozminowywanie (tylko jeżeli gracz posiada odpowiednią technologię; jeden gracz -- jeden kwadrat)
-\item W zasięgu dowolnego budynku: minowanie (maksymalnie 1 prawdziwa i 2 fałszywe miny)
+\item \textcolor{orange}{rozminowywanie (tylko jeżeli gracz posiada odpowiednią technologię}
+\item \textcolor{orange}{minowanie (maksymalnie 1 prawdziwa i 2 fałszywe miny)}
 \item Konstruktor: przygotowanie terenu do budowy (ten teren może być przejęty przez innego gracza w wyniku zbudowania przez niego w tym miejscu modułu)
 \item Konstruktor: budowanie modułów (jeżeli to pierwszy moduł efektora to nie mozna go użyć w bieżącej turze)
 \item Aktywacja min (w tym zniszczenie modułów)
