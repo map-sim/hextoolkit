@@ -23,6 +23,7 @@ class LibraryValidator(TypeValidator):
     types = {
         "objects": dict,
         "terrains": dict,
+        "resources": dict,
         "players": dict
     }
 
