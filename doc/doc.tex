@@ -112,7 +112,7 @@ Mapa składa się z 2 rodzajów elementów: powieszchnie terenowe i objekty infr
 
 Drugim rodzajem elementów mapy są tereny. Na mapie, można znaleźć m.in. zakreślone obszary, w których znajduja się złoża surowców prostych. Właściwością takich terenów są nazwy surowców, które można tu wydobywać. Inną właściwością terenu jest możliwść lub brak możliwości budowania objektów (np. brak możliwości budowy na terenach płynnych, stromych lub silnie toksycznych). Kolejną możliwością, są strefy aktywne sejsmicznie lub niestabilne z innych powodów, które z określonym prawdopodobieństwem powodują uszkodzenia modułów budynków. Dokładniejsze opisy poszczególnych właściwości terenów powinny być dostarczone wraz ze scenaruszem rozgrywki.
 
-Dodatkowym elementem gry jest tzw. \underline{naturalna radiacja} (zawsze w przedziale od 1 do 12), która wpływa na działanie niektórych efektorów -- jej wpływ jest zdefiniowany przy opisie budynków. Opis wyznaczania radiacji powinien być zawarty w kazdym scenariuszu.
+Dodatkowym elementem gry jest tzw. \underline{trudność wynoszenia ładunków na orbitę} (zawsze w przedziale od 1 do 12), która wpływa na działanie niektórych efektorów -- jej wpływ jest zdefiniowany przy opisie budynków. Opis wyznaczania warunków wynoszenia na orbitę powinien być zawarty w każdym scenariuszu.
 
 \newpage
 
@@ -205,7 +205,7 @@ Kopalnie wydobywają podstawowe surowce ze skorupy eksloatowanego ciała niebies
 
 \subsubsection{Magazyn $/$ Storage}
 
-Magazyny są przeznaczone do przechowywania surowców -- maksymalnie 4 (chyba że gracz posiada technologię rozszerzającą ten limit), oraz przesyłania surowców pomiędzy budynkami. Każdy magazyn może odebrać w jednej turze maksymalnie 2 surowce (chyba że gracz posiada technologię rozszerzającą ten limit). Każdy magazyn w podstawowej konfiguracji składa się z 2 modułów. Nie zasilany magazyn nie może odbierać surowców. Może je w dalszym ciągu wydawać efektorom -- gdyż to efektory posiadają środki do ich transportu. Magazyn nie posiada limitu na wydawanie surowców. Jeżeli magazyn traci ostatni moduł to gracz musi zniszczyć wszystkie surowce w nim przetrzymywane. Transport surowców pomiędzy budynkami zawsze może odbywać się tylko w zasięgu przypisanym magazynom.
+Magazyny są przeznaczone do przechowywania surowców -- maksymalnie 4 (chyba że gracz posiada technologię rozszerzającą ten limit), oraz przesyłania surowców pomiędzy budynkami. Każdy magazyn może odebrać w jednej turze maksymalnie 2 surowce z kopalń lub mikserów (chyba że gracz posiada technologię rozszerzającą ten limit). Pomiędzy magazynami nie ma limitu przesyłanych surowców (wyjaśnieniem może tu być paletyzacja na wejściu do magazynu, potem transport jest dużo łatwiejszy). W praktyce surowce można dowolnie przemieścić w ramach danej sieci magazynów. Każdy magazyn w podstawowej konfiguracji składa się z 2 modułów. Nie zasilany magazyn nie może odbierać surowców ani wydawać ich innym magazynom i mikserom. Jednak może je w dalszym ciągu wydawać efektorom -- gdyż to efektory posiadają środki do ich transportu. Magazyn nie posiada limitu na wydawanie surowców. Jeżeli magazyn traci ostatni moduł to gracz musi zniszczyć wszystkie surowce w nim przetrzymywane. Transport surowców pomiędzy budynkami zawsze może odbywać się tylko w zasięgu przypisanym magazynom (również do efektorów). Gracz może wysyłać surowce zgromadzone w swoich magazynach do innych graczy pod warunkiem spełnienia normalnych zasad przesyłu (w tym do efektorów obcego gracza). Wysłany towar nie może jednak być transportowany dalej w ramach tej tury. Oboje gracze uczestniczący w tranzakcji muszą się zgodzić na taki transport.
 
 \subsubsection{Mikser $/$ Mixer}
 
@@ -215,50 +215,39 @@ Miksery mogą produkować surowce złożone wykorzystując do tego celu surowce 
 
 \subsubsection{Wyrzutnia Rakietowa $/$ Launcher}
 
-Podstawową rolą wyrzutni rakietowej jest rażenie wrogich budynków na dystansie. Wyrzutnia w bazowej konfiguracji może wystrzeliwać 2 pociski na turę. Jeżeli pierwszy strzał chybił wyrzutnia może podjąć kolejną próbę (lub kolejne próby, jeżeli inne zasady umożliwiają większą liczbę). Prawdopodobieństwo trafienia zależy od odległości do celu, pola widzenia i uszkodzeń wyrzutni. Odległość w zasięgu bazowym jest mniejsza lub równa wartości umieszczonej w kolumnie zasięg w tabeli w sekcji \ref{sec:efektory}. Zasięg rozszerzony oznacza odległość większą niż zasięg bazowy, ale maksymalnie podwojona jego wartość. Pole widzenia zależy od rozkładu obszarów terenowych i powinno być zdefiniowane w każdym scenariuszu. Koszt każdego pocisku to jeden surowiec $AC$, który musi być dostępny w sąsiadującym magazynie. Wyrzutnia rakietowa jest operacyjna już po zbudowaniu jej pierwszego modułu. Zakłada się, że wszystkie wyrzutnie strzelają jednocześnie w ramach każdej próby (gracze deklarują cele w standardowej kolejności) -- jeżeli wyrzutnia zaliczy uszkodzenie od wrogiego ostrzału w pierwszej próbie to ma to wpływ na prawdopodobieństwo kolejnych prób w tej fazie. Dobór celów i ich kolejności należy przeprowadzić we wszystkich wyrzutniach przed fazą ostrzału. Jeżeli wszystkie moduły jakiegokolwiek budynku zostaną zniszczone wtedy uznaje się, że cały budynek uległ zniszczeniu. W miejscu budynku pozostają oznaczone szczątki, na których w przyszłości każdy gracz może zbudować dowolny budynek pod warunkiem spełnienia jego wymagań -- np. zachowania odległości od innych budynków. W przypadku budowy nowego budynku nie trzeba wykonywać przygotowania placu pod budowę (więcej na ten temat przy okazji wprowadzenia konstruktora). Dodatkowo wyrzutnia rakietowa może być ulepszona dzięki kilku zaawansowanych technologii. Prawdopodobieństwo trafienia określa poniższa tabela:
+Podstawową rolą wyrzutni rakietowej jest rażenie wrogich budynków na dystansie. Wyrzutnia w bazowej konfiguracji składa się z 3 modułów i może wystrzeliwać 2 pociski na turę. Jeżeli pierwszy strzał chybił wyrzutnia może podjąć kolejną próbę (lub kolejne próby, jeżeli inne zasady umożliwiają większą liczbę). Prawdopodobieństwo trafienia zależy od odległości do celu i pola widzenia. Odległość w zasięgu bazowym jest mniejsza lub równa wartości umieszczonej w kolumnie zasięg w tabeli w sekcji \ref{sec:efektory}. Zasięg rozszerzony oznacza odległość większą niż zasięg bazowy, ale maksymalnie podwojona jego wartość. Pole widzenia budynków zależy od rozkładu obszarów terenowych i powinno być zdefiniowane w każdym scenariuszu (gracz może wykorzystać pole widzenia innego budynku pod warunkiem posiadania odpowiedniej technologi). Koszt każdego pocisku to jeden surowiec $AC$, który musi być dostępny w sąsiadującym magazynie. Wyrzutnia rakietowa jest operacyjna już po zbudowaniu jej pierwszego modułu. Zakłada się, że wszystkie wyrzutnie strzelają jednocześnie w ramach każdej próby (gracze deklarują cele w standardowej kolejności) -- jeżeli wyrzutnia zaliczy uszkodzenie od wrogiego ostrzału w pierwszej próbie to ma to wpływ na prawdopodobieństwo kolejnych prób w tej fazie. Dobór celów i ich kolejności należy przeprowadzić we wszystkich wyrzutniach przed fazą ostrzału. Jeżeli wszystkie moduły jakiegokolwiek budynku zostaną zniszczone wtedy uznaje się, że cały budynek uległ zniszczeniu. W miejscu budynku pozostają oznaczone szczątki, na których w przyszłości każdy gracz może zbudować dowolny budynek pod warunkiem spełnienia jego wymagań -- np. zachowania odległości od innych budynków. W przypadku budowy nowego budynku nie trzeba wykonywać przygotowania placu pod budowę (więcej na ten temat przy okazji wprowadzenia konstruktora). Zawsze utrata jednego budynku przez gracza oznacza utratę przez niego punktu zwycięstwa. Dodatkowo wyrzutnia rakietowa może być ulepszona dzięki kilku zaawansowanych technologii. Prawdopodobieństwo trafienia określa poniższa tabela:
 \begin{center}
-\begin{tabular}{| c | c | c | c | c  |}
+\begin{tabular}{| c | c | c | c |}
   \hline
-   \textbf{zasięg} & \textbf{pole widzenia} & \textbf{uszkodzonie} & \textbf{1. próba} & \textbf{2 próba} (i kolejne) \\
+   \textbf{zasięg} & \textbf{pole widzenia} & \textbf{1. próba} & \textbf{2 próba} (i kolejne) \\
   \hline
-  bazowy & tak & nie  & $2/3$ & $5/6$ (korekta operatorów) \\  
+  bazowy & tak   & $2/3$ & $5/6$ (korekta operatorów) \\  
   \hline
-  -,,- & nie & nie  & $2/3$ & $2/3$ \\  
+  -,,- & nie   & $2/3$ & $2/3$ \\  
   \hline
-  -,,- & tak & tak  & $2/3$ & $2/3$ \\  
+  rozszerzony & tak & $1/3$ & $1/2$ (korekta operatorów) \\  
   \hline
-  -,,- & nie & tak  & $2/3$ & $2/3$ \\  
+  -,,- & nie  & $1/3$ & $1/3$ \\  
   \hline
-  rozszerzony & tak & nie  & $1/3$ & $1/2$ (korekta operatorów) \\  
+  rozszerzony  &  &  &  \\  
+  + 14. technologia & tak  & $1/2$ & $2/3$ (korekta operatorów) \\  
   \hline
-  -,,- & nie & nie  & $1/3$ & $1/3$ \\  
-  \hline
-  -,,- & tak & tak  & $1/3$ & $1/3$ \\  
-  \hline
-  -,,- & nie & tak  & $1/3$ & $1/3$ \\  
-  \hline
-  rozszerzony  &  &  &  &   \\  
-  + niska radiacja  &  &  &  &   \\  
-  + 12. technologia & tak & nie  & $1/2$ & $2/3$ (korekta operatorów) \\  
-  \hline
-  -,,- & nie & nie  & $1/2$ & $1/2$ \\  
-  \hline
-  -,,- & tak & tak  & $1/2$ & $1/2$ \\  
-  \hline
-  -,,- & nie & tak  & $1/2$ & $1/2$ \\  
+  -,,- & nie   & $1/2$ & $1/2$ \\  
   \hline
 \end{tabular}
 \end{center}
 
 \subsubsection{Laboratorium $/$ Laboratory}
 
+Laboratoria prowadzą research, co symbolizuje wytwarzanie punktów nauki z pary surowców złożonych: $BC + AC$ (co jest równoważne jednemu punktowi nauki). Gracz na końcu tury musi skrycie wybrać technologie zaawansowaną, jeżeli uzbierał wystarczającą liczbę punktów nauki. Każde laboratorium w podstawowej wersji składa się z 2 modułów. 
+
 \subsubsection{Transmiter $/$ Transsmiter}
 
-Każdy transmiter może podjać jedną probę (chyba że gracz posiada technologię rozszerzającą ten limit) wytransferowania surowca $BC$ na orbitę, a potem na Ziemię -- jest to jedyny sposób na zdobywanie punktów zwycięstwa w grze. Prawdopodobieństwo sukcesu zależy od aktualnej radiacji w następujący sposób:
+Każdy transmiter może podjać jedną probę (chyba że gracz posiada technologię rozszerzającą ten limit) wytransferowania surowca $BC$ na orbitę, a potem na Ziemię -- jest to jedyny sposób na zdobywanie punktów zwycięstwa w grze. Nieudana próba transferu oznacza utratę surowca, który miał być wytransferowany. Prawdopodobieństwo sukcesu zależy od aktualnych warunków wynoszenia na orbitę w następujący sposób (jezeli gracz nie posiada technologi zmieniającej te prawdopodobieństwo):
 \begin{center}
   \begin{tabular}{| c | c |}
     \hline
-    \textbf{radiacja} & \textbf{prawdopodobieństwo transferu}\\
+    \textbf{trudność wynoszenia ładunków na orbitę} & \textbf{prawdopodobieństwo transferu}\\
     \hline
      $\ge$ 8 & 0 \\
     \hline
@@ -284,6 +273,8 @@ Każdy transmiter może podjać jedną probę (chyba że gracz posiada technolog
 % 
 % \textcolor{orange}{Położenie kartonika z miną w danym kwadracie oznacza jego zaminowanie. Właściciel min może choć nie musi je aktywować, szczególnie gdy inni gracze rozpoczeli budowanie budynków w zaminowanym kwadracie. Po aktywacji miny należy ją odwócić tak żeby każdy gracz ją widział i następuje test jej detonacji przy pomocy kostki K6. Każda mina ma 33.(3)\% szansy na detonacje (chyba że gracz posiada technologie zmieniające ten współczynnik). Test przeprowadza się osobno dla każdego budynku. Jeżeli mina wybuchła to należy zdjąć jej kartonik -- należy jednak rozpatrzeć testy detonacji dla wszystkich budynków w danym kwadracie w tej fazie (może się tak zdarzyć przy gęstej zabudowie). Zdetonowanie miny w poblizu budynku powoduje zniszczenie jednego jego modułu. Jeżeli mina nie została zdetonowana to kartonik  wraz z miną pozostaje w tym kwadracie do kolejnej fazy aktywacji min w następnych turach (pozostaje odkryty jezeli mina była aktywowana). Każdy gracz może położyć jeden kartonik w danym kwadracie, czyli maksymalna liczba kartoników w kwadracie jest równa liczbie graczy biorących udział w rozgrywce.  Po detonacji miny nalezy odłozyć jej kartonik do puli min zużytych.}
 
+\newpage
+
 \section{Zaawansowane Technologie}
 
 Zaawansowane technologie są kupowane za punkty nauki, które mogą być produkowane przez laboratoria. Podstawowy koszt odkrycia technologii to $T$. Gracz wybiera odkrytą technologię w ten sposób, że kładzie przed sobą kartkę z jej nazwą tak, aby inni gracze jej nie widzieli - ten wybór jest tajny. Gracz nie musi ujawniać tej technologii tak długo dopóki nie zdecyduje się na jej użycie -- wtedy musi odwrócić tak kartkę z jej nazwą, aby wszyscy inni gracze mogli ją odczytać. Każda kolejna technologia jest droższa o liczbę punktów równą $Q$ (tzw. poziom przyrostowy), tak jak definiuje to poniższa tabela. Raz odkryta technologia zostaje zapamiętana na cały pozostały czas gry. Gracz musi odkryć nową technologie zaraz po tym, gdy wynalazł odpowiednią liczbę punktów nauki. Liczby $T$ i $Q$ musza być zdefiniowane na początku rozgywki.
@@ -300,21 +291,22 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 \subsection{Spis Zaawansowanych Technologii}
 \begin{enumerate}
 \item \textbf{Super Komputer $/$ Super Computer}: koszt odkrywania kolejnych technologii jest zredukowany o 2 przyrostowe poziomy  ($T+kQ \to T+(k-2)Q$).
-\item \textbf{Rozszerzony Wydział R\&D $/$ Extended R\&D Department}: +50\% szansy na wytworzenie punktu technologi w każdym laboratorium (1 $\to$ 2; rzut kością K6).
+\item \textbf{Rozszerzony Wydział R\&D $/$ Extended R\&D Department}: +50\% szansy na wytworzenie punktu technologi w każdym nieuszkodzonym laboratorium (1 $\to$ 2; rzut kością K6). Dla każdego wytworzonego punktu technologicznego substraty muszą znajdować się w sąsiadującym magazynie.
 \item \textbf{Zdalne Odwierty $/$ Remote Drilling}: gracz może podejrzeć jakie złoża przyporządkowane są do danego terenu przed jego odkryciem -- tylko jeden dowolny teren może być podejrzany w danej turze. Dodatkowo w chwili odkrycia przez tego gracza może on wybrać jedno z przyporządkowanych złóż (ich liczbę definiuje scenariusz, ale zwykle są to 2 złoża; $1 \to 2$) -- bez tej technologii wybiera losowo.
 \item \textbf{Elastyczna Kolejka $/$ Flexible Order}: gracz może zignorować domyślną kolejność graczy i wybrać jedną z trzech opcji niezależnie w ramach \underline{każdej fazy} tury: pierwszy, ostatni lub bez zmian (w sytuacji gdy następuje kolizja i inni gracze również dysponują tą technologią o wyborze kolejności decyduje rzut kością; gracz który wyrzucił niższy wynik pierwszy decyduje o swojej kolejności, gracz o najwyższym wyniku ostatni podejmuje tę decyzję, a zatem nikt już nie może go przesunąć w kolejce).
 \item \textbf{Zaawansowane Kopalnie $/$ Advanced Mining}: +50\% szansy na wydobycie dodatkowego surowca w kopalni, dodatkowy surowiec musi być tego samego typu co pierwszy (1 $\to$ 2; rzut kością K6).
 \item \textbf{Zaawansowane Przetwarzanie $/$ Advanced Processing}: +50\% szansy na wytworzenie dodatkowego surowca w nieuszkodzonym mikserze (musi być tego samego typu co pierwszy; 1 $\to$ 2; rzut kością K6; jeżeli test wytworzenia zakończył się sukcesem to koszt substratów obliczne są normalnie dla tego dodatkowego surowca).
-\item \textbf{Kompresja$/$Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5). Jeżeli w magazynie jest zgromadzonych 5 surowców i zostanie on uszkodzony to należy usunąć jeden wybrany surowiec. Dodatkowo magazyn może przyjąć dodatkowy surowiec na turę (2 $\to$ 3).
+\item \textbf{Kompresja$/$Compression}: dodatkowe miejsce w nieuszkodzonym magazynie (4 $\to$ 5). Jeżeli w magazynie jest zgromadzonych 5 surowców i zostanie on uszkodzony to należy usunąć jeden wybrany surowiec. Dodatkowo magazyn może przyjąć dodatkowy surowiec na turę z kopalń i mikserów (2 $\to$ 3).
 \item \textbf{Transformacja Międzysieciowa $/$ Intergrid Transformation}: technologia umożliwa wysyłanie lub odbieranie energii elektrycznej pomiędzy graczami (wystarczy, że tylko jeden gracz ją odkrył, aby przesył energii był możliwy). Wysłanie enrgii innemu graczowi powoduje obniżenie możliwości zasilania własnej infrastruktury.
-\item \textbf{Szybka Transmisja $/$ Fast Transsimision}: +50\% szansy na dodatkowy wyrzut w nieuszkodzonym transmiterze przy tej samej szansie wyrzutu (1 $\to$ 2; rzut kością K6).
-\item \textbf{System Sensorów Radiacji $/$ Radiation Sensor System}: System sensorów pozwala na znalezienie lokalnych minimów radiacji w czasie i przestrzeni oraz lepszą synchronizację transmisji. Gracz może na cele transmisji traktować radjację tak jakby była mniejsza o jeden niż jest w rzeczywistości.
+\item \textbf{Szybka Transmisja $/$ Fast Transsimision}: +50\% szansy na dodatkowy wyrzut w nieuszkodzonym transmiterze przy tej samej szansie wyrzutu (1 $\to$ 2; rzut kością K6). Każdy wytransmtowywany surowiec musi znajdować się w sąsiadującym magazynie.
+\item \textbf{System Sensorów $/$ Sensor System}: System sensorów pozwala na optymalizację wynoszenia ładunków na orbitę. Gracz może na cele transmisji traktować trudność wynoszenia towarów na orbitę tak jakby była mniejsza o jeden niż jest w rzeczywistości z prawdopodobieństwem 50\% (rzut kością K6). Gracz może zrezygnować z transmisji, jeżeli ten test zakończył się niepowodzeniem.
 \item \textbf{Salwa Pocisków $/$ Missile Salvo}: dodatkowy strzał z nieuszkodzonej wyrzutni rakietowej (2 $\to$ 3; w dalszym ciągu jedna wyrzutnia może zniszczyć tylko jeden moduł jednego budynku chyba, że inna zasada pozwala na rozdzielanie pocisków do różnych celów).
 \item \textbf{Wiele Celów $/$ Multiple Targets}: każda nieuszkodzona wyrzutnia rakietowa może brać za cel jednocześnie 2 obiekty w ramach dostępnych strzałów (1 $\to$ 2; jedena wyrzutnia może niszczyć po jednym module w 2 budynkach, gracz musi zadeklarować przed rzutem, liczbę rakiet wystrzelonych w każdy cel).
-\item \textbf{System Przeciw Rakietowy $/$ Anti-Missile System}: Każda nieuszkodzona wyrzutnia rakietowa może podjąć jedną próbę (na turę) anulowania wrogiego trafienia, jeżeli potencjalnie trafiony budynek znajduje się w jej zasięgu. Koszt takiej próby to jeden surowiec $AC$, który musi być do dyspozycji w sąsiadującym magazynie. Prawdopodobieństwo zestrzelenia wrogiej rakiety to $1/2$ i może być obniżone do $1/3$ w sytuacji wysokiej radiacji (większej niż~6). System przeciw rakietowy jest automatyczny -- jego użycie należy zadeklarować przed wyznaczaniem celów dla każdej wyrzutni osobno. Jeżeli nastąpi deficyt surowców $AC$ to nie mozna razić już ani celów ani używac przeciwrakiet.
-\item \textbf{Satelitarny System Pozycjonowania $/$ Satellite Positioning System}: Prawdopo- dobieństwo trafienia rakietą przez nieuszkodzoną wyrzutnie rakietową w rozszerzonym zasięgu jest  wzrasta do $1/2$ (korekta operatorów podnosi go do $2/3$), jeżeli naturalna radiacja jest mniejsza równa niż 6.
+\item \textbf{System Przeciw Rakietowy $/$ Anti-Missile System}: Każda nieuszkodzona wyrzutnia rakietowa może podjąć jedną próbę (na turę) anulowania wrogiego trafienia, jeżeli potencjalnie trafiony budynek znajduje się w jej (bazowym) zasięgu. Koszt takiej próby to jeden surowiec $AC$, który musi być do dyspozycji w sąsiadującym magazynie. Prawdopodobieństwo zestrzelenia wrogiej rakiety to $1/2$. System przeciw rakietowy jest automatyczny -- jego użycie należy zadeklarować przed wyznaczaniem celów dla każdej wyrzutni osobno. Jeżeli nastąpi deficyt surowców $AC$ to nie można razić już ani celów ani używac przeciwrakiet.
+\item \textbf{Satelitarny System Pozycjonowania $/$ Satellite Positioning System}: Prawdopo- dobieństwo trafienia rakietą przez nieuszkodzoną wyrzutnie rakietową w rozszerzonym zasięgu jest  wzrasta do $1/2$ (korekta operatorów podnosi go do $2/3$).
 \item \textbf{Pasywne Opancerzenie $/$ Passive Armor}: Do każdego budynku poza elektrownią, można dobudować dodatkowy zapasowy moduł, który należy zdjąć przy zadaniu uszkodzenia temu budynkowi (czy to w przypadku sabotażu, czy w wyniku ostrzłu rakietowego). Pancerz można odbudować w kolejnych turach, jeżeli został zniszczony.
-\item \textbf{Penetrator Formowany Wybuchowo $/$ Explosively Formed Projectile} dzięki tej technologi każdy pocisk wystrzelony z wyrzutni rakietowej może przebić \textbf{Pasywne Opancerzenie} z prawdopodobieństwem $2/3$. Opancerzenie to ulega zniszczeniu (i nie jest wliczane w limit uszkodzeń zadawanych przez jedeną wyrzutnie jednemu budynkowi).
+\item \textbf{Penetrator Formowany Wybuchowo $/$ Explosively Formed Projectile}: dzięki tej technologi każdy pocisk wystrzelony z wyrzutni rakietowej może przebić \textbf{Pasywne Opancerzenie} z prawdopodobieństwem $2/3$. Opancerzenie to ulega zniszczeniu (i nie jest wliczane w limit uszkodzeń zadawanych przez jedeną wyrzutnie jednemu budynkowi).
+\item \textbf{Scentralizowany System Dowodzenia $/$ Centralized Command System}: nieuszkodzona wyrzutnia rakietowa może wykorzystywać pole widzenia dowolnego nieuszkodzonego budynku (przy czym określanie pola widzenia dla budynków powinno być określone w rozgrywanym scenariuszu).
 \item \textbf{Odzyskiwanie Energi $/$ Energy Recovery}: +20\% wiecej budynków zasilanych jednocześnie przez nieuszkodzony reaktor atomowy, niż wynika to z nominalnej mocy reaktora (zaokrąglając w górę).
 \item \textbf{Recykling$/$Recycling}: konstruktor może zniszczyć pojedynczy moduł dowolnego budynku i odzyskać jeden surowiec, z którego był zbudowany (2 $\to$ 1) -- jest to jedyna operacja tego konstruktora podczas tury. Ten surowiec musi być umieszczony w magazynie w zasięgu tego konstruktora, a następnie może być wykorzystany -- nawet w tej fazie przez inny konstruktor w zasięgu. Jeżeli konstruktor jest uszkodzony to prawdopodobieństwo odzyskania towaru spada do $2/3$ i $1/3$ w zaleznosci od tego czy 1 czy 2 moduły są zniszczone (w porównaniu do bazowej konfiguracji; rzut kością K6). Nieudana próba nie powoduje zniszczenia modułu, ale wyczerpuje limit operacji tego konstruktora, chyba że inna technologia mówi inaczej. Tylko nieuszkodzony konstruktor może odzyskiwać surowce ze swoich własnych modułów -- tak jak w przypadku innych budynków, oznacza to jego uszkodzenie.
 \item \textbf{Rekonstrukcja $/$ Construction Recovery}: dodatkowa próba budowy przez konstruktora, gdy poprzednia zakończyła sie niepowodzeniem (1 surowiec i tak jest tracony). W przypadku odzyskiwania surowców, ta technologa pozwala na dodatkową próbę, gdy wcześniejsza zakończyła się niepowodzeniem z powodu uszkodzenia konstruktora.
@@ -327,18 +319,19 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 \end{enumerate}
 
 \newpage
+
 \section{Kolejność Rozgrywki}
 
 \subsection{Kolejnosć graczy w fazie}
 
-W pierwszej kolejności swoje akcje wykonują gracze, którzy wytransferowali większą liczbę jednostek surowcowych na Ziemię (ci o najwyższej punktacji zwycięstwa). Chyba, że któryś z graczy posiada odpowiednią technologię zmiany tej kolejności, wtedy należy postępować zgodnie z treścią tej technologii. Każdą kolizje kolejności gracze powinni rozstrzygnąć rzucając kośćmi 2 $\times$ K6 (aż do rozstrzygnięcia).
+W pierwszej kolejności swoje akcje wykonują gracze o aktualnie najwyższej punktacji zwycięstwa. Chyba, że któryś z graczy posiada odpowiednią technologię zmiany tej kolejności, wtedy należy postępować zgodnie z treścią tej technologii. Każdą kolizje kolejności gracze powinni rozstrzygnąć rzucając kośćmi 2 $\times$ K6 (aż do rozstrzygnięcia).
 
 \subsection{Kolejnosć faz w turze}
 
 \begin{enumerate}
   \setlength{\parskip}{0pt}
   \setlength{\itemsep}{0pt plus 1pt}
-\item Ustalanie naturalnej radiacji.
+\item Ustalanie trudności wynoszenia towarów na orbiję.
 \item Rozpatrywanie wpływu czynników naturalnych na infrastrukurę.
 \item Możliwość przeprowadzenia zdalnych odwiertów.
 \item Wybór sabotowanych budynków / przeprowadzanie sabotażu.
@@ -351,13 +344,14 @@ W pierwszej kolejności swoje akcje wykonują gracze, którzy wytransferowali wi
 \item Przejmowanie surowców transmitowanych na Ziemie.
 \item Produkcja punktów technologii.
 \item Przemieszczanie surowców pomiędzy magazynami.
-\item Wydobywanie surowców w kopalniach.
+\item Wytwarzanie surowców złożonych w mikserach.
+\item Wydobywanie surowców prostych w kopalniach.
 \item Wybieranie zaawansowanych technologi.
 \end{enumerate}
 
+\subsection{Warunki Zwycięstwa}
 
-
-
+Punkty zwycięstwa gracza oblicza się jako różnice wytransmitowanych towarów na Ziemię minus liczbę utraconych budynków. Monitoring tej punktacji należy prowadzić jawnie w trakcie rozgrywki. Rozgrywkę wygrywa gracz, który na końcu ma największą ich liczbę.
 
 \end{document}
 
