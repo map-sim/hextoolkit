@@ -209,9 +209,25 @@ Magazyny są przeznaczone do przechowywania surowców -- maksymalnie 4 (chyba ż
 
 \subsubsection{Mikser $/$ Mixer}
 
-Miksery mogą produkować surowce złożone wykorzystując do tego celu surowce proste jako substraty. Każdy mikser w podstawowej konfiguracji może wyprodukować tylko jeden surowiec złożony (chyba że gracz posiada technologię rozszerzającą ten limit). Taki wyprodukowany surowiec musi natychmiast być umieszczony w sąsiadującym magazynie. Ten surowiec wchodzi w sumę limitu tego magazynu surowców których jest on wstanie przyjać w danej turze. Jeżeli mikser nie posiada w sąsiedztwie wymaganych substratów w magazynach będących w zasięgu albo nie może umieścić wyprodukowanego surowca w magazynie, to produkcja nie dochodzi do skutku. Każdy mikser składa się z 2 modułów w podstawowej konfiguracji.
+Miksery mogą produkować dowolne surowce złożone wykorzystując do tego celu surowce proste jako substraty. Każdy mikser w podstawowej konfiguracji może wyprodukować tylko jeden surowiec złożony w danej turze (chyba że gracz posiada technologię rozszerzającą ten limit). Taki wyprodukowany surowiec musi natychmiast być umieszczony w sąsiadującym magazynie. Ten surowiec wchodzi w sumę limitu tego magazynu surowców których jest on wstanie przyjać w danej turze. Jeżeli mikser nie posiada w sąsiedztwie wymaganych substratów w magazynach będących w zasięgu albo nie może umieścić wyprodukowanego surowca w magazynie, to produkcja nie dochodzi do skutku. Każdy mikser składa się z 2 modułów w podstawowej konfiguracji.
 
 \subsubsection{Konstruktor $/$ Developer}
+
+Konstruktor służy do budowania i odbudowywania budynków w jego zasięgu. Pierwszym elementem budowy budynku jest przygotowanie placu pod budowę, koszt przygotowania terenu to jeden surowiec $AB$ oraz zajęcie całej fazy jednego konstruktora. Przygotowany teren nie jest jeszcze budynkiem i nie można go w żaden sposób zniszczyć. Teren ten nie należy jeszcze do żadnego gracza. Każdorazowo w sytuacji kolizji o tym, który gracz może zbudować decyduje kolejność graczy. Place budowy nie określają jeszcze jaki budynek będzie budowany. Place budowy muszą zachować odległosć od innych elementów infrastruktury (w tym innych placów budowy) tak jakby był budowany budynek o najmniejszym możliwym interwale. Kolejnymi etapami budowy budynków jest budowanie modułów właściwych budynku -- trzy. Przy pierwszym budowanym module gracz musi zadeklarowć jakiego typu budynek buduje. Budynek staje sie operacyjny dopiero po zbudowanych wszystkich wymaganych modułow budynku. Udana budowa każdego modułu kosztuje 2 surowce $AB$. W przypadku nieudanej próby zbudowania modułu -- gracz musi ponieść koszt pojedynczego surowca $AB$. Za każdym razem wymagane surowce $AB$ musza się znajdować w sąsiadujących magazynach. Prawdopodobieństwo udanej budowy modułu zależy od uszkodzeń konstruktora według poniższej tabeli:
+\begin{center}
+  \begin{tabular}{| c | c |}
+    \hline
+    \textbf{liczba nieuszkodzonych modułów} & \textbf{prawdopodobieństwo budowy modułu}\\
+    \hline
+     3 & 1 \\
+    \hline
+    2 & $2/3$ \\
+    \hline
+    1 & $1/3$ \\
+    \hline
+  \end{tabular}
+\end{center}
+
 
 \subsubsection{Wyrzutnia Rakietowa $/$ Launcher}
 
@@ -266,7 +282,6 @@ Każdy transmiter może podjać jedną probę (chyba że gracz posiada technolog
   \end{tabular}
 \end{center}
 
-
 % \section{\textcolor{orange}{Wojna Minowa (dodatek; inspiracja wojną UA-RUS'23)}}
 % 
 % \textcolor{orange}{Mapa jest pozielona na kwadraty o wymiarach 2 cm $\times$ 2 cm. Szachownica ta służy głównie do określenia obszarów na cele wojny minowej. Każdy gracz w początkowej fazie tury może umieścić do 3 zakrytych kartoników na mapie w wydzielonych kwadratach. Jeden z rozłożonych kartoników musi być prawdziwą miną, pozostałe to miny fałszywe. Informacje o tym, które miny są prawdziwe, a które nie, zna tylko gracz je rozkladający. Każdy gracz posiada limit $M$ min, które może rozłozyć w całej rozgrywce -- ta liczba zależy od rozgrywanego scenariusza i można ją zwiekszyć dzięki jednej z zaawansowanych technologii. Zbudowanie prawdziwej miny kosztuje jeden surowiec $AC$. Gracz może rozłożyć miny w odległości podwojonego zasięgu konstruktora oraz magazynu pod warunkiem posiadania tam surowca $AC$ oraz w kwadracie, w którym nie ma jeszcze ani jednego budynku. Gracz w ramach minowania zamiast wykładania do 3 kartoników może przełożyć jeden wybrany swój kartonik do innego dozwolonego kwadratu bez ponoszenia kosztu surowcowego.}
@@ -304,8 +319,8 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 \item \textbf{Wiele Celów $/$ Multiple Targets}: każda nieuszkodzona wyrzutnia rakietowa może brać za cel jednocześnie 2 obiekty w ramach dostępnych strzałów (1 $\to$ 2; jedena wyrzutnia może niszczyć po jednym module w 2 budynkach, gracz musi zadeklarować przed rzutem, liczbę rakiet wystrzelonych w każdy cel).
 \item \textbf{System Przeciw Rakietowy $/$ Anti-Missile System}: Każda nieuszkodzona wyrzutnia rakietowa może podjąć jedną próbę (na turę) anulowania wrogiego trafienia, jeżeli potencjalnie trafiony budynek znajduje się w jej (bazowym) zasięgu. Koszt takiej próby to jeden surowiec $AC$, który musi być do dyspozycji w sąsiadującym magazynie. Prawdopodobieństwo zestrzelenia wrogiej rakiety to $1/2$. System przeciw rakietowy jest automatyczny -- jego użycie należy zadeklarować przed wyznaczaniem celów dla każdej wyrzutni osobno. Jeżeli nastąpi deficyt surowców $AC$ to nie można razić już ani celów ani używac przeciwrakiet.
 \item \textbf{Satelitarny System Pozycjonowania $/$ Satellite Positioning System}: Prawdopo- dobieństwo trafienia rakietą przez nieuszkodzoną wyrzutnie rakietową w rozszerzonym zasięgu jest  wzrasta do $1/2$ (korekta operatorów podnosi go do $2/3$).
-\item \textbf{Pasywne Opancerzenie $/$ Passive Armor}: Do każdego budynku poza elektrownią, można dobudować dodatkowy zapasowy moduł, który należy zdjąć przy zadaniu uszkodzenia temu budynkowi (czy to w przypadku sabotażu, czy w wyniku ostrzłu rakietowego). Pancerz można odbudować w kolejnych turach, jeżeli został zniszczony.
-\item \textbf{Penetrator Formowany Wybuchowo $/$ Explosively Formed Projectile}: dzięki tej technologi każdy pocisk wystrzelony z wyrzutni rakietowej może przebić \textbf{Pasywne Opancerzenie} z prawdopodobieństwem $2/3$. Opancerzenie to ulega zniszczeniu (i nie jest wliczane w limit uszkodzeń zadawanych przez jedeną wyrzutnie jednemu budynkowi).
+\item \textbf{Pasywne Opancerzenie $/$ Passive Armor}: Do każdego budynku poza elektrownią, można dobudować dodatkowy zapasowy moduł o koszcie jednego tylko surowca $AB$, który należy zdjąć przy zadaniu uszkodzenia temu budynkowi (czy to w przypadku sabotażu, czy w wyniku ostrzłu rakietowego). Pancerz można odbudować w kolejnych turach, jeżeli został zniszczony.
+\item \textbf{Penetrator Formowany Wybuchowo $/$ Explosively Formed Projectile}: dzięki tej technologi każdy pocisk wystrzelony z wyrzutni rakietowej może przebić \textbf{Pasywne Opancerzenie} z prawdopodobieństwem $2/3$. Opancerzenie to ulega zniszczeniu i wtedy należy przeprowadzić normalny test zniszczenia modułu przez rakietę (zniszczenie pancerza nie jest wliczane w limit uszkodzeń zadawanych przez jedną wyrzutnie jednemu budynkowi). Jeżeli nie udało się przebić pancerza to tak czy inaczej należy rozpatrzeć skutki zadania obrażeń przez tę rakietę. Udane trafienie powoduje zniszczenie pancerza, ale już nie właściwego modułu.
 \item \textbf{Scentralizowany System Dowodzenia $/$ Centralized Command System}: nieuszkodzona wyrzutnia rakietowa może wykorzystywać pole widzenia dowolnego nieuszkodzonego budynku (przy czym określanie pola widzenia dla budynków powinno być określone w rozgrywanym scenariuszu).
 \item \textbf{Odzyskiwanie Energi $/$ Energy Recovery}: +20\% wiecej budynków zasilanych jednocześnie przez nieuszkodzony reaktor atomowy, niż wynika to z nominalnej mocy reaktora (zaokrąglając w górę).
 \item \textbf{Recykling$/$Recycling}: konstruktor może zniszczyć pojedynczy moduł dowolnego budynku i odzyskać jeden surowiec, z którego był zbudowany (2 $\to$ 1) -- jest to jedyna operacja tego konstruktora podczas tury. Ten surowiec musi być umieszczony w magazynie w zasięgu tego konstruktora, a następnie może być wykorzystany -- nawet w tej fazie przez inny konstruktor w zasięgu. Jeżeli konstruktor jest uszkodzony to prawdopodobieństwo odzyskania towaru spada do $2/3$ i $1/3$ w zaleznosci od tego czy 1 czy 2 moduły są zniszczone (w porównaniu do bazowej konfiguracji; rzut kością K6). Nieudana próba nie powoduje zniszczenia modułu, ale wyczerpuje limit operacji tego konstruktora, chyba że inna technologia mówi inaczej. Tylko nieuszkodzony konstruktor może odzyskiwać surowce ze swoich własnych modułów -- tak jak w przypadku innych budynków, oznacza to jego uszkodzenie.
@@ -315,10 +330,8 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 \item \textbf{Zniszczenie Zapasów $/$ Stock Destruction}: Jeżeli gracz posiada już \textbf{Odział Dywersyjny} i przeprowadza sabotaż magazynu to ta udana akcja dodatkowo kończy się zniszczeniem przynajmiej jednego surowca. Liczbę zniszczonych surowców wyznacza się rzutem kości K6. Jeżeli gracz wyrzucił więcej niż liczba zgromadzonych surowców to wszystkie zgomadzone w magazynie surowce ulegają zniszczeniu. To sabotujący gracz decyduje, które surowce zostały zniszczone.  
 \item \textbf{Zniszczenie Modułu $/$ Module Destruction}: Jeżeli gracz posiada już \textbf{Odział Dywersyjny} to ta udana akcja oznacza dodatkowo zniszczenie jednego modułu sabotowanego budynku z prawdopodobieństwem $1/3$. Taka akcja jest bezkosztowa.
 \item \textbf{Odział Szybkiego Reagowania $/$ Rapid Operational Unit}: Odział szybkiego reagowania, zmiejsza prawdopodobieństwo dywersji do $1/2$ w pierwszej próbie sabotażu danego budynku (po przerwie od dywersji), oraz całkowicie uniemożliwia powtórny sabotaż danego budynku w kolejnej turze. Ta technologia wpełni przeciwdziała sabotażowi nawet, gdy dany gracz jest jednocześnie sabotowany przez wielu graczy.  
-\item \textbf{Przejęcie Ładunku $/$ Glory Takeover}: Gracz może przejąć wszystkie wytransmitowane surowce innego gracza w danej turze. Akcję taką można przeprowadzić za pierwszym razem z prawdopodobieństwem 100\% (wystepuje element zaskoczenia). Kolejne próby są już obarczone warunkiem, który mówi, że można przejąć transmitowany surowiec tylko wtedy jeżeli gracz posiada swój nieuszkodzony transmiter w zasięgu wrogiego transmitera, który wysyła ten surowiec -- taka operacja odbywa się z prawdopodobieństwem $1/6$, ale jest bezkosztowa.
+\item \textbf{Przejęcie Ładunku $/$ Glory Takeover}: Gracz może przejąć wszystkie wytransmitowane surowce innego gracza w danej turze. Akcję taką można przeprowadzić za pierwszym razem (dla danego gracza okazującego tę technologię) z prawdopodobieństwem 100\% (wystepuje element zaskoczenia). Kolejne próby są już obarczone warunkiem, który mówi, że można przejąć transmitowany surowiec tylko wtedy jeżeli gracz posiada swój nieuszkodzony transmiter w zasięgu wrogiego transmitera, który wysyła ten surowiec -- taka operacja odbywa się z prawdopodobieństwem $1/6$, ale jest bezkosztowa. Każdy przejęty surowiec jest zaliczany jako punkty zwycięstwa gracza, który go przejął. 
 \end{enumerate}
-
-\newpage
 
 \section{Kolejność Rozgrywki}
 
@@ -351,7 +364,7 @@ W pierwszej kolejności swoje akcje wykonują gracze o aktualnie najwyższej pun
 
 \subsection{Warunki Zwycięstwa}
 
-Punkty zwycięstwa gracza oblicza się jako różnice wytransmitowanych towarów na Ziemię minus liczbę utraconych budynków. Monitoring tej punktacji należy prowadzić jawnie w trakcie rozgrywki. Rozgrywkę wygrywa gracz, który na końcu ma największą ich liczbę.
+Punkty zwycięstwa gracza oblicza się jako różnice wytransmitowanych towarów na Ziemię minus liczbę utraconych budynków, które były operacyjne (zniszczenie budynku podczas jego budowy się nie liczy -- z wyjątkiem wyrzutni, która jest operacyjna od pierwszego wybudowanego modułu). Monitoring punktacji zwycięstwa należy prowadzić jawnie w trakcie rozgrywki. Rozgrywkę wygrywa gracz, który na końcu ma największą ich liczbę.
 
 \end{document}
 
