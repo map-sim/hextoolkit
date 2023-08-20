@@ -49,6 +49,7 @@ class SimObject:
         pts0 = [(-2*w+dx, -1*w+dy), (-2*w+dx, 1*w+dy), (2*w+dx, 1*w+dy), (2*w+dx, -1*w+dy)]
         if status: self._draw_polygon(pts0, self.color)
         else: self._draw_polygon(pts0, self.black_color)
+
     def _draw_modules(self, building, offset):
         w = 0.133 * self.config["window-zoom"]
         all_madules = self.library["objects"][building]["modules"]
