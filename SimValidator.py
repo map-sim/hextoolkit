@@ -38,8 +38,8 @@ class LibraryValidator(TypeValidator):
 
 class MapValidator(TypeValidator):
     types = {
+        "difficulty": (int, float),
         "iteration": int,
-        "radiation": (int, float),
         "objects": list,
         "terrains": list
     }
@@ -54,12 +54,12 @@ class MapValidator(TypeValidator):
         for n, obj1 in enumerate(battlefield["objects"]):
             for k, obj2 in enumerate(battlefield["objects"]):
                 if k == n: continue
-                d2 = (obj1[0][0] - obj2[0][0]) ** 2
-                d2 += (obj1[0][1] - obj2[0][1]) ** 2
+                d2 = (obj1["xy"][0] - obj2["xy"][0]) ** 2
+                d2 += (obj1["xy"][1] - obj2["xy"][1]) ** 2
                 d = math.sqrt(d2)
-                iv1 = self.library["objects"][obj1[1]]["interval"]
-                iv2 = self.library["objects"][obj2[1]]["interval"]
-                info = f"wrong dist: {obj1[0:2]} -- {obj2[0:2]}"
+                iv1 = self.library["objects"][obj1["obj"]]["interval"]
+                iv2 = self.library["objects"][obj2["obj"]]["interval"]
+                info = f"wrong dist: {obj1['xy']}/{obj1['obj']} -- {obj2['xy']}/{obj2['obj']}"
                 assert d >= max([iv1, iv2]), info
 
     def validate_terrains(self, battlefield):

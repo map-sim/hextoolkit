@@ -201,7 +201,7 @@ W poniższych tabelach przedstawiono budynki, które mogą występować w grze. 
     \hline
     laboratorium & laboratory & 2 & \laboratorium{14,2}{} & -- & 3 cm & $BC+AC$\\
     \hline
-    konstruktor & developer & 3 & \deweloper{14,-2}{} & 6cm & 3 cm & $AB$\\    
+    konstruktor & developer & 3 & \deweloper{14,-2}{} & 8 cm & 3 cm & $AB$\\    
     \hline
     transmiter & transsmiter & 2 & \transmiter{14,-2}{} & -- & 4 cm & $BC$\\    
     \hline
@@ -238,7 +238,7 @@ Wartownie to małe budynki, które mogą udostepniać pole widzenia wyrzutniom r
 
 \subsubsection{Konstruktor $/$ Developer}
 
-Konstruktor służy do budowania i odbudowywania budynków w jego zasięgu. Składa się on m.in. z drukarek 3D, które drukują gabarytowe elementy potrzebne do budowy. Zakłada się, że małe wyspecjalizowane podzespoły, jak elektronika i komponenty precyzyjne nie możliwe do wytworzenia na powieszchni są dostarczane na bieżąco z orbity. Pierwszym elementem budowy budynku jest przygotowanie placu pod budowę, koszt przygotowania terenu to jeden surowiec $AB$ oraz zajęcie całej fazy jednego konstruktora. Przygotowany teren nie jest jeszcze budynkiem i nie można go w żaden sposób zniszczyć. Teren ten nie należy jeszcze do żadnego gracza. Każdorazowo w sytuacji kolizji o tym, który gracz może zbudować decyduje kolejność graczy. Place budowy nie określają jeszcze jaki budynek będzie budowany. Place budowy muszą zachować odległość od innych elementów infrastruktury (w tym innych placów budowy) tak jakby był budowany budynek o najmniejszym możliwym interwale. Kolejnymi etapami budowy budynków jest budowanie modułów właściwych budynku. Przy pierwszym budowanym module gracz musi zadeklarowć jakiego typu budynek buduje. Budynek staje sie operacyjny dopiero po zbudowaniu wszystkich wymaganych modułów budynku. Udana budowa każdego modułu kosztuje 2 surowce $AB$. W przypadku nieudanej próby zbudowania modułu -- gracz musi ponieść koszt pojedynczego surowca $AB$. Za każdym razem wymagane surowce $AB$ muszą się znajdować w sąsiadujących magazynach. Konstruktor może dokonać próby autonaprawy w ramach normalnej budowy modułu. Prawdopodobieństwo udanej budowy modułu zależy tylko od uszkodzeń konstruktora według poniższej tabeli:
+Konstruktor służy do budowania i odbudowywania budynków w jego zasięgu. Składa się on m.in. z drukarek 3D, które drukują gabarytowe elementy potrzebne do budowy. Zakłada się, że małe wyspecjalizowane podzespoły, jak elektronika i komponenty precyzyjne nie możliwe do wytworzenia na powieszchni są dostarczane na bieżąco z orbity. Każdorazowo w sytuacji kolizji o tym, który gracz może zbudować decyduje kolejność graczy. Budowa każdego modułu budynku zajmuje jedną turę (dopuszczalne jest, że 2 i więcej konstruktorów buduje jeden budynek). Przy pierwszym budowanym module gracz musi zadeklarowć jakiego typu budynek buduje. Budynek staje sie operacyjny dopiero po zbudowaniu wszystkich wymaganych modułów budynku. Udana budowa każdego modułu kosztuje 2 surowce $AB$. W przypadku nieudanej próby zbudowania modułu -- gracz musi ponieść koszt pojedynczego surowca $AB$. Za każdym razem wymagane surowce $AB$ muszą się znajdować w sąsiadujących magazynach. Konstruktor może dokonać próby auto-naprawy w ramach normalnej budowy modułu. Prawdopodobieństwo udanej budowy modułu zależy tylko od uszkodzeń konstruktora według poniższej tabeli:
 \begin{center}
   \begin{tabular}{| c | c |}
     \hline

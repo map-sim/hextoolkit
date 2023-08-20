@@ -7,14 +7,15 @@ class SimObject:
     black_color = 0, 0, 0, 1
     black2_color = 0.3, 0.3, 0.3, 1
     black3_color = 0.3, 0.3, 0.3, 0.75
+    color_armor =  1, 1, 1, 1
 
-    def __init__(self, config, library, context, xyloc, player, modules):
+    def __init__(self, config, library, context, xy, own, cnt):
         self.config, self.library = config, library
-        self.color = self.library["players"][player]["color"]
-        self.xy = self.__calc_render_xy(*xyloc)
+        self.color = self.library["players"][own]["color"]
+        self.xy = self.__calc_render_xy(*xy)
         self.context = context
-        self.modules = modules
-        self.xyloc = xyloc
+        self.modules = cnt
+        self.xyloc = xy
 
     def __calc_render_xy(self, xloc, yloc):
         zoom = self.config["window-zoom"]
@@ -37,7 +38,7 @@ class SimObject:
         self.context.arc(*self.xy, r, 0, TWO_PI)
         self.context.fill()
         
-    def _draw_hp_box(self, offset, status):
+    def _draw_hp_box(self, offset, status, armor=False):
         w = 0.133 * self.config["window-zoom"]
         dx, dy = offset
         self.context.set_line_width(w)
@@ -46,9 +47,10 @@ class SimObject:
         self._draw_polygon(pts0, self.black3_color)
         pts0 = [(-3*w+dx, -2*w+dy), (-3*w+dx, 2*w+dy), (3*w+dx, 2*w+dy), (3*w+dx, -2*w+dy)]
         self._draw_polygon(pts0, self.black2_color)
-        pts0 = [(-2*w+dx, -1*w+dy), (-2*w+dx, 1*w+dy), (2*w+dx, 1*w+dy), (2*w+dx, -1*w+dy)]
-        if status: self._draw_polygon(pts0, self.color)
-        else: self._draw_polygon(pts0, self.black_color)
+        pts1 = [(-2*w+dx, -1*w+dy), (-2*w+dx, 1*w+dy), (2*w+dx, 1*w+dy), (2*w+dx, -1*w+dy)]
+        if status: self._draw_polygon(pts1, self.color)
+        elif armor: self._draw_polygon(pts1, self.color_armor)
+        else: self._draw_polygon(pts1, self.black_color)
 
     def _draw_modules(self, building, offset):
         w = 0.133 * self.config["window-zoom"]
@@ -59,7 +61,10 @@ class SimObject:
             ih = int(i / 4) 
             offset = dx + 6.25 * w * ih, dy - 4.25 * w * iv
             self._draw_hp_box(offset, i < self.modules)
-
+        if self.armor:
+            offset = dx + 6.25 * w * ih, dy - 4.25 * w * (iv + 1)
+            self._draw_hp_box(offset, None, True)
+            
     def _draw_polygon(self, points, color, width=None):
         if width is not None: self.context.set_line_width(width)
         self.context.set_source_rgba(*color)
@@ -86,8 +91,9 @@ class SimObject:
         self.context.fill()
 
 class SimNuke_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+    def __init__(self, config, library, context, xy, obj, own, cnt):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)
+        self.armor = False
 
     def draw(self):
         r = 1.5 * self.config["window-zoom"]
@@ -132,9 +138,10 @@ class SimNuke_0(SimObject):
         self._draw_center()
 
 class SimMine_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules, resource):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
-        self.resource = resource
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, out):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)        
+        self.resource = out
+        self.armor = armor
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -145,14 +152,15 @@ class SimMine_0(SimObject):
         self.context.arc(*self.xy, 3*r/4, 0, TWO_PI)
         self.context.fill()
 
-        self._draw_modules("mixer", (0.95 * r, 0.3 * r))
+        self._draw_modules("mixer", (0.95 * r, 0.5 * r))
         self._draw_resource((0, 0), self.resource)
         self._draw_center()
 
 class SimMixer_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules, resource):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
-        self.resource = resource
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, out):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)        
+        self.resource = out
+        self.armor = armor
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -169,16 +177,17 @@ class SimMixer_0(SimObject):
         rr = r * 2/3 
         self._draw_line((-rr, rr), (rr, -rr), self.black_color)
         self._draw_line((rr, rr), (-rr, -rr), self.black_color)    
-        self._draw_modules("mixer", (0.95 * r, 0.3 * r))
+        self._draw_modules("mixer", (0.95 * r, 0.5 * r))
         self._draw_resource((0, 0), self.resource)
         self._draw_center()
         
 class SimStore_0(SimObject):
     cells = [(-0.43, -0.84), (0.43, -0.84), (-0.43, 0),
              (0.43, 0), (-0.43, 0.84), (0.43, 0.84)]    
-    def __init__(self, config, library, context, xyloc, player, modules, resources):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
-        self.resources = resources
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, goods):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)        
+        self.resources = goods
+        self.armor = armor
 
     def draw(self):
         r = 0.82 * self.config["window-zoom"]
@@ -198,12 +207,14 @@ class SimStore_0(SimObject):
         for i, resource in enumerate(self.resources):
             xyloc = r * self.cells[i][0], r * self.cells[i][1]
             self._draw_resource(xyloc, resource)
-        self._draw_modules("store", (1.25 * r, 0.3 * r))
+        self._draw_modules("store", (1.25 * r, 0.6 * r))
         self._draw_center()
 
 class SimLab_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)
+        self.armor = armor
+        self.work = work
 
     def draw(self):
         r = 1.25 * self.config["window-zoom"]
@@ -213,12 +224,14 @@ class SimLab_0(SimObject):
         self.context.set_source_rgba(*self.color)
         self.context.arc(*self.xy, rr, 0, TWO_PI)
         self.context.fill()
-        self._draw_modules("lab", (0.75 * r, 0.225 * r))
+        self._draw_modules("lab", (0.75 * r, 0.5 * r))
         self._draw_center()
 
 class SimHit_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, targets):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)
+        self.targets = targets
+        self.armor = armor
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -235,12 +248,14 @@ class SimHit_0(SimObject):
         rr = r * 4/3 
         self._draw_line((-rr, 0), (rr, 0), self.black_color)
         self._draw_line((0, -rr), (0, rr), self.black_color)
-        self._draw_modules("hit", (0.75 * r, 0.55 * r))
+        self._draw_modules("hit", (0.75 * r, 0.75 * r))
         self._draw_center()
 
 class SimDevel_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, target):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)
+        self.target = target
+        self.armor = armor
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -254,12 +269,14 @@ class SimDevel_0(SimObject):
         pts2 = [(0, 1.5*rr), (-rr, 0), (+rr, 0)]
         self._draw_polygon(pts2, self.color)
      
-        self._draw_modules("devel", (0.8 * r, 0.55 * r))
+        self._draw_modules("devel", (0.8 * r, 0.75 * r))
         self._draw_center()
 
 class SimSend_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)
+        self.armor = armor
+        self.work = work
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -273,12 +290,13 @@ class SimSend_0(SimObject):
         pts2 = [(0, -1.5*rr), (-rr, 0), (+rr, 0)]
         self._draw_polygon(pts2, self.color)
      
-        self._draw_modules("send", (0.8 * r, 0.25 * r))
+        self._draw_modules("send", (0.8 * r, 0.5 * r))
         self._draw_center()
 
 class SimPost_0(SimObject):
-    def __init__(self, config, library, context, xyloc, player, modules):
-        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor):
+        SimObject.__init__(self, config, library, context, xy, own, cnt)
+        self.armor = armor
 
     def draw(self):
         r = 0.5 * self.config["window-zoom"]
@@ -290,7 +308,7 @@ class SimPost_0(SimObject):
         self.context.arc(*self.xy, rr, 0, TWO_PI)
         self.context.fill()
 
-        self._draw_modules("post", (r, 0.25 * r))
+        self._draw_modules("post", (r, 0.5 * r))
         self._draw_center()
 
 class SimPainter(TerrPainter):
@@ -302,16 +320,16 @@ class SimPainter(TerrPainter):
         
     def draw(self, context):
         self.terr_painter.draw(context)
-        for  xyloc, obj, player, modules, *params in self.battlefield["objects"]:
-            shape = self.library["objects"][obj]["shape"]
+        for  obj in self.battlefield["objects"]:
+            shape = self.library["objects"][obj["obj"]]["shape"]
 
-            if shape == "nuke-0": SimNuke_0(self.config, self.library, context, xyloc, player, modules).draw()
-            elif shape == "lab-0": SimLab_0(self.config, self.library, context, xyloc, player, modules).draw()
-            elif shape == "hit-0": SimHit_0(self.config, self.library, context, xyloc, player, modules).draw()
-            elif shape == "mine-0": SimMine_0(self.config, self.library, context, xyloc, player, modules, params[0]).draw()
-            elif shape == "mixer-0": SimMixer_0(self.config, self.library, context, xyloc, player, modules, params[0]).draw()
-            elif shape == "store-0": SimStore_0(self.config, self.library, context, xyloc, player, modules, params[0]).draw()
-            elif shape == "devel-0": SimDevel_0(self.config, self.library, context, xyloc, player, modules).draw()
-            elif shape == "send-0": SimSend_0(self.config, self.library, context, xyloc, player, modules).draw()
-            elif shape == "post-0": SimPost_0(self.config, self.library, context, xyloc, player, modules).draw()
-            else: raise ValueError(f"Not supported object: {obj}")
+            if shape == "nuke-0": SimNuke_0(self.config, self.library, context, **obj).draw()
+            elif shape == "lab-0": SimLab_0(self.config, self.library, context, **obj).draw()
+            elif shape == "hit-0": SimHit_0(self.config, self.library, context, **obj).draw()
+            elif shape == "mine-0": SimMine_0(self.config, self.library, context, **obj).draw()
+            elif shape == "mixer-0": SimMixer_0(self.config, self.library, context, **obj).draw()
+            elif shape == "store-0": SimStore_0(self.config, self.library, context, **obj).draw()
+            elif shape == "devel-0": SimDevel_0(self.config, self.library, context, **obj).draw()
+            elif shape == "send-0": SimSend_0(self.config, self.library, context, **obj).draw()
+            elif shape == "post-0": SimPost_0(self.config, self.library, context, **obj).draw()
+            else: raise ValueError(f"Not supported object: {obj['obj']}")
