@@ -18,8 +18,12 @@ library0 = {
     "objects": {
         "mine": {"shape": "mine-0", "modules": 2, "interval": 3, "range": 0},
         "mixer": {"shape": "mixer-0", "modules": 2, "interval": 3, "range": 0},
-        "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 160},
-        "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": None},
+        "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 6},
+        "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 6},
+        "send": {"shape": "send-0", "modules": 2, "interval": 4, "range": 0},
+        "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": 0},
+        "lab": {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0},
+        "hit": {"shape": "hit-0", "modules": 3, "interval": 4, "range": 20},
     },
     "terrains": {
  	"desert-0":       {"color": [1.0, 0.95, 0.93], "buildable": True, "level": 0, "risk": 0.0, "desc": "desert", "resources":{}},
@@ -41,6 +45,10 @@ battlefield0 = {
         [(17, 8), "store", "Aaa", 2, []],
         [(20, 9), "mine", "Aaa", 1, "A"],
         [(6, 12), "nuke", "Aaa", 5],
+        [(14, 12), "lab", "Aaa", 1],
+        [(16, 16), "hit", "Aaa", 3],
+        [(20, 16), "devel", "Aaa", 3],
+        [(24, 16), "send", "Aaa", 2],
     ],
     "terrains": [
         ("base", "desert-0"),
@@ -53,6 +61,9 @@ battlefield0 = {
         ("polygon", "crater-crown-0", (-24.08, 2.59), (-26.98, 0.69), (-28.3, -1.3), (-28.55, -7.26), (-26.4, -9.66), (-22.92, -5.93), (-22.42, -1.55),),
         ("polygon", "crater-crown-0", (15.68, 30.73),(19.48, 28.13), (23.13, 27.08), (27.55, 27.08), (29.76, 28.48), (31.66, 30.38), (29.91, 33.19), (24.81, 33.26),(19.76, 32.21),),
         ("polygon", "crater-crown-0", (7.98, 31.36), (10.16, 31.87), (11.38, 32.71), (8.88, 33.55), (5.73, 32.84),),
+        ("polygon", "crater-crown-0", (-32.05, -10.81), (-29.07, -13.39), (-27.29, -17.95), (-28.28, -24.29), (-29.87, -25.88), (-33.44, -20.33), (-34.72, -14.87),),
+        ("polygon", "crater-crown-0", (28.49, 29.22), (31.25, 31.43), (35.75, 32.45), (40.87, 31.03), (46.24, 25.83), (46.95, 22.04), (44.5, 21.17), (35.51, 22.91), (31.73, 25.2),),
+        ("polygon", "crater-crown-0", (49.7, 22.1), (52.9, 23.3), (55.96, 22.1), (61.96, 17.57), (62.62, 14.24), (60.62, 11.58), (51.97, 14.11),),
     ]
 }
 
