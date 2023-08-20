@@ -13,12 +13,20 @@ from gi.repository import Gdk
 
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
+        provider = Gtk.CssProvider()
+        provider.load_from_data(b"""
+        .main-label {
+           background-color: rgba(255, 255, 255, .75);
+           padding: 10px 10px;
+        }""")
+        
         self.mode_label = Gtk.Label()
-        args = Gtk.StateType.NORMAL, Gdk.RGBA(1, 1, 1, 0.75)
-        self.mode_label.override_background_color(*args)
-        self.mode_label.set_padding(10, 5) 
-        self.set_mode_label("navi")
+        style = Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        self.mode_label.get_style_context().add_provider(provider, style)
+        self.mode_label.get_style_context().add_class("main-label")
+        
         self.mode = "navi"
+        self.set_mode_label("navi")
         self.show_info = False
 
         TerrWindow.__init__(self, config, library, battlefield)
@@ -30,12 +38,12 @@ class SimWindow(TerrWindow):
         self.draw_content()
 
     def set_mode_label(self, text):
-        large_font_span = "<span size='35000'>"
+        large_font_span = "<span size='25000'>"
         text = large_font_span + f"{text}</span>"
         self.mode_label.set_markup(text)
 
     def update_info(self):
-        content = "admin: info<span size='15000'>"
+        content = "<span size='25000'>admin: info</span><span size='15000'>"
         for key, val in self.config.items():
             content += f"\nconfig {key} --> {val}"
             print(f"config {key}", "-->", val)
@@ -48,6 +56,16 @@ class SimWindow(TerrWindow):
     def on_scroll(self, widget, event):
         TerrWindow.on_scroll(self, widget, event)
         if self.show_info: self.update_info()
+
+    def on_click(self, widget, event):
+        TerrWindow.on_click(self, widget, event)
+        if self.mode == "navi":
+            ox, oy = self.get_click_location(event)
+            terr = self.graph.check_terrain(ox, oy)
+            content = "<span size='25000'>navi: click</span><span size='15000'>"
+            content += f"\nterrain-type: {terr[0]}\nterrain-shape: {terr[1][0]}"
+            if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
+            self.set_mode_label(content + "</span>")
 
     def on_press(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
