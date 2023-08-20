@@ -1,3 +1,5 @@
+import math
+
 class TypeValidator:
     types = {}
     def validate_types(self, prefix, data):
@@ -33,7 +35,7 @@ class LibraryValidator(TypeValidator):
 
         assert self.library["terrains"], "no terrain"
         assert self.library["players"], "no player"
-        
+
 class MapValidator(TypeValidator):
     types = {
         "iteration": int,
@@ -45,7 +47,21 @@ class MapValidator(TypeValidator):
         self.library = library
         self.validate_types("map", battlefield)
         self.validate_terrains(battlefield)
+        self.validate_intervals(battlefield)
         
+    def validate_intervals(self, battlefield):
+        print("map validate_intervals...")
+        for n, obj1 in enumerate(battlefield["objects"]):
+            for k, obj2 in enumerate(battlefield["objects"]):
+                if k == n: continue
+                d2 = (obj1[0][0] - obj2[0][0]) ** 2
+                d2 += (obj1[0][1] - obj2[0][1]) ** 2
+                d = math.sqrt(d2)
+                iv1 = self.library["objects"][obj1[1]]["interval"]
+                iv2 = self.library["objects"][obj2[1]]["interval"]
+                info = f"wrong dist: {obj1[0:2]} -- {obj2[0:2]}"
+                assert d >= max([iv1, iv2]), info
+
     def validate_terrains(self, battlefield):
         for row in battlefield["terrains"]:
             assert row[1] in self.library["terrains"]
