@@ -24,6 +24,7 @@ library0 = {
         "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": 0},
         "lab": {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0},
         "hit": {"shape": "hit-0", "modules": 3, "interval": 4, "range": 20},
+        "post": {"shape": "post-0", "modules": 1, "interval": 2, "range": 0},
     },
     "terrains": {
  	"desert-0":       {"color": [1.0, 0.95, 0.93], "buildable": True, "level": 0, "risk": 0.0, "desc": "desert", "resources":{}},
@@ -49,6 +50,7 @@ battlefield0 = {
         [(16, 16), "hit", "Aaa", 3],
         [(20, 16), "devel", "Aaa", 3],
         [(24, 16), "send", "Aaa", 2],
+        [(28, 16), "post", "Aaa", 1],
     ],
     "terrains": [
         ("base", "desert-0"),

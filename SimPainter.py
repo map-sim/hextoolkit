@@ -275,6 +275,23 @@ class SimSend_0(SimObject):
         self._draw_modules("send", (0.8 * r, 0.25 * r))
         self._draw_center()
 
+class SimPost_0(SimObject):
+    def __init__(self, config, library, context, xyloc, player, modules):
+        SimObject.__init__(self, config, library, context, xyloc, player, modules)
+
+    def draw(self):
+        r = 0.5 * self.config["window-zoom"]
+        rr = 0.3 * self.config["window-zoom"]
+        self.context.set_source_rgba(*self.black_color)
+        self.context.arc(*self.xy, r, 0, TWO_PI)
+        self.context.fill()
+        self.context.set_source_rgba(*self.color)
+        self.context.arc(*self.xy, rr, 0, TWO_PI)
+        self.context.fill()
+
+        self._draw_modules("post", (r, 0.25 * r))
+        self._draw_center()
+
 class SimPainter(TerrPainter):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
@@ -295,4 +312,5 @@ class SimPainter(TerrPainter):
             elif shape == "store-0": SimStore_0(self.config, self.library, context, xyloc, player, modules, params[0]).draw()
             elif shape == "devel-0": SimDevel_0(self.config, self.library, context, xyloc, player, modules).draw()
             elif shape == "send-0": SimSend_0(self.config, self.library, context, xyloc, player, modules).draw()
+            elif shape == "post-0": SimPost_0(self.config, self.library, context, xyloc, player, modules).draw()
             else: raise ValueError(f"Not supported object: {obj}")
