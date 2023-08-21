@@ -2,7 +2,7 @@ from SimValidator import SimValidator
 from SimPainter import SimPainter
 from TerrWindow import TerrWindow
 
-import gi, os, copy
+import gi, os, copy, math
 from pprint import pformat
 
 gi.require_version('Gtk', '3.0')
@@ -10,6 +10,19 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
+class SimGraph:
+    max_d2 = 64
+    def __init__(self, library, battlefield):
+        self.battlefield =  battlefield
+        self.library = library
+        
+    def find_next_object(self, x, y):
+        index, min_d2 = None, math.inf
+        for i, obj in enumerate(self.battlefield["objects"]):
+            d2 = (obj["xy"][0] - x) ** 2 + (obj["xy"][1] - y) ** 2
+            if d2 > self.max_d2: continue
+            if d2 < min_d2: min_d2, index = d2, i
+        return index
 
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
@@ -30,6 +43,10 @@ class SimWindow(TerrWindow):
         self.show_info = False
 
         TerrWindow.__init__(self, config, library, battlefield)
+        self.graphs = {
+            "sim": SimGraph(library, battlefield),
+            "terr": self.graph
+        }
         self.fix.put(self.mode_label, 0, 0)
         self.show_all()
 
@@ -56,16 +73,29 @@ class SimWindow(TerrWindow):
     def on_scroll(self, widget, event):
         TerrWindow.on_scroll(self, widget, event)
         if self.show_info: self.update_info()
-
+        
     def on_click(self, widget, event):
         TerrWindow.on_click(self, widget, event)
         if self.mode == "navi":
             ox, oy = self.get_click_location(event)
-            terr = self.graph.check_terrain(ox, oy)
+
+            index = self.graphs["sim"].find_next_object(ox, oy)
+            self.painter.set_selected_object(index)
+            self.draw_content()
+
+            terr = self.graphs["terr"].check_terrain(ox, oy)
             content = "<span size='25000'>navi: click</span><span size='15000'>"
-            content += f"\nterrain-type: {terr[0]}\nterrain-shape: {terr[1][0]}"
+            content += f"\n----------------\nterrain-type: {terr[0]}"
+            content += f"\nterrain-shape: {terr[1][0]}"
             if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
+            if index is not None:
+                obj = self.battlefield["objects"][index]
+                content += f"\n----------------\n{obj['obj']}{obj['xy']}"
+                content += f" -- Player: {obj['own']}\n"
+                for k, v in obj.items():
+                    if k not in ("obj", "xy", "own"): content += f"{k}: {v} | "
             self.set_mode_label(content + "</span>")
+
 
     def on_press(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -115,7 +145,7 @@ def run_example():
         "window-title": "mode-window",
         "window-size": (1800, 820),
         "window-offset": (840, 125),
-        "window-zoom": 36.0,
+        "window-zoom": 15.0,
         "move-sensitive": 50
     }
     

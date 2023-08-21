@@ -314,14 +314,32 @@ class SimPost_0(SimObject):
 class SimPainter(TerrPainter):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
+        self.selected_index = None
         self.battlefield =  battlefield
         self.library = library
         self.config = config
-        
+
+    def set_selected_object(self, index):
+        self.selected_index = index
+
+    def draw_selection(self, context, xy, radius):
+        zoom = self.config["window-zoom"]
+        xloc, yloc = xy[0] * zoom, xy[1] * zoom
+        xoffset, yoffset = self.config["window-offset"]
+        xloc, yloc = xloc + xoffset, yloc + yoffset
+        r = radius * zoom
+
+        context.set_source_rgba(0, 0, 0, 0.5)
+        context.arc(xloc, yloc, r, 0, TWO_PI)
+        context.fill()
+
     def draw(self, context):
         self.terr_painter.draw(context)
-        for  obj in self.battlefield["objects"]:
+        for index, obj in enumerate(self.battlefield["objects"]):
             shape = self.library["objects"][obj["obj"]]["shape"]
+            if index == self.selected_index:
+                interval = self.library["objects"][obj["obj"]]["interval"]
+                self.draw_selection(context, obj["xy"], interval)
 
             if shape == "nuke-0": SimNuke_0(self.config, self.library, context, **obj).draw()
             elif shape == "lab-0": SimLab_0(self.config, self.library, context, **obj).draw()
