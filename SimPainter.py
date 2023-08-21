@@ -354,7 +354,6 @@ class SimPainter(TerrPainter):
 
         for obj in self.battlefield["objects"]:
             shape = self.library["objects"][obj["obj"]]["shape"]
-
             if shape == "nuke-0": SimNuke_0(self.config, self.library, context, **obj).draw()
             elif shape == "lab-0": SimLab_0(self.config, self.library, context, **obj).draw()
             elif shape == "hit-0": SimHit_0(self.config, self.library, context, **obj).draw()

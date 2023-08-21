@@ -27,12 +27,10 @@ class SimGraph:
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         provider = Gtk.CssProvider()
-        provider.load_from_data(b"""
-        .main-label {
-           background-color: rgba(255, 255, 255, .75);
-           padding: 10px 10px;
-        }""")
-        
+        provider.load_from_data(b""".main-label {
+        background-color: rgba(255, 255, 255, .75);
+        padding: 10px 10px;}""")
+
         self.mode_label = Gtk.Label()
         style = Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
         self.mode_label.get_style_context().add_provider(provider, style)
@@ -43,10 +41,7 @@ class SimWindow(TerrWindow):
         self.show_info = False
 
         TerrWindow.__init__(self, config, library, battlefield)
-        self.graphs = {
-            "sim": SimGraph(library, battlefield),
-            "terr": self.graph
-        }
+        self.graphs = {"sim": SimGraph(library, battlefield), "terr": self.graph}
         self.fix.put(self.mode_label, 0, 0)
         self.show_all()
 
@@ -78,7 +73,6 @@ class SimWindow(TerrWindow):
         TerrWindow.on_click(self, widget, event)
         if self.mode == "navi":
             ox, oy = self.get_click_location(event)
-
             index = self.graphs["sim"].find_next_object(ox, oy)
             self.painter.set_selected_object(index)
             self.draw_content()
@@ -89,10 +83,9 @@ class SimWindow(TerrWindow):
             content += f"\nterrain-shape: {terr[1][0]}"
             if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
             if index is not None:
-                obj = self.battlefield["objects"][index]
+                obj, tmplist = self.battlefield["objects"][index], []
                 content += f"\n----------------\n{obj['obj']}{obj['xy']}"
                 content += f" -- Player: {obj['own']}\n"
-                tmplist = []
                 for k, v in obj.items():
                     if k in ("obj", "xy", "own"): continue
                     if k == "armor": tmplist += [f"{k}: {'yes' if v else 'no'}"]
@@ -101,7 +94,6 @@ class SimWindow(TerrWindow):
                     else: tmplist += [f"{k}: {v}"]
             content += " | ".join(tmplist)
             self.set_mode_label(content + "</span>")
-
 
     def on_press(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
@@ -114,6 +106,12 @@ class SimWindow(TerrWindow):
             self.show_info = False
             self.draw_content()
         elif key_name == "F1":
+            print("##> mode: navi")
+            self.show_info = False
+            self.set_mode_label("navi")
+            self.mode = "navi"
+            self.draw_content()
+        elif key_name == "F2":
             print("##> pointer mode: admin")
             self.set_mode_label("admin")
             self.mode = "admin"
@@ -129,6 +127,31 @@ class SimWindow(TerrWindow):
             validator.validate_library(self.library)
             validator.validate_map(self.library, self.battlefield)
             self.show_info = False
+        elif key_name == "y" and self.mode in ("admin", "navi"):
+            if self.painter.selected_index is not None:
+                obj = self.battlefield["objects"][self.painter.selected_index]
+                if "work" in obj: obj["work"] = True
+                if obj["obj"] == "mine":
+                    raws = [k for k, v in self.library["resources"].items() if "process" not in v]
+                    if obj["out"] is not None:
+                        i = (raws.index(obj["out"]) + 1) % len(raws)
+                        obj["out"] = raws[i]
+                    else: obj["out"] = raws[0]
+                if obj["obj"] == "mixer":
+                    cmpl = [k for k, v in self.library["resources"].items() if "process" in v]
+                    if obj["out"] is not None:
+                        i = (cmpl.index(obj["out"]) + 1) % len(cmpl)
+                        obj["out"] = cmpl[i]
+                    else: obj["out"] = cmpl[0]
+                self.draw_content()
+        elif key_name == "n" and self.mode in ("admin", "navi"):
+            if self.painter.selected_index is not None:
+                obj = self.battlefield["objects"][self.painter.selected_index]
+                if "targets" in obj: obj["targets"] = []
+                if "target" in obj: obj["target"] = None
+                if "work" in obj: obj["work"] = False
+                if "out" in obj: obj["out"] = None
+                self.draw_content()
         elif key_name == "s" and self.mode == "admin":
             self.set_mode_label("admin: save")
             cnt, libname, mapname = 0, "lib", "map"
