@@ -83,7 +83,9 @@ class SimObject:
         self.context.arc(*xy, r, 0, TWO_PI)
         self.context.fill()
 
-        if resource is None: color2 = self.black_color
+        if resource is True: color2 = 1, 1, 1, 1
+        elif resource is None: color2 = self.black_color
+        elif resource is False: color2 = self.black_color     
         else: color2 = self.library["resources"][resource]["color"]
         self.context.set_source_rgba(*color2)
         rr = 0.18 * self.config["window-zoom"]
@@ -184,14 +186,17 @@ class SimMixer_0(SimObject):
 class SimStore_0(SimObject):
     cells = [(-0.43, -0.84), (0.43, -0.84), (-0.43, 0),
              (0.43, 0), (-0.43, 0.84), (0.43, 0.84)]    
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, goods):
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, goods, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)        
         self.resources = goods
         self.armor = armor
+        self.work = work
 
     def draw(self):
         r = 0.82 * self.config["window-zoom"]
         rr = 0.66 * self.config["window-zoom"]
+        rrr = 0.8 * self.config["window-zoom"]
+        rrrr = 0.35 * self.config["window-zoom"]
         w = 0.1 * self.config["window-zoom"]
 
         self.context.set_line_width(w)
@@ -208,6 +213,7 @@ class SimStore_0(SimObject):
             xyloc = r * self.cells[i][0], r * self.cells[i][1]
             self._draw_resource(xyloc, resource)
         self._draw_modules("store", (1.25 * r, 0.6 * r))
+        self._draw_resource((-rrr, rrrr), self.work)
         self._draw_center()
 
 class SimLab_0(SimObject):
@@ -225,6 +231,7 @@ class SimLab_0(SimObject):
         self.context.arc(*self.xy, rr, 0, TWO_PI)
         self.context.fill()
         self._draw_modules("lab", (0.75 * r, 0.5 * r))
+        self._draw_resource((-rr, rr), self.work)
         self._draw_center()
 
 class SimHit_0(SimObject):
@@ -245,10 +252,11 @@ class SimHit_0(SimObject):
         w = 0.25 * self.config["window-zoom"]
         self.context.set_line_width(w)
         
-        rr = r * 4/3 
+        rr, rrr = r * 4/3, 0.7 * r
         self._draw_line((-rr, 0), (rr, 0), self.black_color)
         self._draw_line((0, -rr), (0, rr), self.black_color)
         self._draw_modules("hit", (0.75 * r, 0.75 * r))
+        self._draw_resource((-rrr, rrr), bool(self.targets))
         self._draw_center()
 
 class SimDevel_0(SimObject):
@@ -260,6 +268,7 @@ class SimDevel_0(SimObject):
     def draw(self):
         r = 1 * self.config["window-zoom"]
         rr = 0.6 * self.config["window-zoom"]
+        rrr = 0.7 * self.config["window-zoom"]
         self.context.set_source_rgba(*self.black_color)
         self.context.arc(*self.xy, r, 0, TWO_PI)
         self.context.fill()
@@ -270,6 +279,7 @@ class SimDevel_0(SimObject):
         self._draw_polygon(pts2, self.color)
      
         self._draw_modules("devel", (0.8 * r, 0.75 * r))
+        self._draw_resource((-rrr, rrr), bool(self.target))
         self._draw_center()
 
 class SimSend_0(SimObject):
@@ -281,6 +291,7 @@ class SimSend_0(SimObject):
     def draw(self):
         r = 1 * self.config["window-zoom"]
         rr = 0.6 * self.config["window-zoom"]
+        rrr = 0.7 * self.config["window-zoom"]
         self.context.set_source_rgba(*self.black_color)
         self.context.arc(*self.xy, r, 0, TWO_PI)
         self.context.fill()
@@ -291,6 +302,7 @@ class SimSend_0(SimObject):
         self._draw_polygon(pts2, self.color)
      
         self._draw_modules("send", (0.8 * r, 0.5 * r))
+        self._draw_resource((-rrr, -rrr), self.work)
         self._draw_center()
 
 class SimPost_0(SimObject):
@@ -336,10 +348,12 @@ class SimPainter(TerrPainter):
     def draw(self, context):
         self.terr_painter.draw(context)
         for index, obj in enumerate(self.battlefield["objects"]):
-            shape = self.library["objects"][obj["obj"]]["shape"]
             if index == self.selected_index:
                 interval = self.library["objects"][obj["obj"]]["interval"]
                 self.draw_selection(context, obj["xy"], interval)
+
+        for obj in self.battlefield["objects"]:
+            shape = self.library["objects"][obj["obj"]]["shape"]
 
             if shape == "nuke-0": SimNuke_0(self.config, self.library, context, **obj).draw()
             elif shape == "lab-0": SimLab_0(self.config, self.library, context, **obj).draw()

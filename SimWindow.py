@@ -92,8 +92,14 @@ class SimWindow(TerrWindow):
                 obj = self.battlefield["objects"][index]
                 content += f"\n----------------\n{obj['obj']}{obj['xy']}"
                 content += f" -- Player: {obj['own']}\n"
+                tmplist = []
                 for k, v in obj.items():
-                    if k not in ("obj", "xy", "own"): content += f"{k}: {v} | "
+                    if k in ("obj", "xy", "own"): continue
+                    if k == "armor": tmplist += [f"{k}: {'yes' if v else 'no'}"]
+                    elif k == "work": tmplist += [f"{k}: {'yes' if v else 'no'}"]
+                    elif k == "goods": tmplist += [f"{k}: {', '.join(v)}"]
+                    else: tmplist += [f"{k}: {v}"]
+            content += " | ".join(tmplist)
             self.set_mode_label(content + "</span>")
 
 
