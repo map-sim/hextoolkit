@@ -24,7 +24,7 @@ library0 = {
     "objects": {
         "mine": {"shape": "mine-0", "modules": 2, "interval": 3, "range": 0},
         "mixer": {"shape": "mixer-0", "modules": 2, "interval": 3, "range": 0},
-        "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 6},
+        "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 8},
         "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 8},
         "send": {"shape": "send-0", "modules": 2, "interval": 4, "range": 0},
         "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": 0},
@@ -130,7 +130,8 @@ battlefield0 = {
         ("polygon", "tectonic-fault-0", (109.72, 74.74), (123.93, 77.13), (137.99, 94.48), (143.53, 114.37), (141.28, 119.01), (135.75, 116.61), (112.27, 96.42), (108.83, 75.48),),
         ("polygon", "tectonic-fault-0", (125.08, 39.3), (126.28, 43.93), (143.85, 48.38), (165.1, 45.81), (179.07, 36.21), (176.67, 34.93), (143.93, 35.27),),
         ("polygon", "tectonic-fault-0", (18.86, -18.73), (23.77, -6.75), (29.76, -3.33), (35.67, -4.75), (32.43, -14.49),),
-         
+        ("polygon", "tectonic-fault-0", (112.96, 40.97), (124.9, 36.32), (147.27, 40.85), (127.35, 48.7),),
+
         ("polygon", "deposit-c-0", (25.7, 4.7), (26.34, 6.24), (28.13, 6.88), (28.96, 6.43), (28.2, 4.25),),
         ("polygon", "deposit-c-0", (1.71, -16.51), (2.14, -14.54), (4.18, -13.12), (6.37, -12.98), (6.37, -15.52), (5.17, -16.37),),
         ("polygon", "deposit-c-0", (27.29, -38.5), (29.1, -37.54), (31.34, -37.54), (30.8, -40.52), (26.54, -40.84),),

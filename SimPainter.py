@@ -268,7 +268,7 @@ class SimDevel_0(SimObject):
     def draw(self):
         r = 1 * self.config["window-zoom"]
         rr = 0.6 * self.config["window-zoom"]
-        rrr = 0.7 * self.config["window-zoom"]
+        rrr = 0.7 * self.config["window-zoom"]                
         self.context.set_source_rgba(*self.black_color)
         self.context.arc(*self.xy, r, 0, TWO_PI)
         self.context.fill()
@@ -334,14 +334,20 @@ class SimPainter(TerrPainter):
     def set_selected_object(self, index):
         self.selected_index = index
 
-    def draw_selection(self, context, xy, radius):
+    def draw_selection(self, context, xy, radius, dist, dist2):
         zoom = self.config["window-zoom"]
         xloc, yloc = xy[0] * zoom, xy[1] * zoom
         xoffset, yoffset = self.config["window-offset"]
+        r, d, d2 = radius * zoom, dist * zoom, dist2 * zoom
         xloc, yloc = xloc + xoffset, yloc + yoffset
-        r = radius * zoom
 
-        context.set_source_rgba(0, 0, 0, 0.5)
+        context.set_source_rgba(1, 1, 1, 0.25)
+        context.arc(xloc, yloc, d, 0, TWO_PI)
+        context.fill()
+        context.set_source_rgba(1, 1, 1, 0.25)
+        context.arc(xloc, yloc, d2, 0, TWO_PI)
+        context.fill()
+        context.set_source_rgba(0, 0, 0, 0.25)
         context.arc(xloc, yloc, r, 0, TWO_PI)
         context.fill()
 
@@ -350,7 +356,9 @@ class SimPainter(TerrPainter):
         for index, obj in enumerate(self.battlefield["objects"]):
             if index == self.selected_index:
                 interval = self.library["objects"][obj["obj"]]["interval"]
-                self.draw_selection(context, obj["xy"], interval)
+                r = self.library["objects"][obj["obj"]].get("range", 0.0)
+                rr = 2*r if obj["obj"] == "hit" else r
+                self.draw_selection(context, obj["xy"], interval, r, rr)
 
         for obj in self.battlefield["objects"]:
             shape = self.library["objects"][obj["obj"]]["shape"]

@@ -77,13 +77,13 @@ class SimWindow(TerrWindow):
             self.painter.set_selected_object(index)
             self.draw_content()
 
-            terr = self.graphs["terr"].check_terrain(ox, oy)
+            terr, tmplist = self.graphs["terr"].check_terrain(ox, oy), []
             content = "<span size='25000'>navi: click</span><span size='15000'>"
             content += f"\n----------------\nterrain-type: {terr[0]}"
             content += f"\nterrain-shape: {terr[1][0]}"
             if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
             if index is not None:
-                obj, tmplist = self.battlefield["objects"][index], []
+                obj = self.battlefield["objects"][index]
                 content += f"\n----------------\n{obj['obj']}{obj['xy']}"
                 content += f" -- Player: {obj['own']}\n"
                 for k, v in obj.items():
