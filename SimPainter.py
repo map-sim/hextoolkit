@@ -11,9 +11,9 @@ class SimPoint:
         return xloc + xoffset, yloc + yoffset
 
 class SimObject(SimPoint):
-    black_color = 0, 0, 0, 1
-    black2_color = 0.3, 0.3, 0.3, 1
-    black3_color = 0.3, 0.3, 0.3, 0.75
+    black_color = 0.45, 0.45, 0.45, 1
+    black2_color = 0.5, 0.5, 0.5, 1
+    black3_color = 0.5, 0.5, 0.5, 0.75
     color_armor =  1, 1, 1, 1
 
     def __init__(self, config, library, context, xy, own, cnt):
@@ -354,29 +354,35 @@ class SimPainter(TerrPainter, SimPoint):
     def draw_connections(self, context):
         xy = self.battlefield["objects"][self.selected_index]["xy"]
         zoom = self.config["window-zoom"]
-        r, rr = 0.2 * zoom, 2 * zoom
+        r, rr = 0.2 * zoom, 1.5 * zoom
 
         for what, (xo, yo), (xe, ye) in self.battlefield["links"]:
             if (xo, yo) != xy: continue
             x2o, y2o = self._calc_render_xy(xo, yo)
             x2e, y2e = self._calc_render_xy(xe, ye)
+            a = math.atan2(y2e - y2o, x2e - x2o)
 
-            context.set_line_width(0.2 * zoom)
+            x2oo = x2o + 0.5 * rr * math.cos(a)
+            y2oo = y2o + 0.5 * rr * math.sin(a)
+
+            context.set_line_width(0.1 * zoom)
             context.set_source_rgba(0, 0, 0, 0.5)
-            context.move_to(x2o, y2o)
+            context.move_to(x2oo, y2oo)
             context.line_to(x2e, y2e) 
             context.stroke()
 
-            a = math.atan2(y2e - y2o, x2e - x2o)
-            x2m = x2o + rr * math.cos(a)
-            y2m = y2o + rr * math.sin(a)
+            x2m = x2e - rr * math.cos(a)
+            y2m = y2e - rr * math.sin(a)
 
+            context.set_source_rgba(0, 0, 0, 0.5)
+            context.arc(x2m, y2m, 3*r, 0, TWO_PI)
+            context.fill()
             context.set_source_rgba(0, 0, 0, 1)
-            context.arc(x2m, y2m, 3.5*r, 0, TWO_PI)
+            context.arc(x2m, y2m, 2.5*r, 0, TWO_PI)
             context.fill()
             color = self._deduce_color(what)
             context.set_source_rgba(*color)
-            context.arc(x2m, y2m, r, 0, TWO_PI)
+            context.arc(x2m, y2m, 1.5*r, 0, TWO_PI)
             context.fill()
             
     def draw(self, context):

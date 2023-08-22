@@ -84,7 +84,7 @@ class SimWindow(TerrWindow):
             if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
             if index is not None:
                 obj = self.battlefield["objects"][index]
-                content += f"\n----------------\n{obj['obj']}{obj['xy']}"
+                content += f"\n----------------\n{obj['obj']} {obj['xy']}"
                 content += f" -- Player: {obj['own']}\n"
                 for k, v in obj.items():
                     if k in ("obj", "xy", "own"): continue
