@@ -38,10 +38,12 @@ class LibraryValidator(TypeValidator):
 
 class MapValidator(TypeValidator):
     types = {
-        "difficulty": (int, float),
+        "difficulty": int,
         "iteration": int,
+        "terrains": list,
         "objects": list,
-        "terrains": list
+        "players": dict,
+        "links": list
     }
     def __init__(self, library, battlefield):
         self.library = library

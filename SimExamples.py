@@ -14,11 +14,11 @@ library0 = {
         }
     },
     "resources": {
-        "A": {"color": [1.0, 0.1, 0.1]},
-        "B": {"color": [0.1, 0.8, 0.1]},
-        "C": {"color": [0.1, 0.1, 1.0]},
-        "AB": {"color": [1.0, 0.8, 0.1], "process": {"A": 1, "B": 1}},
-        "AC": {"color": [1.0, 0.1, 1.0], "process": {"A": 1, "C": 1}},
+        "A": {"color": [0.9, 0.1, 0.1]},
+        "B": {"color": [0.1, 0.7, 0.1]},
+        "C": {"color": [0.1, 0.1, 0.9]},
+        "AB": {"color": [1.0, 0.85, 0.1], "process": {"A": 1, "B": 1}},
+        "AC": {"color": [1.0, 0.45, 1.0], "process": {"A": 1, "C": 1}},
         "BC": {"color": [0.1, 0.9, 0.9], "process": {"C": 1, "B": 1}}
     },
     "objects": {
@@ -26,10 +26,10 @@ library0 = {
         "mixer": {"shape": "mixer-0", "modules": 2, "interval": 3, "range": 0},
         "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 8},
         "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 8},
+        "lab":  {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0},
         "send": {"shape": "send-0", "modules": 2, "interval": 4, "range": 0},
         "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": 0},
-        "lab": {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0},
-        "hit": {"shape": "hit-0", "modules": 3, "interval": 4, "range": 20},
+        "hit": {"shape": "hit-0", "modules": 3, "interval": 4, "range": 30},
         "post": {"shape": "post-0", "modules": 1, "interval": 2, "range": 0},
     },
     "terrains": {
@@ -44,30 +44,50 @@ library0 = {
 battlefield0 = {
     "iteration": 0,
     "difficulty": 3,
+    "links": [
+        ("devel", (20, 16), (14, 12)),
+        ("AC", (10, 5), (14, 8)),
+        ("A", (15, 5), (14, 8)),
+        ("C", (15, 5), (17, 8))
+    ],
     "objects": [
         {"xy": (120, -20), "obj": "nuke", "own": "Bbb", "cnt": 8},
         {"xy": (109, -18), "obj": "mine", "own": "Bbb", "cnt": 2, "armor": False, "out": "A"},
         {"xy": (107, -21), "obj": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": []},
-        {"xy": (102, -22), "obj": "devel", "own": "Bbb", "cnt": 3, "armor": False, "target": None},
-        
+        {"xy": (102, -22), "obj": "devel", "own": "Bbb", "cnt": 3, "armor": False, "work": False},
+
         {"xy": (-10, 60), "obj": "nuke", "own": "Aaa", "cnt": 8},
         {"xy": (-3, 44), "obj": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": "B"},
         {"xy": (-8, 42), "obj": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": []},
-        {"xy": (-10, 36), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": False, "target": None},
-        
+        {"xy": (-10, 36), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
+
         {"xy": (6, 12), "obj": "nuke", "own": "Aaa", "cnt": 5},
         {"xy": (10, 5), "obj": "mixer", "own": "Aaa", "cnt": 2, "armor": False, "out": "AC"},
         {"xy": (13, 2), "obj": "mixer", "own": "Aaa", "cnt": 1, "armor": False, "out": "AB"},
-        {"xy": (15, 5), "obj": "store", "own": "Aaa", "cnt": 0, "armor": False, "work": True, "goods": ["AC", "BC", "AB", "A", "B", "C"]},
+        {"xy": (15, 5), "obj": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": ["AC", "BC", "AB", "A", "B", "C"]},
         {"xy": (14, 8), "obj": "store", "own": "Aaa", "cnt": 1, "armor": False, "work": True, "goods": ["AC", "AC", "AC", "A"]},
         {"xy": (17, 8), "obj": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": False, "goods": []},
         {"xy": (20, 9), "obj": "mine", "own": "Aaa", "cnt": 1, "armor": False, "out": "A"},
         {"xy": (24, 16), "obj": "send", "own": "Aaa", "cnt": 2, "armor": True, "work": True},
         {"xy": (14, 12), "obj": "lab", "own": "Aaa", "cnt": 1, "armor": False, "work": True},
-        {"xy": (16, 16), "obj": "hit", "own": "Aaa", "cnt": 3, "armor": True, "targets": []},
-        {"xy": (20, 16), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": True, "target": None},
+        {"xy": (16, 16), "obj": "hit", "own": "Aaa", "cnt": 3, "armor": True, "work": False},
+        {"xy": (20, 16), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": True, "work": True},
         {"xy": (28, 16), "obj": "post", "own": "Aaa", "cnt": 1, "armor": True},
     ],
+    "players": {
+        "Aaa": {
+            "glory": 0,
+            "research": 0,
+            "technologies": [],
+            "power": (None, 0)
+        },
+        "Bbb": {
+            "glory": 0,
+            "research": 0,
+            "technologies": [],
+            "power": (None, 0)
+        }
+    },
     "terrains": [
         ("base", "desert-0"),
         ("polygon", "crater-crown-0", (-14.92, 13.48), (-13.71, 13.8), (-13.52, 15.41), (-14.8, 14.95),),

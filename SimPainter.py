@@ -3,7 +3,14 @@ from TerrWindow import TerrPainter
 
 TWO_PI = 2 * math.pi
 
-class SimObject:
+class SimPoint:
+    def _calc_render_xy(self, xloc, yloc):
+        zoom = self.config["window-zoom"]
+        xloc, yloc = xloc * zoom, yloc * zoom
+        xoffset, yoffset = self.config["window-offset"]
+        return xloc + xoffset, yloc + yoffset
+
+class SimObject(SimPoint):
     black_color = 0, 0, 0, 1
     black2_color = 0.3, 0.3, 0.3, 1
     black3_color = 0.3, 0.3, 0.3, 0.75
@@ -12,16 +19,10 @@ class SimObject:
     def __init__(self, config, library, context, xy, own, cnt):
         self.config, self.library = config, library
         self.color = self.library["players"][own]["color"]
-        self.xy = self.__calc_render_xy(*xy)
+        self.xy = self._calc_render_xy(*xy)
         self.context = context
         self.modules = cnt
         self.xyloc = xy
-
-    def __calc_render_xy(self, xloc, yloc):
-        zoom = self.config["window-zoom"]
-        xloc, yloc = xloc * zoom, yloc * zoom
-        xoffset, yoffset = self.config["window-offset"]
-        return xloc + xoffset, yloc + yoffset
 
     def _draw_line(self, xy0, xy1, color, width=None):
         if width is not None: self.context.set_line_width(width)
@@ -193,26 +194,23 @@ class SimStore_0(SimObject):
         self.work = work
 
     def draw(self):
-        r = 0.82 * self.config["window-zoom"]
-        rr = 0.66 * self.config["window-zoom"]
-        rrr = 0.8 * self.config["window-zoom"]
-        rrrr = 0.35 * self.config["window-zoom"]
+        r = 0.65 * self.config["window-zoom"]
+        rr = 0.5 * self.config["window-zoom"]
         w = 0.1 * self.config["window-zoom"]
 
         self.context.set_line_width(w)
         self.context.set_source_rgba(*self.black_color)
-        pts0 = [(-r, -1.5*r), (-r, +1.5*r), (+r, +1.5*r), (+r, -1.5*r)]
-        pts1 = [(-rr, -1.5*rr), (-rr, +1.5*rr), (+rr, +1.5*rr), (+rr, -1.5*rr)]
+        pts0 = [(-r, -1.3*r), (-r, +1.3*r), (+r, +1.3*r), (+r, -1.3*r)]
+        pts1 = [(-rr, -1.3*rr), (-rr, +1.3*rr), (+rr, +1.3*rr), (+rr, -1.3*rr)]
         self._draw_polygon(pts0, self.black_color)
         self._draw_polygon(pts1, self.color)
 
-        self._draw_line((-r, -0.42*r), (+r, -0.42*r), self.black_color)
-        self._draw_line((-r, +0.42*r), (+r, +0.42*r), self.black_color)
-        self._draw_line((0, -1.45*r), (0, +1.45*r), self.black_color)
+        rrr = 0.722 * self.config["window-zoom"]
+        rrrr = 0.273 * self.config["window-zoom"]
         for i, resource in enumerate(self.resources):
             xyloc = r * self.cells[i][0], r * self.cells[i][1]
             self._draw_resource(xyloc, resource)
-        self._draw_modules("store", (1.25 * r, 0.6 * r))
+        self._draw_modules("store", (1.3 * r, 0.7 * r))
         self._draw_resource((-rrr, rrrr), self.work)
         self._draw_center()
 
@@ -235,10 +233,10 @@ class SimLab_0(SimObject):
         self._draw_center()
 
 class SimHit_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, targets):
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
-        self.targets = targets
         self.armor = armor
+        self.work = work
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -256,14 +254,14 @@ class SimHit_0(SimObject):
         self._draw_line((-rr, 0), (rr, 0), self.black_color)
         self._draw_line((0, -rr), (0, rr), self.black_color)
         self._draw_modules("hit", (0.75 * r, 0.75 * r))
-        self._draw_resource((-rrr, rrr), bool(self.targets))
+        self._draw_resource((-rrr, rrr), self.work)
         self._draw_center()
 
 class SimDevel_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, target):
+    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
-        self.target = target
         self.armor = armor
+        self.work = work
 
     def draw(self):
         r = 1 * self.config["window-zoom"]
@@ -279,7 +277,7 @@ class SimDevel_0(SimObject):
         self._draw_polygon(pts2, self.color)
      
         self._draw_modules("devel", (0.8 * r, 0.75 * r))
-        self._draw_resource((-rrr, rrr), bool(self.target))
+        self._draw_resource((-rrr, rrr), self.work)
         self._draw_center()
 
 class SimSend_0(SimObject):
@@ -323,7 +321,7 @@ class SimPost_0(SimObject):
         self._draw_modules("post", (r, 0.5 * r))
         self._draw_center()
 
-class SimPainter(TerrPainter):
+class SimPainter(TerrPainter, SimPoint):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
         self.selected_index = None
@@ -333,14 +331,11 @@ class SimPainter(TerrPainter):
 
     def set_selected_object(self, index):
         self.selected_index = index
-
+        
     def draw_selection(self, context, xy, radius, dist, dist2):
+        xloc, yloc = self._calc_render_xy(*xy)
         zoom = self.config["window-zoom"]
-        xloc, yloc = xy[0] * zoom, xy[1] * zoom
-        xoffset, yoffset = self.config["window-offset"]
-        r, d, d2 = radius * zoom, dist * zoom, dist2 * zoom
-        xloc, yloc = xloc + xoffset, yloc + yoffset
-
+        r, d, d2 = radius*zoom, dist*zoom, dist2*zoom
         context.set_source_rgba(1, 1, 1, 0.25)
         context.arc(xloc, yloc, d, 0, TWO_PI)
         context.fill()
@@ -351,6 +346,39 @@ class SimPainter(TerrPainter):
         context.arc(xloc, yloc, r, 0, TWO_PI)
         context.fill()
 
+    def _deduce_color(self, what):
+        if what == "devel": return 1, 1, 1, 1
+        elif what == "hit": return 0, 0, 0, 1
+        else: return self.library["resources"][what]["color"]
+
+    def draw_connections(self, context):
+        xy = self.battlefield["objects"][self.selected_index]["xy"]
+        zoom = self.config["window-zoom"]
+        r, rr = 0.2 * zoom, 2 * zoom
+
+        for what, (xo, yo), (xe, ye) in self.battlefield["links"]:
+            if (xo, yo) != xy: continue
+            x2o, y2o = self._calc_render_xy(xo, yo)
+            x2e, y2e = self._calc_render_xy(xe, ye)
+
+            context.set_line_width(0.2 * zoom)
+            context.set_source_rgba(0, 0, 0, 0.5)
+            context.move_to(x2o, y2o)
+            context.line_to(x2e, y2e) 
+            context.stroke()
+
+            a = math.atan2(y2e - y2o, x2e - x2o)
+            x2m = x2o + rr * math.cos(a)
+            y2m = y2o + rr * math.sin(a)
+
+            context.set_source_rgba(0, 0, 0, 1)
+            context.arc(x2m, y2m, 3.5*r, 0, TWO_PI)
+            context.fill()
+            color = self._deduce_color(what)
+            context.set_source_rgba(*color)
+            context.arc(x2m, y2m, r, 0, TWO_PI)
+            context.fill()
+            
     def draw(self, context):
         self.terr_painter.draw(context)
         for index, obj in enumerate(self.battlefield["objects"]):
@@ -372,3 +400,7 @@ class SimPainter(TerrPainter):
             elif shape == "send-0": SimSend_0(self.config, self.library, context, **obj).draw()
             elif shape == "post-0": SimPost_0(self.config, self.library, context, **obj).draw()
             else: raise ValueError(f"Not supported object: {obj['obj']}")
+
+        if self.selected_index is None: return
+        self.draw_connections(context)
+

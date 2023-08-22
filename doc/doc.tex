@@ -109,9 +109,9 @@ Gracze mogą wydobywać surowce proste, oznaczane pojedynczymi literami alfabetu
 \item lub odkrywanie zaawansowanych technologii.
 \end{itemize}
 
-\rule{-5mm}{0mm}\elektrownia{4,12}{elektrownia} $\to\to \Big($ \kopalnia{4,12}{kopalnia} $\to$ \magazyn{8,17}{magazyn} $\to$ \mikser{6,12}{mikser} $\to$ \magazyn{8,17}{magazyn} $\to\big($\rule{-2mm}{0mm}\laboratorium{14,7}{lab} $||$ \transmiter{14,2}{transmiter} $||$ \rule{3mm}{0mm}\deweloper{14,2}{konstruktor}\rule{3mm}{0mm} $||$ \wyrzutnia{3,12}{wyrzutnia} $\big)\Big) ||$ \rule{-3mm}{0mm}\wartownia{8,2}{wartownia}
+\rule{-6mm}{0mm}\elektrownia{4,12}{elektrownia} $\to\to \Big($ \kopalnia{4,12}{kopalnia} $\to$ \magazyn{8,17}{magazyn} $\to$ \mikser{6,12}{mikser} $\to$ \magazyn{8,17}{magazyn} $\to\big($\rule{-2mm}{0mm}\laboratorium{14,7}{lab} $||$ \transmiter{14,2}{transmiter} $||$ \rule{3mm}{0mm}\deweloper{14,2}{konstruktor}\rule{3mm}{0mm} $||$ \wyrzutnia{3,12}{wyrzutnia} $\big)\Big) \rule{1mm}{0mm}||$ \rule{-4mm}{0mm}\wartownia{8,2}{wartownia}
 
-\rule{0cm}{1cm}Diagram dozwolonego przesuwania surowców jest zaprezentowany powyżej. $\to\to$ oznacza bycie zasilanym przez elektrownie (dostępne jest jedno źródło zasilania -- reaktor nuklearny). $\to$ oznacza normalne przemieszczenie surowca. $||$ oznacza alternatywne efektory.
+\rule{0cm}{1cm}Diagram dozwolonego przesuwania surowców jest zaprezentowany powyżej. $\to\to$ oznacza bycie zasilanym przez elektrownie (dostępne jest jedno źródło zasilania -- reaktor nuklearny). $\to$ oznacza normalne przemieszczenie surowca. $||$ oznacza alternatywne budynki $/$ efektory.
 
 \section{Elementy Mapy}
 
@@ -191,7 +191,7 @@ W poniższych tabelach przedstawiono budynki, które mogą występować w grze. 
     \hline
     transmiter & transsmiter & 2 & \transmiter{14,-2}{} & -- & 4 cm & $BC$\\    
     \hline
-    wyrzutnia rakietowa & launcher & 3 & \wyrzutnia{5,8}{} & 20 cm & 4 cm & $AC$\\
+    wyrzutnia rakietowa & launcher & 3 & \wyrzutnia{5,8}{} & 30 cm & 4 cm & $AC$\\
     \hline
   \end{tabular}
 \end{center}
@@ -437,6 +437,10 @@ Zaawansowane technologie są kupowane za punkty nauki, które mogą być produko
 \item \textbf{Przejęcie Ładunku $/$ Glory Takeover}: Jeżeli gracz posiada już \textbf{Odział Dywersyjny} to w ramach jego akcji może przejąć wytransmitowane surowce innego gracza w danej turze przez transmitery znajdujące się w zasięgu 10 cm od dowolnego budynku gracza przejmującego ładunek. Akcję taką można przeprowadzić za pierwszym razem (dla danego gracza okazującego tę technologię) z prawdopodobieństwem 100\% (wystepuje element zaskoczenia). Kolejne próby dokonuje się z prawdopodobieństwem $1/3$. Każdy przejęty surowiec jest zaliczany jako punkty zwycięstwa gracza, który go przejął. 
 \item \textbf{Odział Szybkiego Reagowania $/$ Rapid Operational Unit}: Odział szybkiego reagowania, zmiejsza prawdopodobieństwo dywersji do $1/2$ w pierwszej próbie sabotażu danego budynku (po przerwie od dywersji), oraz całkowicie uniemożliwia powtórny sabotaż danego budynku w kolejnej turze. Ta technologia wpełni przeciwdziała sabotażowi nawet, gdy dany gracz jest jednocześnie sabotowany przez wielu graczy. Dodatkowo prawdopodobieństwo przejęcia towaru jest zmiejszane do $1/2$ przy odkryciu technologii przejęcia i do $1/6$ przy kolejnych próbach przejęcia transmitowanego surowca.
 \end{enumerate}
+
+\subsection{Przydzielanie Początkowych Technologii}
+
+Każdy z graczy otrzymuje na początku rozgrywki początkowe technologie, które nie powodują zwiększenia kosztu wymyślania kolejnych technologii. Sposób wyboru i liczbę technologii początkowych ($T$) określa scenariusz.
 
 \section{Kolejność Rozgrywki}
 
