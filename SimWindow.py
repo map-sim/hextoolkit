@@ -15,7 +15,25 @@ class SimGraph:
     def __init__(self, library, battlefield):
         self.battlefield =  battlefield
         self.library = library
-        
+
+    def check_resource(self, index, x, y):
+        if index is None: return
+        obj = self.battlefield["objects"][index]
+        if "out" in obj: return obj["out"]
+        if obj["obj"] == "devel": return "devel"
+        if obj["obj"] == "hit": return "hit"
+        if obj["obj"] == "store":
+            if len(obj["goods"]) == 0: return
+            dx = obj["xy"][0] - x
+            dy = obj["xy"][1] - y
+            if len(obj["goods"]) >= 1 and dx >= 0 and dy > 0.25: return obj["goods"][0]
+            if len(obj["goods"]) >= 2 and dx < 0 and dy > 0.25: return obj["goods"][1]
+            if len(obj["goods"]) >= 5 and dx >= 0 and dy < -0.25: return obj["goods"][4]
+            if len(obj["goods"]) >= 6 and dx < 0 and dy < -0.25: return obj["goods"][5]
+            if len(obj["goods"]) >= 3 and dx >= 0: return obj["goods"][2]
+            if len(obj["goods"]) >= 4 and dx < 0: return obj["goods"][3]
+        return
+
     def find_next_object(self, x, y):
         index, min_d2 = None, math.inf
         for i, obj in enumerate(self.battlefield["objects"]):
@@ -39,6 +57,7 @@ class SimWindow(TerrWindow):
         self.mode = "navi"
         self.set_mode_label("navi")
         self.show_info = False
+        self.good = None
 
         TerrWindow.__init__(self, config, library, battlefield)
         self.graphs = {"sim": SimGraph(library, battlefield), "terr": self.graph}
@@ -77,6 +96,7 @@ class SimWindow(TerrWindow):
             self.painter.set_selected_object(index)
             self.draw_content()
 
+            self.good = self.graphs["sim"].check_resource(index, ox, oy)
             terr, tmplist = self.graphs["terr"].check_terrain(ox, oy), []
             content = "<span size='25000'>navi: click</span><span size='15000'>"
             content += f"\n----------------\nterrain-type: {terr[0]}"
@@ -93,6 +113,7 @@ class SimWindow(TerrWindow):
                     elif k == "goods": tmplist += [f"{k}: {', '.join(v)}"]
                     else: tmplist += [f"{k}: {v}"]
             content += " | ".join(tmplist)
+            if self.good: content += f"\n----------------\ngood: {self.good}"
             self.set_mode_label(content + "</span>")
 
     def on_press(self, widget, event):

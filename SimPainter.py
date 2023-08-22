@@ -377,7 +377,7 @@ class SimPainter(TerrPainter, SimPoint):
             context.set_source_rgba(0, 0, 0, 0.5)
             context.arc(x2m, y2m, 3*r, 0, TWO_PI)
             context.fill()
-            context.set_source_rgba(0, 0, 0, 1)
+            context.set_source_rgba(0, 0, 0, 0.5)
             context.arc(x2m, y2m, 2.5*r, 0, TWO_PI)
             context.fill()
             color = self._deduce_color(what)
