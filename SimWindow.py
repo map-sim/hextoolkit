@@ -90,7 +90,11 @@ class SimWindow(TerrWindow):
         
     def on_click(self, widget, event):
         TerrWindow.on_click(self, widget, event)
-        if self.mode == "navi":
+        
+        if self.mode == "navi" and event.button == 3:
+            print("make connection", self.good, self.painter.selected_index)
+            
+        if self.mode == "navi" and event.button == 1: 
             ox, oy = self.get_click_location(event)
             index = self.graphs["sim"].find_next_object(ox, oy)
             self.painter.set_selected_object(index)
