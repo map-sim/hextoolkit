@@ -50,7 +50,10 @@ class SimGraph:
         if obj["obj"] != "mine": return
         if obj["out"] is None: return
         target_xy = None
-        for link in self.battlefield["links"]:
+        indexes = list(range(len(self.battlefield["links"])))
+        random.shuffle(indexes)
+        for i in indexes:
+            link = self.battlefield["links"][i]
             if link[1] != obj["xy"]: continue
             if obj["out"] != link[0]: continue
             target_xy = link[2]
@@ -71,8 +74,10 @@ class SimGraph:
         target_obj["goods"].append(obj["out"])
     
     def run(self, terr):
-        for obj in self.battlefield["objects"]:
-            self.run_mine(obj, terr)
+        indexes = list(range(len(self.battlefield["objects"])))
+        random.shuffle(indexes)
+        for i in indexes:            
+            self.run_mine(self.battlefield["objects"][i], terr)
 
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):

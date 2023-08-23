@@ -67,6 +67,7 @@ battlefield0 = {
 
         {"xy": (-10, 60), "obj": "nuke", "own": "Aaa", "cnt": 8},
         {"xy": (-3, 44), "obj": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": "B"},
+        {"xy": (0, 37), "obj": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": "A"},
         {"xy": (-8, 42), "obj": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": []},
         {"xy": (-10, 36), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
 
