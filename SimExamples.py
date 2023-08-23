@@ -49,11 +49,14 @@ battlefield0 = {
         ("AC", (10, 5), (14, 8)),
         ("A", (15, 5), (14, 8)),
         ("C", (15, 5), (17, 8)),
+        ("AC", (15, 5), (17, 8)),
         ("hit", (16, 16), (64, -10)),
         ("hit", (16, 16), (20, 9)),
         ("hit", (16, 16), (24, 16)),
         ("hit", (16, 16), (6, 12)),
-        ("AB", (13, 2), (15, 5))
+        ("AB", (13, 2), (15, 5)),
+        ("AB", (15, 5), (20, 1)),
+        ("AB", (19, 5), (15, 5)),
     ],
     "objects": [
         {"xy": (120, -20), "obj": "nuke", "own": "Bbb", "cnt": 8},
@@ -78,6 +81,8 @@ battlefield0 = {
         {"xy": (14, 12), "obj": "lab", "own": "Aaa", "cnt": 1, "armor": False, "work": True},
         {"xy": (16, 16), "obj": "hit", "own": "Aaa", "cnt": 3, "armor": True, "work": False},
         {"xy": (20, 16), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": True, "work": True},
+        {"xy": (20, 1), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": True, "work": True},
+        {"xy": (19, 5), "obj": "devel", "own": "Aaa", "cnt": 3, "armor": True, "work": True},
         {"xy": (28, 16), "obj": "post", "own": "Aaa", "cnt": 1, "armor": True},
     ],
     "players": {

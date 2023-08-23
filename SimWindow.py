@@ -19,13 +19,17 @@ class SimGraph:
     def check_resource(self, index, x, y):
         if index is None: return
         obj = self.battlefield["objects"][index]
+        dx = obj["xy"][0] - x
+        dy = obj["xy"][1] - y
+        if obj["obj"] == "post": return "devel"
+        if dx < -0.6:
+            if obj["obj"] == "devel": return "AB"
+            else: return "devel"
         if "out" in obj: return obj["out"]
         if obj["obj"] == "devel": return "devel"
         if obj["obj"] == "hit": return "hit"
         if obj["obj"] == "store":
             if len(obj["goods"]) == 0: return
-            dx = obj["xy"][0] - x
-            dy = obj["xy"][1] - y
             if len(obj["goods"]) >= 1 and dx >= 0 and dx < 0.6 and dy > 0.25: return obj["goods"][0]
             if len(obj["goods"]) >= 2 and dx < 0 and dx > -0.6 and dy > 0.25: return obj["goods"][1]
             if len(obj["goods"]) >= 5 and dx >= 0 and dx < 0.6 and dy < -0.25: return obj["goods"][4]
@@ -74,7 +78,8 @@ class SimWindow(TerrWindow):
         self.mode_label.set_markup(text)
 
     def update_info(self):
-        content = "<span size='25000'>admin: info</span><span size='15000'>"
+        content = f"<span size='25000'>{self.mode}: info</span>"
+        content += "<span size='15000'>"
         for key, val in self.config.items():
             content += f"\nconfig {key} --> {val}"
             print(f"config {key}", "-->", val)
@@ -87,24 +92,67 @@ class SimWindow(TerrWindow):
     def on_scroll(self, widget, event):
         TerrWindow.on_scroll(self, widget, event)
         if self.show_info: self.update_info()
-        
+
+    def delete_object(self):
+        torm = set()
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        for n, link in enumerate(self.battlefield["links"]):
+            if link[1] == obj["xy"] or link[2] == obj["xy"]: torm.add(n)
+        for n in reversed(sorted(torm)):
+            del self.battlefield["links"][n]
+        del self.battlefield["objects"][self.painter.selected_index]
+        self.painter.selected_index = None
+        self.good = None
+
+    def try_to_make_link(self, x, y):
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        if self.good is None: print("No good no-link"); return
+        if obj["obj"] == "nuke": print("Nuke no-link"); return
+        if obj["obj"] == "post": print("Post no-link"); return
+        index = self.graphs["sim"].find_next_object(x, y)
+        obj2 = self.battlefield["objects"][index]
+
+        count = 0
+        for link in self.battlefield["links"]:
+            if link[1] == obj["xy"] and link[2] == obj2["xy"]: count += 1
+        if count >= 2: print("No free slot (max 2)"); return
+        link = self.good, obj["xy"], obj2["xy"] 
+        self.battlefield["links"].append(link)
+        self.draw_content()
+
+    def try_to_remove_link(self, x, y):
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        if self.good is None: print("No good no-del-link"); return
+        index = self.graphs["sim"].find_next_object(x, y)
+        obj2 = self.battlefield["objects"][index]
+
+        torm = list()
+        for n, link in enumerate(self.battlefield["links"]):
+            if link == (self.good, obj["xy"], obj2["xy"]): torm.append(n)
+        for n in reversed(sorted(torm)): del self.battlefield["links"][n] 
+        self.draw_content()
+    
     def on_click(self, widget, event):
         TerrWindow.on_click(self, widget, event)
         
-        if self.mode == "navi" and event.button == 3:
-            print("make connection", self.good, self.painter.selected_index)
+        ox, oy = self.get_click_location(event)
+        if self.mode == "edit" and event.button == 3:
+            print("make link", self.good)
+            self.try_to_make_link(ox, oy)            
+        if self.mode == "delete" and event.button == 3:
+            print("delete link", self.good)
+            self.try_to_remove_link(ox, oy)            
             
-        if self.mode == "navi" and event.button == 1: 
-            ox, oy = self.get_click_location(event)
+        if event.button == 1: 
             index = self.graphs["sim"].find_next_object(ox, oy)
             self.painter.set_selected_object(index)
             self.draw_content()
 
             self.good = self.graphs["sim"].check_resource(index, ox, oy)
             terr, tmplist = self.graphs["terr"].check_terrain(ox, oy), []
-            content = "<span size='25000'>navi: click</span><span size='15000'>"
-            content += f"\n----------------\nterrain-type: {terr[0]}"
-            content += f"\nterrain-shape: {terr[1][0]}"
+            content = f"<span size='25000'>{self.mode}: click</span>"
+            content += f"<span size='15000'>\n----------------\n"
+            content += f"terrain-type: {terr[0]}\nterrain-shape: {terr[1][0]}"
             if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
             if index is not None:
                 obj = self.battlefield["objects"][index]
@@ -137,22 +185,32 @@ class SimWindow(TerrWindow):
             self.mode = "navi"
             self.draw_content()
         elif key_name == "F2":
-            print("##> pointer mode: admin")
-            self.set_mode_label("admin")
-            self.mode = "admin"
+            print("##> pointer mode: edit")
+            self.set_mode_label("edit")
+            self.mode = "edit"
             self.show_info = False
             self.draw_content()
-        elif key_name == "i" and self.mode == "admin":
+        elif key_name == "F3":
+            print("##> pointer mode: delete")
+            self.set_mode_label("delete")
+            self.mode = "delete"
+            self.show_info = False
+            self.draw_content()
+        elif key_name == "i":
             self.show_info = not self.show_info
-            if not self.show_info: self.set_mode_label("admin")
-        elif key_name == "c" and self.mode == "admin":
-            self.set_mode_label("admin: check")
+            if not self.show_info: self.set_mode_label("edit")
+        elif key_name == "c" and self.mode == "navi":
+            self.set_mode_label("navi: check")
             validator = SimValidator()
             validator.validate_config(self.config)
             validator.validate_library(self.library)
             validator.validate_map(self.library, self.battlefield)
             self.show_info = False
-        elif key_name == "y" and self.mode in ("admin", "navi"):
+        elif key_name == "d" and self.mode == "delete":
+            if self.painter.selected_index is not None:
+                self.delete_object()
+                self.draw_content()
+        elif key_name == "y" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
                 if "work" in obj: obj["work"] = True
@@ -169,7 +227,7 @@ class SimWindow(TerrWindow):
                         obj["out"] = cmpl[i]
                     else: obj["out"] = cmpl[0]
                 self.draw_content()
-        elif key_name == "n" and self.mode in ("admin", "navi"):
+        elif key_name == "n" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
                 if "targets" in obj: obj["targets"] = []
@@ -177,8 +235,8 @@ class SimWindow(TerrWindow):
                 if "work" in obj: obj["work"] = False
                 if "out" in obj: obj["out"] = None
                 self.draw_content()
-        elif key_name == "s" and self.mode == "admin":
-            self.set_mode_label("admin: save")
+        elif key_name == "s" and self.mode == "navi":
+            self.set_mode_label("navi: save")
             cnt, libname, mapname = 0, "lib", "map"
             flib = lambda c: f"{libname}-{c}.txt"
             fmap = lambda c: f"{mapname}-{c}.txt"

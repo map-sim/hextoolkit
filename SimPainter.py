@@ -34,11 +34,12 @@ class SimObject(SimPoint):
         self.context.stroke()
     
     def _draw_center(self):
-        r = 0.05 * self.config["window-zoom"]
-        self.context.set_source_rgba(1, 1, 1)
-        self.context.arc(*self.xy, r, 0, TWO_PI)
-        self.context.fill()
-        
+        # r = 0.05 * self.config["window-zoom"]
+        # self.context.set_source_rgba(1, 1, 1)
+        # self.context.arc(*self.xy, r, 0, TWO_PI)
+        # self.context.fill()
+        pass
+
     def _draw_hp_box(self, offset, status, armor=False):
         w = 0.133 * self.config["window-zoom"]
         dx, dy = offset
@@ -356,6 +357,7 @@ class SimPainter(TerrPainter, SimPoint):
         zoom = self.config["window-zoom"]
         r, rr = 0.2 * zoom, 1.5 * zoom
 
+        done = set()
         for what, (xo, yo), (xe, ye) in self.battlefield["links"]:
             if (xo, yo) != xy: continue
             x2o, y2o = self._calc_render_xy(xo, yo)
@@ -364,25 +366,31 @@ class SimPainter(TerrPainter, SimPoint):
 
             x2oo = x2o + 0.5 * rr * math.cos(a)
             y2oo = y2o + 0.5 * rr * math.sin(a)
-
-            context.set_line_width(0.1 * zoom)
-            context.set_source_rgba(0, 0, 0, 0.5)
-            context.move_to(x2oo, y2oo)
-            context.line_to(x2e, y2e) 
-            context.stroke()
-
             x2m = x2e - rr * math.cos(a)
             y2m = y2e - rr * math.sin(a)
 
-            context.set_source_rgba(0, 0, 0, 0.5)
-            context.arc(x2m, y2m, 3*r, 0, TWO_PI)
-            context.fill()
-            context.set_source_rgba(0, 0, 0, 0.5)
-            context.arc(x2m, y2m, 2.5*r, 0, TWO_PI)
-            context.fill()
-            color = self._deduce_color(what)
-            context.set_source_rgba(*color)
-            context.arc(x2m, y2m, 1.5*r, 0, TWO_PI)
+            if (xo, yo, xe, ye) not in done:
+                context.set_line_width(0.1 * zoom)
+                context.set_source_rgba(0, 0, 0, 0.5)
+                context.move_to(x2oo, y2oo)
+                context.line_to(x2e, y2e) 
+                context.stroke()
+            
+                context.set_source_rgba(0, 0, 0, 0.5)
+                context.arc(x2m, y2m, 3*r, 0, TWO_PI)
+                context.fill()
+                context.set_source_rgba(0, 0, 0, 0.5)
+                context.arc(x2m, y2m, 2.5*r, 0, TWO_PI)
+                context.fill()
+                
+                color = self._deduce_color(what)
+                context.set_source_rgba(*color)
+                context.arc(x2m, y2m, 1.5*r, 0, TWO_PI)
+            else:
+                color = self._deduce_color(what)
+                context.set_source_rgba(*color)
+                context.arc(x2m, y2m, 1.5*r, 0.25*TWO_PI, 0.75*TWO_PI)
+            done.add((xo, yo, xe, ye))
             context.fill()
             
     def draw(self, context):
