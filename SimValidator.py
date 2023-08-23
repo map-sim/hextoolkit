@@ -50,7 +50,8 @@ class MapValidator(TypeValidator):
         self.validate_types("map", battlefield)
         self.validate_terrains(battlefield)
         self.validate_intervals(battlefield)
-        
+        self.validate_links(battlefield)
+
     def validate_intervals(self, battlefield):
         print("map validate_intervals...")
         for n, obj1 in enumerate(battlefield["objects"]):
@@ -68,7 +69,36 @@ class MapValidator(TypeValidator):
         for row in battlefield["terrains"]:
             assert row[1] in self.library["terrains"]
         print("map validate_terrains...")
+
+    def validate_links(self, battlefield):
+        counters = {}
+        for g, xy1, xy2 in battlefield["links"]:
+            assert xy1 != xy2, "link other to other"
+            try: counters[*xy1, *xy2] += 1
+            except KeyError: counters[*xy1, *xy2] = 1
+
+            o_is, e_is = False, False
+            for obj in battlefield["objects"]:
+                if xy1 == obj["xy"]:  o_is = True
+                if xy2 == obj["xy"]:  e_is = True
+            assert o_is and e_is, f"broken link: {g}, {xy1}, {xy2}"
+        for oe, c in counters.items(): assert c <= 2, f"{oe} counter = {c}"
         
+        for g, xy1, xy2 in battlefield["links"]:
+            d2 = (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2
+            for obj in battlefield["objects"]:
+                if xy1 == obj["xy"]: break
+            for obj2 in battlefield["objects"]:
+                if xy2 == obj2["xy"]: break
+                
+            objdef = self.library["objects"][obj["obj"]]
+            obj2def = self.library["objects"][obj2["obj"]]
+            r = objdef["range"] if objdef["range"] > 0 else obj2def["range"]
+            if g == "hit": r *= 2
+            info = f"range {g}, {xy1}{obj['obj']}, {xy2}{obj2['obj']} < {r}"
+            assert math.sqrt(d2) <= r, info 
+        print("map validate_links...")
+            
 class SimValidator:
     def validate_config(self, config):
         ConfigValidator(config)

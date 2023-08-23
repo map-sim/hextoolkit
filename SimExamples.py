@@ -34,8 +34,8 @@ library0 = {
     },
     "terrains": {
  	"desert-0":       {"color": [1.0, 0.95, 0.93], "buildable": True, "level": 0, "risk": 0.0, "desc": "desert", "resources":{}},
-	"deposit-ab-0":   {"color": [0.8, 0.8, 0.9],   "buildable": True, "level": 0, "risk": 0.0, "desc": "deposit", "resources":{"C": 0.3}},
-	"deposit-c-0":     {"color": [0.9, 0.9, 0.7],   "buildable": True, "level": 0, "risk": 0.0, "desc": "deposit", "resources":{"A": 0.1, "B": 0.15}},
+	"deposit-c-0":   {"color": [0.8, 0.8, 0.9],   "buildable": True, "level": 0, "risk": 0.0, "desc": "deposit", "resources":{"C": 0.3}},
+	"deposit-ab-0":     {"color": [0.9, 0.9, 0.7],   "buildable": True, "level": 0, "risk": 0.0, "desc": "deposit", "resources":{"A": 0.1, "B": 0.15}},
         "tectonic-fault-0":{"color": [0.9, 0.82, 0.8],   "buildable": True, "level": 0, "risk": 0.0277777, "desc": "tectonic-fault", "resources":{}},
         "crater-crown-0":  {"color": [1.0, 0.8, 0.8],   "buildable": False, "level": 1, "risk": 0.0, "desc": "crater-crown", "resources":{}},
 	"toxic-sea-0":    {"color": [0.55, 0.9, 0.9],   "buildable": False, "level": 0, "risk": 0.0, "desc": "toxic-sea", "resources":{}},

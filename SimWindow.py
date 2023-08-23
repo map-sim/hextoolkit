@@ -2,7 +2,7 @@ from SimValidator import SimValidator
 from SimPainter import SimPainter
 from TerrWindow import TerrWindow
 
-import gi, os, copy, math
+import gi, os, copy, math, random
 from pprint import pformat
 
 gi.require_version('Gtk', '3.0')
@@ -45,6 +45,34 @@ class SimGraph:
             if d2 > self.max_d2: continue
             if d2 < min_d2: min_d2, index = d2, i
         return index
+
+    def run_mine(self, obj, terr):
+        if obj["obj"] != "mine": return
+        if obj["out"] is None: return
+        target_xy = None
+        for link in self.battlefield["links"]:
+            if link[1] != obj["xy"]: continue
+            if obj["out"] != link[0]: continue
+            target_xy = link[2]
+        if target_xy is None: return
+        target_obj = None
+        for obj2 in self.battlefield["objects"]:
+            if obj2["xy"] == target_xy and obj2["obj"] == "store":
+                target_obj = obj2
+        if target_obj is None: return
+        if not target_obj["work"]: return
+        if len(target_obj["goods"]) >= 6: return
+        t = terr.check_terrain(*obj["xy"])[0]
+        resources = self.library["terrains"][t]["resources"]
+        p = resources.get(obj["out"], 0.0)
+        r = random.random()
+        if r > p: return
+        print("New resource:", obj["out"])
+        target_obj["goods"].append(obj["out"])
+    
+    def run(self, terr):
+        for obj in self.battlefield["objects"]:
+            self.run_mine(obj, terr)
 
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
@@ -196,6 +224,12 @@ class SimWindow(TerrWindow):
             self.mode = "delete"
             self.show_info = False
             self.draw_content()
+        elif key_name == "F4":
+            print("##> pointer mode: run")
+            self.set_mode_label("run")
+            self.mode = "run"
+            self.show_info = False
+            self.draw_content()
         elif key_name == "i":
             self.show_info = not self.show_info
             if not self.show_info: self.set_mode_label("edit")
@@ -206,6 +240,10 @@ class SimWindow(TerrWindow):
             validator.validate_library(self.library)
             validator.validate_map(self.library, self.battlefield)
             self.show_info = False
+        elif key_name == "Return" and self.mode == "run":
+            print("Simulate a single step...")
+            self.graphs["sim"].run(self.graphs["terr"])
+            self.draw_content()
         elif key_name == "d" and self.mode == "delete":
             if self.painter.selected_index is not None:
                 self.delete_object()
