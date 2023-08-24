@@ -72,11 +72,28 @@ class SimGraph:
         if r > p: return
         print("New resource:", obj["out"])
         target_obj["goods"].append(obj["out"])
-    
+        
+    def run_storage(self, good, xyo, xye):
+        objo, obje = None, None
+        for obj in self.battlefield["objects"]:
+            if obj["xy"] == xyo or obj["xy"] == xye:
+                if obj["obj"] != "store": return
+            if obj["xy"] == xyo: objo = obj
+            if obj["xy"] == xye: obje = obj
+        if good not in objo["goods"]: return
+        if len(obje["goods"]) >= 6: return
+        index = objo["goods"].index(good)
+        del objo["goods"][index]
+        obje["goods"].append(good)
+
     def run(self, terr):
+        indexes = list(range(len(self.battlefield["links"])))
+        random.shuffle(indexes)
+        for i in indexes:
+            self.run_storage(*self.battlefield["links"][i])
         indexes = list(range(len(self.battlefield["objects"])))
         random.shuffle(indexes)
-        for i in indexes:            
+        for i in indexes:
             self.run_mine(self.battlefield["objects"][i], terr)
 
 class SimWindow(TerrWindow):
@@ -94,7 +111,9 @@ class SimWindow(TerrWindow):
         self.mode = "navi"
         self.set_mode_label("navi")
         self.show_info = False
+        self.player = None
         self.good = None
+        self.obj = None
 
         TerrWindow.__init__(self, config, library, battlefield)
         self.graphs = {"sim": SimGraph(library, battlefield), "terr": self.graph}
@@ -139,19 +158,49 @@ class SimWindow(TerrWindow):
 
     def try_to_make_link(self, x, y):
         obj = self.battlefield["objects"][self.painter.selected_index]
-        if self.good is None: print("No good no-link"); return
-        if obj["obj"] == "nuke": print("Nuke no-link"); return
-        if obj["obj"] == "post": print("Post no-link"); return
+        if self.good is None: print("No good no-link"); return False
+        if self.good != "devel":
+            if obj["obj"] == "nuke": print("Nuke no-link"); return False
+            if obj["obj"] == "post": print("Post no-link"); return False
         index = self.graphs["sim"].find_next_object(x, y)
         obj2 = self.battlefield["objects"][index]
+        if obj["xy"] == obj2["xy"]: print("Self-link not supported!"); return False
+        if self.good == "devel" and "devel" not in [obj["obj"], obj2["obj"]]:
+            print("Devel is supported only by devel!"); return False
+        if self.good == "hit" and obj["obj"] != "hit":
+            print("Hit is supported only by hit!"); return False            
+        if obj["obj"] == "devel" and self.good in self.library["resources"]:
+            if obj2["obj"] != "store": print("Recycling only to store!"); return False
 
-        count = 0
+        if obj2["obj"] == "mine" and self.good in self.library["resources"]: 
+            print("Mine does not accept resources!"); return False
+        if obj2["obj"] == "nuke" and self.good in self.library["resources"]:
+            print("Nuke does not accept resources!"); return False
+        if obj2["obj"] == "post" and self.good in self.library["resources"]:
+            print("Post does not accept resources!"); return False
+        if self.good in self.library["resources"]:
+            if "store" not in [obj["obj"], obj2["obj"]]:
+                print("Resources have to be in store!"); return False            
+        count = 0; hit_counter = 0; anti_counter = 0
+        new_link = self.good, obj["xy"], obj2["xy"] 
         for link in self.battlefield["links"]:
             if link[1] == obj["xy"] and link[2] == obj2["xy"]: count += 1
-        if count >= 2: print("No free slot (max 2)"); return
-        link = self.good, obj["xy"], obj2["xy"] 
-        self.battlefield["links"].append(link)
+            if link[1] == obj["xy"] and self.good == "hit":
+                for obj3 in self.battlefield["objects"]:
+                    if obj3["xy"] == link[2]:
+                        if obj3["own"] == obj["own"]: anti_counter += 1
+                        else: hit_counter += 1
+            if obj["obj"] != "store" or obj2["obj"] != "store":
+                if link[1] == new_link[1] and link[2] == new_link[2]:
+                    print("Link already exists" ); return False
+        if count >= 2: print("No free slot (max 2)"); return False
+        if obj["own"] != obj2["own"] and hit_counter >= 2:
+            print("No free hit slot (max 2)"); return False
+        if obj["own"] == obj2["own"] and anti_counter >= 3:
+            print("No free anti-hit slot (max 2)"); return False
+        self.battlefield["links"].append(new_link)
         self.draw_content()
+        return True
 
     def try_to_remove_link(self, x, y):
         obj = self.battlefield["objects"][self.painter.selected_index]
@@ -170,8 +219,9 @@ class SimWindow(TerrWindow):
         
         ox, oy = self.get_click_location(event)
         if self.mode == "edit" and event.button == 3:
-            print("make link", self.good)
-            self.try_to_make_link(ox, oy)            
+            print("try to make link", self.good)
+            status = self.try_to_make_link(ox, oy)
+            if status: print("New link done!")
         if self.mode == "delete" and event.button == 3:
             print("delete link", self.good)
             self.try_to_remove_link(ox, oy)            
@@ -209,7 +259,11 @@ class SimWindow(TerrWindow):
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.set_mode_label("navi")
             self.mode = "navi"
+            self.player = None
+            self.good = None
+            self.obj = None
             self.show_info = False
+            self.painter.selected_index = None
             self.draw_content()
         elif key_name == "F1":
             print("##> mode: navi")
@@ -253,6 +307,22 @@ class SimWindow(TerrWindow):
             if self.painter.selected_index is not None:
                 self.delete_object()
                 self.draw_content()
+        elif key_name == "o" and self.mode == "edit":
+            objs = list(self.library["objects"].keys())
+            if self.obj is not None:
+                index = objs.index(self.obj)
+                index = (index + 1) % len(objs)
+            else: index = 0
+            self.obj = list(sorted(objs))[index]
+            self.set_mode_label(f"edit: object: {self.obj}")            
+        elif key_name == "p" and self.mode == "edit":
+            players = list(self.library["players"].keys())
+            if self.player is not None:
+                index = players.index(self.player)
+                index = (index + 1) % len(players)
+            else: index = 0
+            self.player = list(sorted(players))[index]
+            self.set_mode_label(f"edit: player: {self.player}")            
         elif key_name == "y" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]

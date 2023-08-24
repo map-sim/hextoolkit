@@ -74,15 +74,16 @@ class MapValidator(TypeValidator):
         counters = {}
         for g, xy1, xy2 in battlefield["links"]:
             assert xy1 != xy2, "link other to other"
-            try: counters[*xy1, *xy2] += 1
-            except KeyError: counters[*xy1, *xy2] = 1
+            try: counters[g, *xy1, *xy2] += 1
+            except KeyError: counters[g, *xy1, *xy2] = 1
 
             o_is, e_is = False, False
             for obj in battlefield["objects"]:
                 if xy1 == obj["xy"]:  o_is = True
                 if xy2 == obj["xy"]:  e_is = True
             assert o_is and e_is, f"broken link: {g}, {xy1}, {xy2}"
-        for oe, c in counters.items(): assert c <= 2, f"{oe} counter = {c}"
+        for oe, c in counters.items():
+            assert c == 1, f"{oe} counter = {c}"
         
         for g, xy1, xy2 in battlefield["links"]:
             d2 = (xy1[0] - xy2[0]) ** 2 + (xy1[1] - xy2[1]) ** 2
