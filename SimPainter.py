@@ -405,7 +405,7 @@ class SimPainter(TerrPainter, SimPoint):
             if index == self.selected_index:
                 interval = self.library["objects"][obj["obj"]]["interval"]
                 r = self.library["objects"][obj["obj"]].get("range", 0.0)
-                rr = 2*r if obj["obj"] == "hit" else r
+                rr = 2*r if obj["obj"] in ["hit", "devel"] else r
                 self.draw_selection(context, obj["xy"], interval, r, rr)
 
         for obj in self.battlefield["objects"]:

@@ -156,6 +156,37 @@ class SimWindow(TerrWindow):
         self.painter.selected_index = None
         self.good = None
 
+    def try_to_add_obj(self, x, y):
+        obj = self.library["objects"][self.obj]
+        iv1 = obj["interval"]
+        for k, obj2 in enumerate(self.battlefield["objects"]):
+            iv2 = self.library["objects"][obj2["obj"]]["interval"]
+            d2 = (x - obj2["xy"][0]) ** 2
+            d2 += (y - obj2["xy"][1]) ** 2
+            d = math.sqrt(d2)
+            if d < max([iv1, iv2]):
+                print("To close to:", obj2["obj"], obj2["xy"]); return False
+        new_obj = {"xy": (x, y), "obj": self.obj, "own": self.player, "cnt": obj["modules"]}
+        if new_obj["obj"] == "mixer": new_obj["out"] = None
+        if new_obj["obj"] == "mine": new_obj["out"] = None
+        if new_obj["obj"] == "store": new_obj["work"] = False; new_obj["goods"] = []
+        if new_obj["obj"] == "devel": new_obj["work"] = False
+        if new_obj["obj"] == "send": new_obj["work"] = False
+        if new_obj["obj"] == "lab": new_obj["work"] = False
+        if new_obj["obj"] == "hit": new_obj["work"] = False
+        if new_obj["obj"] == "post": new_obj["armor"] = True
+        elif new_obj["obj"] == "nuke": pass
+        else: new_obj["armor"] = False
+        if self.painter.selected_index is not None:
+            obj3 = self.battlefield["objects"][self.painter.selected_index]
+            if obj3["obj"] == "devel" and self.player == obj3["own"]:
+                link = "devel", obj3["xy"], (x, y)
+                self.battlefield["links"].append(link)
+                new_obj["cnt"] = 0
+        self.battlefield["objects"].append(new_obj)
+        self.draw_content()
+        return True
+        
     def try_to_make_link(self, x, y):
         obj = self.battlefield["objects"][self.painter.selected_index]
         if self.good is None: print("No good no-link"); return False
@@ -198,6 +229,14 @@ class SimWindow(TerrWindow):
             print("No free hit slot (max 2)"); return False
         if obj["own"] == obj2["own"] and anti_counter >= 3:
             print("No free anti-hit slot (max 2)"); return False
+
+        d2 = (obj["xy"][0] - obj2["xy"][0]) ** 2
+        d2 += (obj["xy"][1] - obj2["xy"][1]) ** 2
+        d = math.sqrt(d2)
+        if self.good == "devel": r = 2*self.library["objects"]["devel"]["range"]
+        elif self.good == "hit": r = 2*self.library["objects"]["hit"]["range"]
+        else: r = self.library["objects"]["store"]["range"]
+        if d > r: print("Distance greater than range"); return False
         self.battlefield["links"].append(new_link)
         self.draw_content()
         return True
@@ -225,6 +264,11 @@ class SimWindow(TerrWindow):
         if self.mode == "delete" and event.button == 3:
             print("delete link", self.good)
             self.try_to_remove_link(ox, oy)            
+        if self.mode == "edit" and event.button == 1:
+            if self.obj is not None and self.player is not None: 
+                print(f"try to add obj {self.obj}/{self.player}")
+                status = self.try_to_add_obj(ox, oy)
+                if status: print("New obj done!")
             
         if event.button == 1: 
             index = self.graphs["sim"].find_next_object(ox, oy)
@@ -265,25 +309,25 @@ class SimWindow(TerrWindow):
             self.show_info = False
             self.painter.selected_index = None
             self.draw_content()
-        elif key_name == "F1":
+        elif key_name == "F1" or key_name == "Home":
             print("##> mode: navi")
             self.show_info = False
             self.set_mode_label("navi")
             self.mode = "navi"
             self.draw_content()
-        elif key_name == "F2":
+        elif key_name == "F2" or key_name == "Insert":
             print("##> pointer mode: edit")
             self.set_mode_label("edit")
             self.mode = "edit"
             self.show_info = False
             self.draw_content()
-        elif key_name == "F3":
+        elif key_name == "F3" or key_name == "Delete":
             print("##> pointer mode: delete")
             self.set_mode_label("delete")
             self.mode = "delete"
             self.show_info = False
             self.draw_content()
-        elif key_name == "F4":
+        elif key_name == "F4" or key_name == "End":
             print("##> pointer mode: run")
             self.set_mode_label("run")
             self.mode = "run"
@@ -308,7 +352,7 @@ class SimWindow(TerrWindow):
                 self.delete_object()
                 self.draw_content()
         elif key_name == "o" and self.mode == "edit":
-            objs = list(self.library["objects"].keys())
+            objs = list(sorted(self.library["objects"].keys()))
             if self.obj is not None:
                 index = objs.index(self.obj)
                 index = (index + 1) % len(objs)
@@ -328,16 +372,22 @@ class SimWindow(TerrWindow):
                 obj = self.battlefield["objects"][self.painter.selected_index]
                 if "work" in obj: obj["work"] = True
                 if obj["obj"] == "mine":
+                    for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
+                        if xy0 == obj["xy"] and g == obj["out"]:
+                            del self.battlefield["links"][n]
                     raws = [k for k, v in self.library["resources"].items() if "process" not in v]
                     if obj["out"] is not None:
                         i = (raws.index(obj["out"]) + 1) % len(raws)
-                        obj["out"] = raws[i]
+                        self.good = obj["out"] = raws[i]  
                     else: obj["out"] = raws[0]
                 if obj["obj"] == "mixer":
+                    for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
+                        if xy0 == obj["xy"] and g == obj["out"]:
+                            del self.battlefield["links"][n]
                     cmpl = [k for k, v in self.library["resources"].items() if "process" in v]
                     if obj["out"] is not None:
                         i = (cmpl.index(obj["out"]) + 1) % len(cmpl)
-                        obj["out"] = cmpl[i]
+                        self.good = obj["out"] = cmpl[i]
                     else: obj["out"] = cmpl[0]
                 self.draw_content()
         elif key_name == "n" and self.mode == "edit":
