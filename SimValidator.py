@@ -60,9 +60,9 @@ class MapValidator(TypeValidator):
                 d2 = (obj1["xy"][0] - obj2["xy"][0]) ** 2
                 d2 += (obj1["xy"][1] - obj2["xy"][1]) ** 2
                 d = math.sqrt(d2)
-                iv1 = self.library["objects"][obj1["obj"]]["interval"]
-                iv2 = self.library["objects"][obj2["obj"]]["interval"]
-                info = f"wrong dist: {obj1['xy']}/{obj1['obj']} -- {obj2['xy']}/{obj2['obj']}"
+                iv1 = self.library["objects"][obj1["name"]]["interval"]
+                iv2 = self.library["objects"][obj2["name"]]["interval"]
+                info = f"wrong dist: {obj1['xy']}/{obj1['name']} -- {obj2['xy']}/{obj2['name']}"
                 assert d >= max([iv1, iv2]), info
 
     def validate_terrains(self, battlefield):
@@ -92,11 +92,11 @@ class MapValidator(TypeValidator):
             for obj2 in battlefield["objects"]:
                 if xy2 == obj2["xy"]: break
                 
-            objdef = self.library["objects"][obj["obj"]]
-            obj2def = self.library["objects"][obj2["obj"]]
+            objdef = self.library["objects"][obj["name"]]
+            obj2def = self.library["objects"][obj2["name"]]
             r = objdef["range"] if objdef["range"] > 0 else obj2def["range"]
             if g == "hit": r *= 2
-            info = f"range {g}, {xy1}{obj['obj']}, {xy2}{obj2['obj']} < {r}"
+            info = f"range {g}, {xy1}{obj['name']}, {xy2}{obj2['name']} < {r}"
             assert math.sqrt(d2) <= r, info 
         print("map validate_links...")
             

@@ -95,7 +95,7 @@ class SimObject(SimPoint):
         self.context.fill()
 
 class SimNuke_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt):
+    def __init__(self, config, library, context, xy, name, own, cnt):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
         self.armor = False
 
@@ -142,7 +142,7 @@ class SimNuke_0(SimObject):
         self._draw_center()
 
 class SimMine_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, out):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, out):
         SimObject.__init__(self, config, library, context, xy, own, cnt)        
         self.resource = out
         self.armor = armor
@@ -161,7 +161,7 @@ class SimMine_0(SimObject):
         self._draw_center()
 
 class SimMixer_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, out):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, out):
         SimObject.__init__(self, config, library, context, xy, own, cnt)        
         self.resource = out
         self.armor = armor
@@ -188,7 +188,7 @@ class SimMixer_0(SimObject):
 class SimStore_0(SimObject):
     cells = [(-0.43, -0.84), (0.43, -0.84), (-0.43, 0),
              (0.43, 0), (-0.43, 0.84), (0.43, 0.84)]    
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, goods, work):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, goods, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)        
         self.resources = goods
         self.armor = armor
@@ -216,7 +216,7 @@ class SimStore_0(SimObject):
         self._draw_center()
 
 class SimLab_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
         self.armor = armor
         self.work = work
@@ -234,7 +234,7 @@ class SimLab_0(SimObject):
         self._draw_center()
 
 class SimHit_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
         self.armor = armor
         self.work = work
@@ -259,7 +259,7 @@ class SimHit_0(SimObject):
         self._draw_center()
 
 class SimDevel_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
         self.armor = armor
         self.work = work
@@ -282,7 +282,7 @@ class SimDevel_0(SimObject):
         self._draw_center()
 
 class SimSend_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor, work):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor, work):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
         self.armor = armor
         self.work = work
@@ -305,7 +305,7 @@ class SimSend_0(SimObject):
         self._draw_center()
 
 class SimPost_0(SimObject):
-    def __init__(self, config, library, context, xy, obj, own, cnt, armor):
+    def __init__(self, config, library, context, xy, name, own, cnt, armor):
         SimObject.__init__(self, config, library, context, xy, own, cnt)
         self.armor = armor
 
@@ -354,7 +354,7 @@ class SimPainter(TerrPainter, SimPoint):
 
     def draw_connections(self, context):
         xy = self.battlefield["objects"][self.selected_index]["xy"]
-        obj = self.battlefield["objects"][self.selected_index]["obj"]
+        obj = self.battlefield["objects"][self.selected_index]["name"]
         zoom = self.config["window-zoom"]
         r, rr = 0.2 * zoom, 1.5 * zoom
 
@@ -363,7 +363,7 @@ class SimPainter(TerrPainter, SimPoint):
             if (xo, yo) != xy: continue
             for obj2 in self.battlefield["objects"]:
                 if obj2["xy"] == (xe, ye):
-                    obj2 = obj2["obj"]; break
+                    obj2 = obj2["name"]; break
             x2o, y2o = self._calc_render_xy(xo, yo)
             x2e, y2e = self._calc_render_xy(xe, ye)
             a = math.atan2(y2e - y2o, x2e - x2o)
@@ -403,13 +403,13 @@ class SimPainter(TerrPainter, SimPoint):
         self.terr_painter.draw(context)
         for index, obj in enumerate(self.battlefield["objects"]):
             if index == self.selected_index:
-                interval = self.library["objects"][obj["obj"]]["interval"]
-                r = self.library["objects"][obj["obj"]].get("range", 0.0)
-                rr = 2*r if obj["obj"] in ["hit", "devel"] else r
+                interval = self.library["objects"][obj["name"]]["interval"]
+                r = self.library["objects"][obj["name"]].get("range", 0.0)
+                rr = 2*r if obj["name"] in ["hit", "devel"] else r
                 self.draw_selection(context, obj["xy"], interval, r, rr)
 
         for obj in self.battlefield["objects"]:
-            shape = self.library["objects"][obj["obj"]]["shape"]
+            shape = self.library["objects"][obj["name"]]["shape"]
             if shape == "nuke-0": SimNuke_0(self.config, self.library, context, **obj).draw()
             elif shape == "lab-0": SimLab_0(self.config, self.library, context, **obj).draw()
             elif shape == "hit-0": SimHit_0(self.config, self.library, context, **obj).draw()
@@ -419,7 +419,7 @@ class SimPainter(TerrPainter, SimPoint):
             elif shape == "devel-0": SimDevel_0(self.config, self.library, context, **obj).draw()
             elif shape == "send-0": SimSend_0(self.config, self.library, context, **obj).draw()
             elif shape == "post-0": SimPost_0(self.config, self.library, context, **obj).draw()
-            else: raise ValueError(f"Not supported object: {obj['obj']}")
+            else: raise ValueError(f"Not supported object: {obj['name']}")
 
         if self.selected_index is None: return
         self.draw_connections(context)

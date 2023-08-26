@@ -11,7 +11,7 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
 class SimGraph:
-    max_d2 = 64
+    max_d2 = 48
     def __init__(self, library, battlefield):
         self.battlefield =  battlefield
         self.library = library
@@ -19,16 +19,15 @@ class SimGraph:
     def check_resource(self, index, x, y):
         if index is None: return
         obj = self.battlefield["objects"][index]
-        dx = obj["xy"][0] - x
-        dy = obj["xy"][1] - y
-        if obj["obj"] == "post": return "devel"
+        dx = obj["xy"][0] - x; dy = obj["xy"][1] - y
+        if obj["name"] == "post": return "devel"
         if dx < -0.6:
-            if obj["obj"] == "devel": return "AB"
+            if obj["name"] == "devel": return "AB"
             else: return "devel"
         if "out" in obj: return obj["out"]
-        if obj["obj"] == "devel": return "devel"
-        if obj["obj"] == "hit": return "hit"
-        if obj["obj"] == "store":
+        if obj["name"] == "devel": return "devel"
+        if obj["name"] == "hit": return "hit"
+        if obj["name"] == "store":
             if len(obj["goods"]) == 0: return
             if len(obj["goods"]) >= 1 and dx >= 0 and dx < 0.6 and dy > 0.25: return obj["goods"][0]
             if len(obj["goods"]) >= 2 and dx < 0 and dx > -0.6 and dy > 0.25: return obj["goods"][1]
@@ -47,7 +46,7 @@ class SimGraph:
         return index
 
     def run_mine(self, obj, terr):
-        if obj["obj"] != "mine": return
+        if obj["name"] != "mine": return
         if obj["out"] is None: return
         target_xy = None
         indexes = list(range(len(self.battlefield["links"])))
@@ -60,7 +59,7 @@ class SimGraph:
         if target_xy is None: return
         target_obj = None
         for obj2 in self.battlefield["objects"]:
-            if obj2["xy"] == target_xy and obj2["obj"] == "store":
+            if obj2["xy"] == target_xy and obj2["name"] == "store":
                 target_obj = obj2
         if target_obj is None: return
         if not target_obj["work"]: return
@@ -70,14 +69,14 @@ class SimGraph:
         p = resources.get(obj["out"], 0.0)
         r = random.random()
         if r > p: return
-        print("New resource:", obj["out"])
+        print("New good in a mine:", obj["out"])
         target_obj["goods"].append(obj["out"])
         
     def run_storage(self, good, xyo, xye):
         objo, obje = None, None
         for obj in self.battlefield["objects"]:
             if obj["xy"] == xyo or obj["xy"] == xye:
-                if obj["obj"] != "store": return
+                if obj["name"] != "store": return
             if obj["xy"] == xyo: objo = obj
             if obj["xy"] == xye: obje = obj
         if good not in objo["goods"]: return
@@ -145,13 +144,15 @@ class SimWindow(TerrWindow):
         TerrWindow.on_scroll(self, widget, event)
         if self.show_info: self.update_info()
 
-    def delete_object(self):
+    def delete_object_links(self):
         torm = set()
         obj = self.battlefield["objects"][self.painter.selected_index]
         for n, link in enumerate(self.battlefield["links"]):
             if link[1] == obj["xy"] or link[2] == obj["xy"]: torm.add(n)
         for n in reversed(sorted(torm)):
             del self.battlefield["links"][n]
+    def delete_object(self):
+        self.delete_object_links()
         del self.battlefield["objects"][self.painter.selected_index]
         self.painter.selected_index = None
         self.good = None
@@ -160,26 +161,26 @@ class SimWindow(TerrWindow):
         obj = self.library["objects"][self.obj]
         iv1 = obj["interval"]
         for k, obj2 in enumerate(self.battlefield["objects"]):
-            iv2 = self.library["objects"][obj2["obj"]]["interval"]
+            iv2 = self.library["objects"][obj2["name"]]["interval"]
             d2 = (x - obj2["xy"][0]) ** 2
             d2 += (y - obj2["xy"][1]) ** 2
             d = math.sqrt(d2)
             if d < max([iv1, iv2]):
-                print("To close to:", obj2["obj"], obj2["xy"]); return False
-        new_obj = {"xy": (x, y), "obj": self.obj, "own": self.player, "cnt": obj["modules"]}
-        if new_obj["obj"] == "mixer": new_obj["out"] = None
-        if new_obj["obj"] == "mine": new_obj["out"] = None
-        if new_obj["obj"] == "store": new_obj["work"] = False; new_obj["goods"] = []
-        if new_obj["obj"] == "devel": new_obj["work"] = False
-        if new_obj["obj"] == "send": new_obj["work"] = False
-        if new_obj["obj"] == "lab": new_obj["work"] = False
-        if new_obj["obj"] == "hit": new_obj["work"] = False
-        if new_obj["obj"] == "post": new_obj["armor"] = True
-        elif new_obj["obj"] == "nuke": pass
+                print("To close to:", obj2["name"], obj2["xy"]); return False
+        new_obj = {"xy": (x, y), "name": self.obj, "own": self.player, "cnt": obj["modules"]}
+        if new_obj["name"] == "mixer": new_obj["out"] = None
+        if new_obj["name"] == "mine": new_obj["out"] = None
+        if new_obj["name"] == "store": new_obj["work"] = False; new_obj["goods"] = []
+        if new_obj["name"] == "devel": new_obj["work"] = False
+        if new_obj["name"] == "send": new_obj["work"] = False
+        if new_obj["name"] == "lab": new_obj["work"] = False
+        if new_obj["name"] == "hit": new_obj["work"] = False
+        if new_obj["name"] == "post": new_obj["armor"] = True
+        elif new_obj["name"] == "nuke": pass
         else: new_obj["armor"] = False
         if self.painter.selected_index is not None:
             obj3 = self.battlefield["objects"][self.painter.selected_index]
-            if obj3["obj"] == "devel" and self.player == obj3["own"]:
+            if obj3["name"] == "devel" and self.player == obj3["own"]:
                 link = "devel", obj3["xy"], (x, y)
                 self.battlefield["links"].append(link)
                 new_obj["cnt"] = 0
@@ -191,26 +192,26 @@ class SimWindow(TerrWindow):
         obj = self.battlefield["objects"][self.painter.selected_index]
         if self.good is None: print("No good no-link"); return False
         if self.good != "devel":
-            if obj["obj"] == "nuke": print("Nuke no-link"); return False
-            if obj["obj"] == "post": print("Post no-link"); return False
+            if obj["name"] == "nuke": print("Nuke no-link"); return False
+            if obj["name"] == "post": print("Post no-link"); return False
         index = self.graphs["sim"].find_next_object(x, y)
         obj2 = self.battlefield["objects"][index]
         if obj["xy"] == obj2["xy"]: print("Self-link not supported!"); return False
-        if self.good == "devel" and "devel" not in [obj["obj"], obj2["obj"]]:
+        if self.good == "devel" and "devel" not in [obj["name"], obj2["name"]]:
             print("Devel is supported only by devel!"); return False
-        if self.good == "hit" and obj["obj"] != "hit":
+        if self.good == "hit" and obj["name"] != "hit":
             print("Hit is supported only by hit!"); return False            
-        if obj["obj"] == "devel" and self.good in self.library["resources"]:
-            if obj2["obj"] != "store": print("Recycling only to store!"); return False
+        if obj["name"] == "devel" and self.good in self.library["resources"]:
+            if obj2["name"] != "store": print("Recycling only to store!"); return False
 
-        if obj2["obj"] == "mine" and self.good in self.library["resources"]: 
+        if obj2["name"] == "mine" and self.good in self.library["resources"]: 
             print("Mine does not accept resources!"); return False
-        if obj2["obj"] == "nuke" and self.good in self.library["resources"]:
+        if obj2["name"] == "nuke" and self.good in self.library["resources"]:
             print("Nuke does not accept resources!"); return False
-        if obj2["obj"] == "post" and self.good in self.library["resources"]:
+        if obj2["name"] == "post" and self.good in self.library["resources"]:
             print("Post does not accept resources!"); return False
         if self.good in self.library["resources"]:
-            if "store" not in [obj["obj"], obj2["obj"]]:
+            if "store" not in [obj["name"], obj2["name"]]:
                 print("Resources have to be in store!"); return False            
         count = 0; hit_counter = 0; anti_counter = 0
         new_link = self.good, obj["xy"], obj2["xy"] 
@@ -221,7 +222,7 @@ class SimWindow(TerrWindow):
                     if obj3["xy"] == link[2]:
                         if obj3["own"] == obj["own"]: anti_counter += 1
                         else: hit_counter += 1
-            if obj["obj"] != "store" or obj2["obj"] != "store":
+            if obj["name"] != "store" or obj2["name"] != "store":
                 if link[1] == new_link[1] and link[2] == new_link[2]:
                     print("Link already exists" ); return False
         if count >= 2: print("No free slot (max 2)"); return False
@@ -283,10 +284,10 @@ class SimWindow(TerrWindow):
             if terr[1][2]: content += f"\nterrain-points: {terr[1][2]}"
             if index is not None:
                 obj = self.battlefield["objects"][index]
-                content += f"\n----------------\n{obj['obj']} {obj['xy']}"
+                content += f"\n----------------\n{obj['name']} {obj['xy']}"
                 content += f" -- Player: {obj['own']}\n"
                 for k, v in obj.items():
-                    if k in ("obj", "xy", "own"): continue
+                    if k in ("name", "xy", "own"): continue
                     if k == "armor": tmplist += [f"{k}: {'yes' if v else 'no'}"]
                     elif k == "work": tmplist += [f"{k}: {'yes' if v else 'no'}"]
                     elif k == "goods": tmplist += [f"{k}: {', '.join(v)}"]
@@ -295,6 +296,69 @@ class SimWindow(TerrWindow):
             if self.good: content += f"\n----------------\ngood: {self.good}"
             self.set_mode_label(content + "</span>")
 
+    def save_lib_and_map(self):
+        self.set_mode_label("navi: save")
+        cnt, libname, mapname = 0, "lib", "map"
+        flib = lambda c: f"{libname}-{c}.txt"
+        fmap = lambda c: f"{mapname}-{c}.txt"
+        while os.path.exists(flib(cnt)): cnt += 1
+        while os.path.exists(fmap(cnt)): cnt += 1
+        with open(flib(cnt), "w") as fd:
+            fd.write(pformat(self.library))
+        print("Save library:", flib(cnt))
+        with open(fmap(cnt), "w") as fd:
+            fd.write(pformat(self.battlefield))
+        print("Save battlefield:", fmap(cnt))
+    def switch_owner(self):
+        if self.painter.selected_index is None: return
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        if self.player is None: return
+        if obj["own"] != self.player: self.delete_object_links()
+        obj["own"] = self.player
+        
+    def switch_player(self):
+        players = list(sorted(self.library["players"].keys()))
+        if self.player is not None:
+            index = players.index(self.player)
+            index = (index + 1) % len(players)
+        else: index = 0
+        self.player = players[index]
+        self.set_mode_label(f"edit: player: {self.player}")
+    def switch_object(self):
+        objs = list(sorted(self.library["objects"].keys()))
+        if self.obj is not None:
+            index = objs.index(self.obj)
+            index = (index + 1) % len(objs)
+        else: index = 0
+        self.obj = objs[index]
+        self.set_mode_label(f"edit: object: {self.obj}")
+    def switch_good_in_mine(self):
+        if self.painter.selected_index is None: return
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        if obj["name"] != "mine": return
+        for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
+            if xy0 == obj["xy"] and g == obj["out"]:
+                del self.battlefield["links"][n]
+        raws = [k for k, v in self.library["resources"].items() if "process" not in v]
+        if obj["out"] is not None:
+            i = (raws.index(obj["out"]) + 1) % len(raws)
+            self.good = obj["out"] = raws[i]  
+        else: elf.good = obj["out"] = raws[0]
+        print("New goot in mine:", obj["out"])
+    def switch_good_in_mixer(self):
+        if self.painter.selected_index is None: return
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        if obj["name"] != "mixer": return
+        for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
+            if xy0 == obj["xy"] and g == obj["out"]:
+                del self.battlefield["links"][n]
+        cmpl = [k for k, v in self.library["resources"].items() if "process" in v]
+        if obj["out"] is not None:
+            i = (cmpl.index(obj["out"]) + 1) % len(cmpl)
+            self.good = obj["out"] = cmpl[i]
+        else: self.good = obj["out"] = cmpl[0]
+        print("New goot in mixer:", obj["out"])
+        
     def on_press(self, widget, event):
         key_name = Gdk.keyval_name(event.keyval)
         if key_name == "Escape":
@@ -351,45 +415,19 @@ class SimWindow(TerrWindow):
             if self.painter.selected_index is not None:
                 self.delete_object()
                 self.draw_content()
+        elif key_name == "x" and self.mode == "edit":
+            self.switch_owner(); self.draw_content()
         elif key_name == "o" and self.mode == "edit":
-            objs = list(sorted(self.library["objects"].keys()))
-            if self.obj is not None:
-                index = objs.index(self.obj)
-                index = (index + 1) % len(objs)
-            else: index = 0
-            self.obj = list(sorted(objs))[index]
-            self.set_mode_label(f"edit: object: {self.obj}")            
+            self.switch_object(); print(f"object: {self.obj}")
         elif key_name == "p" and self.mode == "edit":
-            players = list(self.library["players"].keys())
-            if self.player is not None:
-                index = players.index(self.player)
-                index = (index + 1) % len(players)
-            else: index = 0
-            self.player = list(sorted(players))[index]
-            self.set_mode_label(f"edit: player: {self.player}")            
+            self.switch_player(); print(f"player: {self.player}")
         elif key_name == "y" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
-                if "work" in obj: obj["work"] = True
-                if obj["obj"] == "mine":
-                    for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
-                        if xy0 == obj["xy"] and g == obj["out"]:
-                            del self.battlefield["links"][n]
-                    raws = [k for k, v in self.library["resources"].items() if "process" not in v]
-                    if obj["out"] is not None:
-                        i = (raws.index(obj["out"]) + 1) % len(raws)
-                        self.good = obj["out"] = raws[i]  
-                    else: obj["out"] = raws[0]
-                if obj["obj"] == "mixer":
-                    for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
-                        if xy0 == obj["xy"] and g == obj["out"]:
-                            del self.battlefield["links"][n]
-                    cmpl = [k for k, v in self.library["resources"].items() if "process" in v]
-                    if obj["out"] is not None:
-                        i = (cmpl.index(obj["out"]) + 1) % len(cmpl)
-                        self.good = obj["out"] = cmpl[i]
-                    else: obj["out"] = cmpl[0]
-                self.draw_content()
+                if "work" in obj: obj["work"] = True        
+            self.switch_good_in_mine()
+            self.switch_good_in_mixer()
+            self.draw_content()
         elif key_name == "n" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
@@ -399,18 +437,7 @@ class SimWindow(TerrWindow):
                 if "out" in obj: obj["out"] = None
                 self.draw_content()
         elif key_name == "s" and self.mode == "navi":
-            self.set_mode_label("navi: save")
-            cnt, libname, mapname = 0, "lib", "map"
-            flib = lambda c: f"{libname}-{c}.txt"
-            fmap = lambda c: f"{mapname}-{c}.txt"
-            while os.path.exists(flib(cnt)): cnt += 1
-            while os.path.exists(fmap(cnt)): cnt += 1
-            with open(flib(cnt), "w") as fd:
-                fd.write(pformat(self.library))
-            print("Save library:", flib(cnt))
-            with open(fmap(cnt), "w") as fd:
-                fd.write(pformat(self.battlefield))
-            print("Save battlefield:", fmap(cnt))
+            self.save_lib_and_map()
             self.show_info = False
         else: TerrWindow.on_press(self, widget, event)
         if self.show_info: self.update_info()
