@@ -15,6 +15,11 @@ class SimGraph:
         self.battlefield =  battlefield
         self.library = library
 
+    def update_difficulty(self):
+        if self.library["settings"]["difficulty-method"] == "random":
+            self.battlefield["difficulty"] = random.randint(2,12)
+        else: raise ValueError("difficulty-method")
+        
     def run_mine(self, obj, terr):
         if obj["name"] != "mine": return
         if obj["out"] is None: return
@@ -100,6 +105,8 @@ class SimGraph:
                 if "out" in obj: obj["out"] = None
 
     def run(self, terr):
+        self.battlefield["iteration"] += 1
+        self.update_difficulty()
         self.run_power_supply()
         indexes = list(range(len(self.battlefield["links"])))
         random.shuffle(indexes)
@@ -143,6 +150,32 @@ class SimWindow(TerrWindow):
         text = large_font_span + f"{text}</span>"
         self.mode_label.set_markup(text)
 
+    def show_report(self):
+        content = f"<span size='25000'>{self.mode}: report</span>"
+        content += "\n\n<span size='15000'>"
+        content += f"current iteration: {self.battlefield['iteration']}\n"
+        content += f"transsmition difficulty: {self.battlefield['difficulty']}\n"
+        content += f"objects number: {len(self.battlefield['objects'])}\n"
+        content += f"links number: {len(self.battlefield['links'])}\n"
+        content += "------------------------\n"
+        players = self.library["players"]
+
+        send_row = [f"{p}: {self.battlefield['players'][p]['send']}" for p in players]
+        content += f"send resources        => {', '.join(send_row)}\n"
+        destroy_row = [f"{p}: {self.battlefield['players'][p]['destroyed']}" for p in players]
+        content += f"destruction points   => {', '.join(destroy_row)}\n"
+        lost_row = [f"{p}: {self.battlefield['players'][p]['lost']}" for p in players]
+        content += f"lost builds/modules => {', '.join(lost_row)}\n"
+        tex_row = [f"{p}: {len(self.battlefield['players'][p]['technologies'])}" for p in players]
+        content += f"found technologies => {', '.join(tex_row)}\n"
+        research_row = [f"{p}: {self.battlefield['players'][p]['research']}" for p in players]
+        content += f"research points       => {', '.join(research_row)}\n"
+        for p in players:
+            ps = self.battlefield["players"][p]["power-share"]
+            power_row = [f"{p}: {ps.get(p, 0)}" for p in players]
+            content += f"{p} power-share => {', '.join(power_row)}\n"
+        self.set_mode_label(content + "</span>")
+        
     def update_info(self):
         content = f"<span size='25000'>{self.mode}: info</span>"
         content += "<span size='15000'>"
@@ -437,6 +470,9 @@ class SimWindow(TerrWindow):
             print("Simulate a single step...")
             self.graphs["sim"].run(self.graphs["terr"])
             self.draw_content()
+        elif key_name == "r":
+            self.show_report()
+            self.show_info = False
         elif key_name == "d" and self.mode == "delete":
             if self.painter.selected_index is not None:
                 self.delete_object()
