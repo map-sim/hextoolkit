@@ -16,6 +16,7 @@ class ConfigValidator(TypeValidator):
         "window-size": (tuple, list),
         "window-offset": (tuple, list),
         "window-zoom": (int, float),
+        "selection-radius": (int, float),
         "move-sensitive": (int, float)
     }
     def __init__(self, config):

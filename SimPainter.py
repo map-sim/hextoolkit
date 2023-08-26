@@ -330,6 +330,27 @@ class SimPainter(TerrPainter, SimPoint):
         self.library = library
         self.config = config
 
+    def check_resource(self, index, x, y):
+        if index is None: return
+        obj = self.battlefield["objects"][index]
+        dx = obj["xy"][0] - x; dy = obj["xy"][1] - y
+        if obj["name"] == "post": return "devel"
+        if dx < -0.6:
+            if obj["name"] == "devel": return "AB"
+            else: return "devel"
+        if "out" in obj: return obj["out"]
+        if obj["name"] == "devel": return "devel"
+        if obj["name"] == "hit": return "hit"
+        if obj["name"] == "store":
+            if len(obj["goods"]) == 0: return
+            if len(obj["goods"]) >= 1 and dx >= 0 and dx < 0.6 and dy > 0.25: return obj["goods"][0]
+            if len(obj["goods"]) >= 2 and dx < 0 and dx > -0.6 and dy > 0.25: return obj["goods"][1]
+            if len(obj["goods"]) >= 5 and dx >= 0 and dx < 0.6 and dy < -0.25: return obj["goods"][4]
+            if len(obj["goods"]) >= 6 and dx < 0 and dx > -0.6 and dy < -0.25: return obj["goods"][5]
+            if len(obj["goods"]) >= 3 and dx >= 0 and dx < 0.6 and dy <= 0.25 and dy >= -0.25: return obj["goods"][2]
+            if len(obj["goods"]) >= 4 and dx < 0 and dx > -0.6 and dy <= 0.25 and dy >= -0.25: return obj["goods"][3]
+        return
+
     def set_selected_object(self, index):
         self.selected_index = index
         

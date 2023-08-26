@@ -11,39 +11,9 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
 class SimGraph:
-    max_d2 = 48
     def __init__(self, library, battlefield):
         self.battlefield =  battlefield
         self.library = library
-
-    def check_resource(self, index, x, y):
-        if index is None: return
-        obj = self.battlefield["objects"][index]
-        dx = obj["xy"][0] - x; dy = obj["xy"][1] - y
-        if obj["name"] == "post": return "devel"
-        if dx < -0.6:
-            if obj["name"] == "devel": return "AB"
-            else: return "devel"
-        if "out" in obj: return obj["out"]
-        if obj["name"] == "devel": return "devel"
-        if obj["name"] == "hit": return "hit"
-        if obj["name"] == "store":
-            if len(obj["goods"]) == 0: return
-            if len(obj["goods"]) >= 1 and dx >= 0 and dx < 0.6 and dy > 0.25: return obj["goods"][0]
-            if len(obj["goods"]) >= 2 and dx < 0 and dx > -0.6 and dy > 0.25: return obj["goods"][1]
-            if len(obj["goods"]) >= 5 and dx >= 0 and dx < 0.6 and dy < -0.25: return obj["goods"][4]
-            if len(obj["goods"]) >= 6 and dx < 0 and dx > -0.6 and dy < -0.25: return obj["goods"][5]
-            if len(obj["goods"]) >= 3 and dx >= 0 and dx < 0.6 and dy <= 0.25 and dy >= -0.25: return obj["goods"][2]
-            if len(obj["goods"]) >= 4 and dx < 0 and dx > -0.6 and dy <= 0.25 and dy >= -0.25: return obj["goods"][3]
-        return
-
-    def find_next_object(self, x, y):
-        index, min_d2 = None, math.inf
-        for i, obj in enumerate(self.battlefield["objects"]):
-            d2 = (obj["xy"][0] - x) ** 2 + (obj["xy"][1] - y) ** 2
-            if d2 > self.max_d2: continue
-            if d2 < min_d2: min_d2, index = d2, i
-        return index
 
     def run_mine(self, obj, terr):
         if obj["name"] != "mine": return
@@ -144,6 +114,14 @@ class SimWindow(TerrWindow):
         TerrWindow.on_scroll(self, widget, event)
         if self.show_info: self.update_info()
 
+    def find_next_object(self, x, y):
+        index, min_d2 = None, math.inf
+        for i, obj in enumerate(self.battlefield["objects"]):
+            d2 = (obj["xy"][0] - x) ** 2 + (obj["xy"][1] - y) ** 2
+            if d2 > self.config["selection-radius"]: continue
+            if d2 < min_d2: min_d2, index = d2, i
+        return index
+
     def delete_object_links(self):
         torm = set()
         obj = self.battlefield["objects"][self.painter.selected_index]
@@ -194,7 +172,7 @@ class SimWindow(TerrWindow):
         if self.good != "devel":
             if obj["name"] == "nuke": print("Nuke no-link"); return False
             if obj["name"] == "post": print("Post no-link"); return False
-        index = self.graphs["sim"].find_next_object(x, y)
+        index = self.find_next_object(x, y)
         obj2 = self.battlefield["objects"][index]
         if obj["xy"] == obj2["xy"]: print("Self-link not supported!"); return False
         if self.good == "devel" and "devel" not in [obj["name"], obj2["name"]]:
@@ -245,7 +223,7 @@ class SimWindow(TerrWindow):
     def try_to_remove_link(self, x, y):
         obj = self.battlefield["objects"][self.painter.selected_index]
         if self.good is None: print("No good no-del-link"); return
-        index = self.graphs["sim"].find_next_object(x, y)
+        index = self.find_next_object(x, y)
         obj2 = self.battlefield["objects"][index]
 
         torm = list()
@@ -272,11 +250,11 @@ class SimWindow(TerrWindow):
                 if status: print("New obj done!")
             
         if event.button == 1: 
-            index = self.graphs["sim"].find_next_object(ox, oy)
+            index = self.find_next_object(ox, oy)
             self.painter.set_selected_object(index)
             self.draw_content()
 
-            self.good = self.graphs["sim"].check_resource(index, ox, oy)
+            self.good = self.painter.check_resource(index, ox, oy)
             terr, tmplist = self.graphs["terr"].check_terrain(ox, oy), []
             content = f"<span size='25000'>{self.mode}: click</span>"
             content += f"<span size='15000'>\n----------------\n"
@@ -448,6 +426,7 @@ def run_example():
         "window-size": (1800, 820),
         "window-offset": (840, 125),
         "window-zoom": 15.0,
+        "selection-radius": 5,
         "move-sensitive": 50
     }
     
