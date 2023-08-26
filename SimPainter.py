@@ -14,6 +14,7 @@ class SimObject(SimPoint):
     black_color = 0.45, 0.45, 0.45, 1
     black2_color = 0.5, 0.5, 0.5, 1
     black3_color = 0.5, 0.5, 0.5, 0.75
+    not_oper_color = 0.8, 0.8, 0.8, 1
     color_armor =  1, 1, 1, 1
 
     def __init__(self, config, library, context, xy, own, cnt):
@@ -40,7 +41,7 @@ class SimObject(SimPoint):
         # self.context.fill()
         pass
 
-    def _draw_hp_box(self, offset, status, armor=False):
+    def _draw_hp_box(self, offset, status, oper, armor=False):
         w = 0.133 * self.config["window-zoom"]
         dx, dy = offset
         self.context.set_line_width(w)
@@ -48,7 +49,8 @@ class SimObject(SimPoint):
                 (3.125*w+dx, 2.125*w+dy), (3.125*w+dx, -2.125*w+dy)]
         self._draw_polygon(pts0, self.black3_color)
         pts0 = [(-3*w+dx, -2*w+dy), (-3*w+dx, 2*w+dy), (3*w+dx, 2*w+dy), (3*w+dx, -2*w+dy)]
-        self._draw_polygon(pts0, self.black2_color)
+        if oper: self._draw_polygon(pts0, self.black2_color)
+        else: self._draw_polygon(pts0, self.not_oper_color)
         pts1 = [(-2*w+dx, -1*w+dy), (-2*w+dx, 1*w+dy), (2*w+dx, 1*w+dy), (2*w+dx, -1*w+dy)]
         if status: self._draw_polygon(pts1, self.color)
         elif armor: self._draw_polygon(pts1, self.color_armor)
@@ -62,10 +64,12 @@ class SimObject(SimPoint):
             iv = int(i % 4) 
             ih = int(i / 4) 
             offset = dx + 6.25 * w * ih, dy - 4.25 * w * iv
-            self._draw_hp_box(offset, i < self.modules)
+            if self.modules > 0: modules = self.modules
+            else: modules = -self.modules
+            self._draw_hp_box(offset, i < modules, self.modules > 0)
         if self.armor:
             offset = dx + 6.25 * w * ih, dy - 4.25 * w * (iv + 1)
-            self._draw_hp_box(offset, None, True)
+            self._draw_hp_box(offset, None, True, armor=True)
             
     def _draw_polygon(self, points, color, width=None):
         if width is not None: self.context.set_line_width(width)

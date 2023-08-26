@@ -24,6 +24,7 @@ class ConfigValidator(TypeValidator):
 
 class LibraryValidator(TypeValidator):
     types = {
+        "settings": dict,
         "objects": dict,
         "terrains": dict,
         "resources": dict,

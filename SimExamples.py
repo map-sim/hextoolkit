@@ -1,16 +1,14 @@
 library0 = {
+    "settings": {
+        "power-by-nuke": 14,
+        "modules-for-power": 8,
+    },
     "players": {
         "Aaa": {
-            "glory": 0,
-            "research": 0,
             "color": [1.0, 1.0, 0.5],
-            "technologies": []
         },
         "Bbb": {
-            "glory": 0,
-            "research": 0,
             "color": [0.5, 1.0, 1.0],
-            "technologies": []
         }
     },
     "resources": {
@@ -71,7 +69,7 @@ battlefield0 = {
         {"xy": (-8, 42), "name": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": []},
         {"xy": (-10, 36), "name": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
 
-        {"xy": (6, 12), "name": "nuke", "own": "Aaa", "cnt": 5},
+        {"xy": (6, 12), "name": "nuke", "own": "Aaa", "cnt": -5},
         {"xy": (10, 5), "name": "mixer", "own": "Aaa", "cnt": 2, "armor": False, "out": "AC"},
         {"xy": (13, 2), "name": "mixer", "own": "Aaa", "cnt": 1, "armor": False, "out": "AB"},
         {"xy": (15, 5), "name": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": ["AC", "BC", "AB", "A", "B", "C"]},
@@ -79,7 +77,7 @@ battlefield0 = {
         {"xy": (17, 8), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": False, "goods": []},
         {"xy": (20, 9), "name": "mine", "own": "Aaa", "cnt": 1, "armor": False, "out": "A"},
         {"xy": (24, 16), "name": "send", "own": "Aaa", "cnt": 2, "armor": True, "work": True},
-        {"xy": (14, 12), "name": "lab", "own": "Aaa", "cnt": 1, "armor": False, "work": True},
+        {"xy": (14, 12), "name": "lab", "own": "Aaa", "cnt": -1, "armor": False, "work": True},
         {"xy": (16, 16), "name": "hit", "own": "Aaa", "cnt": 3, "armor": True, "work": False},
         {"xy": (20, 16), "name": "devel", "own": "Aaa", "cnt": 3, "armor": True, "work": True},
         {"xy": (20, 1), "name": "devel", "own": "Aaa", "cnt": 3, "armor": True, "work": True},
@@ -91,13 +89,13 @@ battlefield0 = {
             "glory": 0,
             "research": 0,
             "technologies": [],
-            "power": (None, 0)
+            "power-share": {"Bbb": 2}
         },
         "Bbb": {
             "glory": 0,
             "research": 0,
             "technologies": [],
-            "power": (None, 0)
+            "power-share": {}
         }
     },
     "terrains": [

@@ -55,7 +55,52 @@ class SimGraph:
         del objo["goods"][index]
         obje["goods"].append(good)
 
+    def run_power_supply(self):
+        N = self.library["settings"]["power-by-nuke"]
+        M = self.library["settings"]["modules-for-power"]
+        needed_power = {p: 0 for p in self.library["players"]}
+        available_power = {p: 0 for p in self.library["players"]}
+        total_modules = {p: 0 for p in self.library["players"]}
+        for obj in self.battlefield["objects"]:
+            if obj["cnt"] > 0: total_modules[obj["own"]] += obj["cnt"]
+            if "out" in obj and obj["out"] is not None: needed_power[obj["own"]] += 1
+            elif "work" in obj and obj["work"]: needed_power[obj["own"]] += 1
+            if obj["name"] == "nuke" and obj["cnt"] > 0:
+                available_power[obj["own"]] += N
+        print("NPower:", ", ".join([f"{p}: {n}" for p,n in needed_power.items()]))
+        for player in self.library["players"]:
+            # TODO if tech
+            available_power[player] += int(total_modules[player] / M)
+        available_power2 = copy.deepcopy(available_power)
+        for player in self.library["players"]:
+            for p, conf in self.battlefield["players"].items():
+                if available_power[p] > conf["power-share"].get(player, 0):
+                    available_power2[player] += conf["power-share"].get(player, 0)
+                    available_power2[p] -= conf["power-share"].get(player, 0)       
+                    available_power[p] -= conf["power-share"].get(player, 0)
+        available_power = available_power2
+        print("APower:", ", ".join([f"{p}: {n}" for p,n in available_power.items()]))
+        for player in self.library["players"]:
+            if needed_power[player] <= available_power[player]:
+                print(f"{player} has sufficient power supply"); continue
+            off_buildings, tooff = needed_power[player] - available_power[player], []
+            print(f"{player} has deficit: {off_buildings}")
+            for i, obj in enumerate(self.battlefield["objects"]):
+                if "out" in obj and obj["out"] is None: continue
+                if "work" in obj and not obj["work"]: continue  
+                if obj["name"] in ["post", "nuke"]: continue
+                if obj["own"] != player: continue
+                if obj["cnt"] <= 0: continue
+                tooff.append(i)
+            random.shuffle(tooff)
+            for i in range(off_buildings):
+                obj = self.battlefield["objects"][tooff[i]]
+                print(f"Blackout: {obj['name']} {obj['xy']} / {obj['own']}")
+                if "work" in obj: obj["work"] = False
+                if "out" in obj: obj["out"] = None
+
     def run(self, terr):
+        self.run_power_supply()
         indexes = list(range(len(self.battlefield["links"])))
         random.shuffle(indexes)
         for i in indexes:
@@ -136,6 +181,7 @@ class SimWindow(TerrWindow):
         self.good = None
 
     def try_to_add_obj(self, x, y):
+        x = int(x); y = int(y)
         obj = self.library["objects"][self.obj]
         iv1 = obj["interval"]
         for k, obj2 in enumerate(self.battlefield["objects"]):
@@ -314,6 +360,7 @@ class SimWindow(TerrWindow):
         if self.painter.selected_index is None: return
         obj = self.battlefield["objects"][self.painter.selected_index]
         if obj["name"] != "mine": return
+        if obj["cnt"] <= 0: obj["out"] = None; return
         for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
             if xy0 == obj["xy"] and g == obj["out"]:
                 del self.battlefield["links"][n]
@@ -327,6 +374,7 @@ class SimWindow(TerrWindow):
         if self.painter.selected_index is None: return
         obj = self.battlefield["objects"][self.painter.selected_index]
         if obj["name"] != "mixer": return
+        if obj["cnt"] <= 0: obj["out"] = None; return
         for n, (g, xy0, _ ) in enumerate(self.battlefield["links"]):
             if xy0 == obj["xy"] and g == obj["out"]:
                 del self.battlefield["links"][n]
@@ -402,7 +450,7 @@ class SimWindow(TerrWindow):
         elif key_name == "y" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
-                if "work" in obj: obj["work"] = True        
+                if "work" in obj and obj["cnt"] > 0: obj["work"] = True        
             self.switch_good_in_mine()
             self.switch_good_in_mixer()
             self.draw_content()
