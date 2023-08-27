@@ -182,9 +182,12 @@ class SimGraph:
 
     def run(self):
         self.battlefield["iteration"] += 1
+        # self.run_natural_demage()
         self.run_power_supply()
 
         self.run_group(self.battlefield["objects"], "send")
+        # self.run_group(self.battlefield["links"], "devel")
+        # self.run_group(self.battlefield["links"], "hit")
         self.run_group(self.battlefield["objects"], "lab")
         self.run_group(self.battlefield["links"], "store")
         self.run_group(self.battlefield["objects"], "mine")
@@ -289,6 +292,9 @@ class SimWindow(TerrWindow):
 
     def try_to_add_obj(self, x, y):
         x = int(x); y = int(y)
+        terr = self.graphs["terr"].check_terrain(x, y)
+        if not self.library["terrains"][terr[0]]["buildable"]:
+            print(f"{terr[0]} is not buildable"); return False        
         obj = self.library["objects"][self.obj]
         iv1 = obj["interval"]
         for k, obj2 in enumerate(self.battlefield["objects"]):
