@@ -29,10 +29,11 @@ class SimGraph:
             else: return None
         return None
 
-    def __check_availability(self, obj, substracts):
+    def _check_availability(self, obj, substracts):
         substracts2 = copy.deepcopy(substracts)
         for g, xyo, xye in self.battlefield["links"]:
             if g not in substracts2: continue
+            if xye != obj["xy"]: continue
             indexg = substracts2.index(g)
             obj2 = self.get_object_by_xy(xyo, "store")
             if obj2 is None or not obj2["work"]: continue
@@ -41,25 +42,46 @@ class SimGraph:
             if not substracts2:
                 return True
         return False
-            
-    def run_lab(self, obj):
-        if obj["name"] != "lab": return
-        if not obj["work"]: return
-        substracts = self.library["objects"]["lab"]["substracts"]
-        if not self.__check_availability(obj, substracts): return
+
+    def _run_effector(self, obj, substracts):
+        if not self._check_availability(obj, substracts): return False
         indexes = list(range(len(self.battlefield["links"])))
-        substracts = copy.deepcopy(substracts)
+        substracts2 = copy.deepcopy(substracts)
         random.shuffle(indexes)
         for i in indexes:
-            if not substracts: break
+            if not substracts2: break
             link = self.battlefield["links"][i]
             if link[2] != obj["xy"]: continue
-            if link[0] not in substracts: continue
+            if link[0] not in substracts2: continue
             obj2 = self.get_object_by_xy(link[1], "store")
             if obj2 is None or not obj2["work"]: continue
             if link[0] not in obj2["goods"]: continue
             del obj2["goods"][obj2["goods"].index(link[0])]
-            del substracts[substracts.index(link[0])]
+            del substracts2[substracts2.index(link[0])]
+        return True
+
+    def run_send(self, obj):
+        if obj["name"] != "send" or not obj["work"]: return
+        substracts = self.library["objects"]["send"]["substracts"]
+        if not self._run_effector(obj, substracts): return
+        difficulty = self.battlefield["difficulty"]
+        if difficulty >= 8: p = 0.0 
+        if difficulty == 7: p = 1.0/6
+        if difficulty == 6: p = 1.0/3
+        if difficulty == 5: p = 1.0/2
+        if difficulty == 4: p = 2.0/3
+        if difficulty == 3: p = 5.0/6
+        if difficulty <= 2: p = 1.0
+        los = random.random()
+        if los < p:
+            self.battlefield["players"][obj["own"]]["send"] += 1
+            print(f"Player {obj['own']} send 1 resource into space ({los}<{p})")
+        else: print(f"Player {obj['own']} fail to send 1 resource into space ({los}>={p})")
+
+    def run_lab(self, obj):
+        if obj["name"] != "lab" or not obj["work"]: return
+        substracts = self.library["objects"]["lab"]["substracts"]
+        if not self._run_effector(obj, substracts): return
         self.battlefield["players"][obj["own"]]["research"] += 1
         print(f"Player {obj['own']} made 1 research point")
 
@@ -90,7 +112,7 @@ class SimGraph:
         print("New good in a mine:", obj["out"])
         target_obj["goods"].append(obj["out"])
         
-    def run_storage(self, link):
+    def run_store(self, link):
         good, xyo, xye = link
         objo, obje = None, None
         for obj in self.battlefield["objects"]:
@@ -148,20 +170,25 @@ class SimGraph:
                 if "work" in obj: obj["work"] = False
                 if "out" in obj: obj["out"] = None
 
-
-    def run_group(self, items, func):
+    def run_group(self, items, key):
         indexes = list(range(len(items)))
         random.shuffle(indexes)
-        for i in indexes: func(items[i])
+        for i in indexes:
+            if key == "lab": self.run_lab(items[i])
+            elif key == "send": self.run_send(items[i])
+            elif key == "store": self.run_store(items[i])
+            elif key == "mine": self.run_mine(items[i])
+            else: raise ValueError(key)
 
     def run(self):
         self.battlefield["iteration"] += 1
-        self.update_difficulty()
         self.run_power_supply()
 
-        self.run_group(self.battlefield["objects"], self.run_lab)
-        self.run_group(self.battlefield["links"], self.run_storage)
-        self.run_group(self.battlefield["objects"], self.run_mine)
+        self.run_group(self.battlefield["objects"], "send")
+        self.run_group(self.battlefield["objects"], "lab")
+        self.run_group(self.battlefield["links"], "store")
+        self.run_group(self.battlefield["objects"], "mine")
+        self.update_difficulty()
 
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
@@ -177,6 +204,7 @@ class SimWindow(TerrWindow):
         
         self.mode = "navi"
         self.set_mode_label("navi")
+        self.show_report = False
         self.show_info = False
         self.player = None
         self.good = None
@@ -197,7 +225,7 @@ class SimWindow(TerrWindow):
         text = large_font_span + f"{text}</span>"
         self.mode_label.set_markup(text)
 
-    def show_report(self):
+    def update_report(self):
         content = f"<span size='25000'>{self.mode}: report</span>"
         content += "\n\n<span size='15000'>"
         content += f"current iteration: {self.battlefield['iteration']}\n"
@@ -206,7 +234,6 @@ class SimWindow(TerrWindow):
         content += f"links number: {len(self.battlefield['links'])}\n"
         content += "------------------------\n"
         players = self.library["players"]
-
         send_row = [f"{p}: {self.battlefield['players'][p]['send']}" for p in players]
         content += f"send resources        => {', '.join(send_row)}\n"
         destroy_row = [f"{p}: {self.battlefield['players'][p]['destroyed']}" for p in players]
@@ -320,6 +347,8 @@ class SimWindow(TerrWindow):
         count = 0; hit_counter = 0; anti_counter = 0
         new_link = self.good, obj["xy"], obj2["xy"] 
         for link in self.battlefield["links"]:
+            if link[0] == self.good and link[1] == obj["xy"] and link[2] == obj2["xy"]: 
+                print("Identical link already exists" ); return False
             if link[1] == obj["xy"] and link[2] == obj2["xy"]: count += 1
             if link[1] == obj["xy"] and self.good == "hit":
                 for obj3 in self.battlefield["objects"]:
@@ -487,11 +516,11 @@ class SimWindow(TerrWindow):
             self.good = None
             self.obj = None
             self.show_info = False
+            self.show_report = False
             self.painter.selected_index = None
             self.draw_content()
         elif key_name == "F1" or key_name == "Home":
             print("##> mode: navi")
-            self.show_info = False
             self.set_mode_label("navi")
             self.mode = "navi"
             self.draw_content()
@@ -499,37 +528,39 @@ class SimWindow(TerrWindow):
             print("##> pointer mode: edit")
             self.set_mode_label("edit")
             self.mode = "edit"
-            self.show_info = False
             self.draw_content()
         elif key_name == "F3" or key_name == "Delete":
             print("##> pointer mode: delete")
             self.set_mode_label("delete")
             self.mode = "delete"
-            self.show_info = False
             self.draw_content()
         elif key_name == "F4" or key_name == "End":
             print("##> pointer mode: run")
             self.set_mode_label("run")
             self.mode = "run"
             self.show_info = False
+            self.show_report = True
             self.draw_content()
-        elif key_name == "i":
-            self.show_info = not self.show_info
-            if not self.show_info: self.set_mode_label("edit")
         elif key_name == "c" and self.mode == "navi":
             self.set_mode_label("navi: check")
             validator = SimValidator()
             validator.validate_config(self.config)
             validator.validate_library(self.library)
             validator.validate_map(self.library, self.battlefield)
-            self.show_info = False
         elif key_name == "Return" and self.mode == "run":
             print("Simulate a single step...")
             self.graphs["sim"].run()
             self.draw_content()
+
+        elif key_name == "i":
+            self.show_info = not self.show_info
+            if not self.show_info: self.set_mode_label(self.mode)
+            else: self.show_report = False
         elif key_name == "r":
-            self.show_report()
-            self.show_info = False
+            self.show_report = not self.show_report
+            if not self.show_report: self.set_mode_label(self.mode)
+            else: self.show_info = False
+            
         elif key_name == "d" and self.mode == "delete":
             if self.painter.selected_index is not None:
                 self.delete_object()
@@ -559,8 +590,8 @@ class SimWindow(TerrWindow):
                 self.draw_content()
         elif key_name == "s" and self.mode == "navi":
             self.save_lib_and_map()
-            self.show_info = False
         else: TerrWindow.on_press(self, widget, event)
+        if self.show_report: self.update_report()
         if self.show_info: self.update_info()
 
 def run_example():

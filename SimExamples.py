@@ -6,10 +6,10 @@ library0 = {
     },
     "players": {
         "Aaa": {
-            "color": [1.0, 1.0, 0.5],
+            "color": [1.0, 1.0, 0.5, 1.0],
         },
         "Bbb": {
-            "color": [0.5, 1.0, 1.0],
+            "color": [0.5, 1.0, 1.0, 1.0],
         }
     },
     "resources": {
@@ -42,13 +42,13 @@ library0 = {
 }
 battlefield0 = {
     "iteration": 0,
-    "difficulty": 3,
+    "difficulty": 2,
     "links": [
         ("devel", (20, 16), (14, 12)),
         ("AC", (10, 5), (14, 8)),
         ("A", (15, 5), (14, 8)),
         ("C", (15, 5), (17, 8)),
-        ("AC", (15, 5), (17, 8)),
+        ("AB", (15, 5), (17, 8)),
         ("hit", (16, 16), (64, -10)),
         ("hit", (16, 16), (20, 9)),
         ("hit", (16, 16), (24, 16)),
@@ -76,6 +76,7 @@ battlefield0 = {
         {"xy": (15, 5), "name": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": ["AC", "BC", "AB", "A", "B", "C"]},
         {"xy": (14, 8), "name": "store", "own": "Aaa", "cnt": 1, "armor": False, "work": True, "goods": ["AC", "AC", "AC", "A"]},
         {"xy": (17, 8), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": False, "goods": []},
+        {"xy": (26, 12), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": True, "goods": ["BC", "BC", "BC", "BC", "BC"]},
         {"xy": (20, 9), "name": "mine", "own": "Aaa", "cnt": 1, "armor": False, "out": "A"},
         {"xy": (24, 16), "name": "send", "own": "Aaa", "cnt": 2, "armor": True, "work": True},
         {"xy": (14, 12), "name": "lab", "own": "Aaa", "cnt": -1, "armor": False, "work": False},

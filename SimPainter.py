@@ -358,14 +358,15 @@ class SimPainter(TerrPainter, SimPoint):
     def set_selected_object(self, index):
         self.selected_index = index
         
-    def draw_selection(self, context, xy, radius, dist, dist2):
+    def draw_selection(self, context, xy, radius, dist, dist2, color):
+        color = [c if i != 3 else 0.15 for i, c in enumerate(color)]
         xloc, yloc = self._calc_render_xy(*xy)
         zoom = self.config["window-zoom"]
         r, d, d2 = radius*zoom, dist*zoom, dist2*zoom
-        context.set_source_rgba(1, 1, 1, 0.25)
+        context.set_source_rgba(*color)
         context.arc(xloc, yloc, d, 0, TWO_PI)
         context.fill()
-        context.set_source_rgba(1, 1, 1, 0.25)
+        context.set_source_rgba(*color)
         context.arc(xloc, yloc, d2, 0, TWO_PI)
         context.fill()
         context.set_source_rgba(0, 0, 0, 0.25)
@@ -431,7 +432,8 @@ class SimPainter(TerrPainter, SimPoint):
                 interval = self.library["objects"][obj["name"]]["interval"]
                 r = self.library["objects"][obj["name"]].get("range", 0.0)
                 rr = 2*r if obj["name"] in ["hit", "devel"] else r
-                self.draw_selection(context, obj["xy"], interval, r, rr)
+                color = self.library["players"][obj["own"]]["color"]
+                self.draw_selection(context, obj["xy"], interval, r, rr, color)
 
         for obj in self.battlefield["objects"]:
             shape = self.library["objects"][obj["name"]]["shape"]
