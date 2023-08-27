@@ -330,6 +330,7 @@ class SimPainter(TerrPainter, SimPoint):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
         self.selected_index = None
+        self.draw_good_links = False
         self.battlefield =  battlefield
         self.library = library
         self.config = config
@@ -356,6 +357,7 @@ class SimPainter(TerrPainter, SimPoint):
         return
 
     def set_selected_object(self, index):
+        self.draw_good_links = False
         self.selected_index = index
         
     def draw_selection(self, context, xy, radius, dist, dist2, color):
@@ -378,15 +380,21 @@ class SimPainter(TerrPainter, SimPoint):
         elif what == "hit": return 0, 0, 0, 1
         else: return self.library["resources"][what]["color"]
 
-    def draw_connections(self, context):
-        xy = self.battlefield["objects"][self.selected_index]["xy"]
-        obj = self.battlefield["objects"][self.selected_index]["name"]
+    def draw_connections(self, context, good=False):
+        if self.selected_index is not None:
+            xy = self.battlefield["objects"][self.selected_index]["xy"]
+            obj = self.battlefield["objects"][self.selected_index]["name"]
+        else: xy = None
         zoom = self.config["window-zoom"]
         r, rr = 0.2 * zoom, 1.5 * zoom
 
         done = set()
         for what, (xo, yo), (xe, ye) in self.battlefield["links"]:
-            if (xo, yo) != xy: continue
+            if self.selected_index is None:
+                if good is False: continue
+                if good not in (None, True):
+                    if what != good: continue
+            if xy is not None and (xo, yo) != xy: continue
             for obj2 in self.battlefield["objects"]:
                 if obj2["xy"] == (xe, ye):
                     obj2 = obj2["name"]; break
@@ -413,9 +421,12 @@ class SimPainter(TerrPainter, SimPoint):
                 context.arc(x2m, y2m, 2.5*r, 0, TWO_PI)
                 context.fill()
                 
+                for obj3 in self.battlefield["objects"]:
+                    if obj3["xy"] == (xo, yo):
+                        obj3 = obj3["name"]; break
                 color = self._deduce_color(what)
                 context.set_source_rgba(*color)
-                if obj == "store" and obj2 == "store":
+                if obj3 == "store" and obj2 == "store":
                     context.arc(x2m, y2m, 1.5*r, 0.75*TWO_PI, 1.25*TWO_PI)
                 else: context.arc(x2m, y2m, 1.5*r, 0, 2*TWO_PI)
             else:
@@ -448,6 +459,8 @@ class SimPainter(TerrPainter, SimPoint):
             elif shape == "post-0": SimPost_0(self.config, self.library, context, **obj).draw()
             else: raise ValueError(f"Not supported object: {obj['name']}")
 
-        if self.selected_index is None: return
-        self.draw_connections(context)
+        if self.draw_good_links is not False:
+            self.draw_connections(context, self.draw_good_links)
+        elif self.selected_index is None: return
+        else: self.draw_connections(context)
 

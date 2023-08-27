@@ -561,6 +561,12 @@ class SimWindow(TerrWindow):
             if not self.show_report: self.set_mode_label(self.mode)
             else: self.show_info = False
             
+        elif key_name == "l" and self.mode == "navi":
+            if self.painter.draw_good_links is False:
+                self.painter.draw_good_links = self.good
+            else: self.painter.draw_good_links = False
+            self.draw_content()
+            
         elif key_name == "d" and self.mode == "delete":
             if self.painter.selected_index is not None:
                 self.delete_object()
@@ -571,8 +577,11 @@ class SimWindow(TerrWindow):
             self.switch_object(); print(f"object: {self.obj}")
         elif key_name == "p" and self.mode == "edit":
             self.switch_player(); print(f"player: {self.player}")
-        elif key_name == "g" and self.mode in ["edit", "delete"]:
+        elif key_name == "g" and self.mode in ["navi", "edit", "delete"]:
             self.switch_good(); print(f"good: {self.good}")
+            if self.painter.draw_good_links is not False:
+                self.painter.draw_good_links = self.good
+                self.draw_content()                
         elif key_name == "y" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
