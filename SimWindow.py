@@ -11,16 +11,59 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
 class SimGraph:
-    def __init__(self, library, battlefield):
+    def __init__(self, library, battlefield, terr_graph):
         self.battlefield =  battlefield
+        self.terr_graph = terr_graph
         self.library = library
 
     def update_difficulty(self):
         if self.library["settings"]["difficulty-method"] == "random":
             self.battlefield["difficulty"] = random.randint(2,12)
         else: raise ValueError("difficulty-method")
-        
-    def run_mine(self, obj, terr):
+
+    def get_object_by_xy(self, xy, name=None):
+        for obj in self.battlefield["objects"]:
+            if obj["xy"] != xy: continue
+            if name is None: return obj
+            elif obj["name"] == name: return obj
+            else: return None
+        return None
+
+    def __check_availability(self, obj, substracts):
+        substracts2 = copy.deepcopy(substracts)
+        for g, xyo, xye in self.battlefield["links"]:
+            if g not in substracts2: continue
+            indexg = substracts2.index(g)
+            obj2 = self.get_object_by_xy(xyo, "store")
+            if obj2 is None or not obj2["work"]: continue
+            if g not in obj2["goods"]: continue
+            del substracts2[indexg]
+            if not substracts2:
+                return True
+        return False
+            
+    def run_lab(self, obj):
+        if obj["name"] != "lab": return
+        if not obj["work"]: return
+        substracts = self.library["objects"]["lab"]["substracts"]
+        if not self.__check_availability(obj, substracts): return
+        indexes = list(range(len(self.battlefield["links"])))
+        substracts = copy.deepcopy(substracts)
+        random.shuffle(indexes)
+        for i in indexes:
+            if not substracts: break
+            link = self.battlefield["links"][i]
+            if link[2] != obj["xy"]: continue
+            if link[0] not in substracts: continue
+            obj2 = self.get_object_by_xy(link[1], "store")
+            if obj2 is None or not obj2["work"]: continue
+            if link[0] not in obj2["goods"]: continue
+            del obj2["goods"][obj2["goods"].index(link[0])]
+            del substracts[substracts.index(link[0])]
+        self.battlefield["players"][obj["own"]]["research"] += 1
+        print(f"Player {obj['own']} made 1 research point")
+
+    def run_mine(self, obj):
         if obj["name"] != "mine": return
         if obj["out"] is None: return
         target_xy = None
@@ -39,7 +82,7 @@ class SimGraph:
         if target_obj is None: return
         if not target_obj["work"]: return
         if len(target_obj["goods"]) >= 6: return
-        t = terr.check_terrain(*obj["xy"])[0]
+        t = self.terr_graph.check_terrain(*obj["xy"])[0]
         resources = self.library["terrains"][t]["resources"]
         p = resources.get(obj["out"], 0.0)
         r = random.random()
@@ -47,7 +90,8 @@ class SimGraph:
         print("New good in a mine:", obj["out"])
         target_obj["goods"].append(obj["out"])
         
-    def run_storage(self, good, xyo, xye):
+    def run_storage(self, link):
+        good, xyo, xye = link
         objo, obje = None, None
         for obj in self.battlefield["objects"]:
             if obj["xy"] == xyo or obj["xy"] == xye:
@@ -104,18 +148,20 @@ class SimGraph:
                 if "work" in obj: obj["work"] = False
                 if "out" in obj: obj["out"] = None
 
-    def run(self, terr):
+
+    def run_group(self, items, func):
+        indexes = list(range(len(items)))
+        random.shuffle(indexes)
+        for i in indexes: func(items[i])
+
+    def run(self):
         self.battlefield["iteration"] += 1
         self.update_difficulty()
         self.run_power_supply()
-        indexes = list(range(len(self.battlefield["links"])))
-        random.shuffle(indexes)
-        for i in indexes:
-            self.run_storage(*self.battlefield["links"][i])
-        indexes = list(range(len(self.battlefield["objects"])))
-        random.shuffle(indexes)
-        for i in indexes:
-            self.run_mine(self.battlefield["objects"][i], terr)
+
+        self.run_group(self.battlefield["objects"], self.run_lab)
+        self.run_group(self.battlefield["links"], self.run_storage)
+        self.run_group(self.battlefield["objects"], self.run_mine)
 
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
@@ -137,7 +183,8 @@ class SimWindow(TerrWindow):
         self.obj = None
 
         TerrWindow.__init__(self, config, library, battlefield)
-        self.graphs = {"sim": SimGraph(library, battlefield), "terr": self.graph}
+        self.graphs = {"sim": SimGraph(library, battlefield, self.graph),
+                       "terr": self.graph}
         self.fix.put(self.mode_label, 0, 0)
         self.show_all()
 
@@ -279,7 +326,8 @@ class SimWindow(TerrWindow):
                     if obj3["xy"] == link[2]:
                         if obj3["own"] == obj["own"]: anti_counter += 1
                         else: hit_counter += 1
-            if obj["name"] != "store" or obj2["name"] != "store":
+            
+            if link[0] in ["hit", "devel"]:
                 if link[1] == new_link[1] and link[2] == new_link[2]:
                     print("Link already exists" ); return False
         if count >= 2: print("No free slot (max 2)"); return False
@@ -381,6 +429,15 @@ class SimWindow(TerrWindow):
         else: index = 0
         self.player = players[index]
         self.set_mode_label(f"edit: player: {self.player}")
+    def switch_good(self):
+        goods = list(sorted(self.library["resources"].keys()))
+        goods += ["devel", "hit"]
+        if self.good is not None:
+            index = goods.index(self.good)
+            index = (index + 1) % len(goods)
+        else: index = 0
+        self.good = goods[index]
+        self.set_mode_label(f"edit: good: {self.good}")
     def switch_object(self):
         objs = list(sorted(self.library["objects"].keys()))
         if self.obj is not None:
@@ -468,7 +525,7 @@ class SimWindow(TerrWindow):
             self.show_info = False
         elif key_name == "Return" and self.mode == "run":
             print("Simulate a single step...")
-            self.graphs["sim"].run(self.graphs["terr"])
+            self.graphs["sim"].run()
             self.draw_content()
         elif key_name == "r":
             self.show_report()
@@ -483,6 +540,8 @@ class SimWindow(TerrWindow):
             self.switch_object(); print(f"object: {self.obj}")
         elif key_name == "p" and self.mode == "edit":
             self.switch_player(); print(f"player: {self.player}")
+        elif key_name == "g" and self.mode in ["edit", "delete"]:
+            self.switch_good(); print(f"good: {self.good}")
         elif key_name == "y" and self.mode == "edit":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]

@@ -8,7 +8,7 @@ class TypeValidator:
             if type(self.types[key]) in (tuple, list):
                 assert type(val) in self.types[key]
             else: assert type(val) is self.types[key]
-        print(f"{prefix} validate_types...")
+        print(f"{prefix} validate_types... OK")
 
 class ConfigValidator(TypeValidator):
     types = {
@@ -53,9 +53,16 @@ class MapValidator(TypeValidator):
         self.validate_terrains(battlefield)
         self.validate_intervals(battlefield)
         self.validate_links(battlefield)
+        self.validate_works_in_progress(battlefield)
 
+    def validate_works_in_progress(self, battlefield):
+        for obj in battlefield["objects"]:
+            if obj["cnt"] <= 0:
+                if "work" in obj: assert not obj["work"], "obj works under construction"
+                if "out" in obj: assert obj["work"] is None, "obj works under construction"
+        print("map validate_works_in_progress... OK")
+        
     def validate_intervals(self, battlefield):
-        print("map validate_intervals...")
         for n, obj1 in enumerate(battlefield["objects"]):
             for k, obj2 in enumerate(battlefield["objects"]):
                 if k == n: continue
@@ -66,11 +73,12 @@ class MapValidator(TypeValidator):
                 iv2 = self.library["objects"][obj2["name"]]["interval"]
                 info = f"wrong dist: {obj1['xy']}/{obj1['name']} -- {obj2['xy']}/{obj2['name']}"
                 assert d >= max([iv1, iv2]), info
+        print("map validate_intervals... OK")
 
     def validate_terrains(self, battlefield):
         for row in battlefield["terrains"]:
             assert row[1] in self.library["terrains"]
-        print("map validate_terrains...")
+        print("map validate_terrains... OK")
 
     def validate_links(self, battlefield):
         counters = {}
@@ -100,7 +108,7 @@ class MapValidator(TypeValidator):
             if g == "hit": r *= 2
             info = f"range {g}, {xy1}{obj['name']}, {xy2}{obj2['name']} < {r}"
             assert math.sqrt(d2) <= r, info 
-        print("map validate_links...")
+        print("map validate_links... OK")
             
 class SimValidator:
     def validate_config(self, config):
