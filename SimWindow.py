@@ -85,6 +85,32 @@ class SimGraph:
         self.battlefield["players"][obj["own"]]["research"] += 1
         print(f"Player {obj['own']} made 1 research point")
 
+    def delete_object_links(self, index):
+        torm = set()
+        obj = self.battlefield["objects"][index]
+        for n, link in enumerate(self.battlefield["links"]):
+            if link[1] == obj["xy"] or link[2] == obj["xy"]: torm.add(n)
+        for n in reversed(sorted(torm)): del self.battlefield["links"][n]
+    def delete_object(self, index):
+        self.delete_object_links(index)
+        del self.battlefield["objects"][index]
+
+    def run_natural_demage(self):
+        torm = set()
+        for i, obj in enumerate(self.battlefield["objects"]):
+            t = self.terr_graph.check_terrain(*obj["xy"])[0]
+            risk = self.library["terrains"][t]["risk"]
+            if risk <= 0: continue
+            los = random.random()
+            print(los, "<?", risk)
+            if los < risk:
+                obj["cnt"] -= 1
+                print(f"{obj['own']}'s object: {obj['name']} took 1 demage point from env")
+                if obj["cnt"] <= 0: torm.add(i)
+        for n in reversed(sorted(torm)):
+            print(f"Player {obj['own']} lost object: {obj['name']}")
+            self.delete_object(n)
+            
     def run_mine(self, obj):
         if obj["name"] != "mine": return
         if obj["out"] is None: return
@@ -182,7 +208,7 @@ class SimGraph:
 
     def run(self):
         self.battlefield["iteration"] += 1
-        # self.run_natural_demage()
+        self.run_natural_demage()
         self.run_power_supply()
 
         self.run_group(self.battlefield["objects"], "send")
@@ -277,18 +303,9 @@ class SimWindow(TerrWindow):
             if d2 < min_d2: min_d2, index = d2, i
         return index
 
-    def delete_object_links(self):
-        torm = set()
-        obj = self.battlefield["objects"][self.painter.selected_index]
-        for n, link in enumerate(self.battlefield["links"]):
-            if link[1] == obj["xy"] or link[2] == obj["xy"]: torm.add(n)
-        for n in reversed(sorted(torm)):
-            del self.battlefield["links"][n]
     def delete_object(self):
-        self.delete_object_links()
-        del self.battlefield["objects"][self.painter.selected_index]
+        self.graphs["sim"].delete_object(self.painter.selected_index)
         self.painter.selected_index = None
-        self.good = None
 
     def try_to_add_obj(self, x, y):
         x = int(x); y = int(y)
@@ -449,13 +466,15 @@ class SimWindow(TerrWindow):
         with open(fmap(cnt), "w") as fd:
             fd.write(pformat(self.battlefield))
         print("Save battlefield:", fmap(cnt))
+
     def switch_owner(self):
         if self.painter.selected_index is None: return
         obj = self.battlefield["objects"][self.painter.selected_index]
-        if self.player is None: return
-        if obj["own"] != self.player: self.delete_object_links()
+        if self.player is None: print("no-player to set"); return
+        if obj["own"] != self.player:
+            self.graphs["sim"].delete_object_links(self.painter.selected_index)
         obj["own"] = self.player
-        
+
     def switch_player(self):
         players = list(sorted(self.library["players"].keys()))
         if self.player is not None:
@@ -555,6 +574,7 @@ class SimWindow(TerrWindow):
             validator.validate_map(self.library, self.battlefield)
         elif key_name == "Return" and self.mode == "run":
             print("Simulate a single step...")
+            self.painter.selected_index = None
             self.graphs["sim"].run()
             self.draw_content()
 
