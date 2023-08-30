@@ -240,6 +240,11 @@ class SimGraph:
                         if obj2["xy"] != build["xy"]: continue
                         return n
 
+    def run_hit(self, obj):
+        if obj["name"] != "hit" or not obj["work"]: return
+        if obj["cnt"] <= 0: return
+        R = self.library["objects"]["hit"]["range"]
+
     def check_tech(self, player, tech):
         assert tech in self.library["technologies"], f"no-tech: {tech}"
         techs = self.battlefield["players"][player]["technologies"]
@@ -306,7 +311,7 @@ class SimGraph:
             elif key == "store2": self.run_store(items[i], True)
             elif key == "mixer": self.run_mixer(items[i])
             elif key == "mine": self.run_mine(items[i])
-            elif key == "hit": pass
+            elif key == "hit": self.run_hit(items[i])
             else: raise ValueError(key)
         fsort = lambda x: -1 if x is None else x
         for n in reversed(sorted(torm, key = fsort)):
