@@ -5,8 +5,8 @@ library0 = {
         "power-by-nuke": 14,
     },
     "technologies": [
-        "intergrid-transformation", "passive-armor", "construction-recovery",
-        "build-recycling", "advanced-mining", "resource-compresion"
+        "intergrid-transformation", "construction-recovery", "build-recycling", 
+        "advanced-mining", "advanced-processing", "resource-compresion", "passive-armor"
     ],
     "players": {
         "Aaa": {

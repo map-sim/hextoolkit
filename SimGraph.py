@@ -83,12 +83,26 @@ class SimGraph:
             resources = self.library["terrains"][t]["resources"]
             if random.random() < resources.get(obj["out"], 0.0):
                 print("New good in a mine:", obj["out"])
-                target["goods"].append(obj["out"])
+                target["goods"].append(obj["out"]); break
         if not first_try: return
         if self.check_tech(obj["own"], "advanced-mining"):
             if random.random() < 0.5: self.run_mine(obj, False)
+    def run_mixer(self, obj, first_try=True):
+        if obj["name"] != "mixer" or obj["out"] is None: return
+        for _, target in self.find_by_xy_source_and_target_name(obj["xy"], "store", obj["out"]):
+            if not self.check_store_accept(target): continue
+            if obj["own"] != target["own"]: continue
+            process = self.library["resources"][obj["out"]]["process"]
+            substracts = []
+            for k, v in process.items():
+                substracts.extend([k] * int(v))
+            if not self._run_effector(obj, substracts): return
+            target["goods"].append(obj["out"])
+        if not first_try: return
+        if self.check_tech(obj["own"], "advanced-processing"):
+            if random.random() < 0.5: self.run_mine(obj, False)
 
-    def run_store(self, link):
+    def run_store(self, link, transfer=False):
         good, xyo, xye = link
         objo, obje = None, None
         for obj in self.battlefield["objects"]:
@@ -99,7 +113,10 @@ class SimGraph:
         if not objo["work"]: return
         if good not in objo["goods"]: return
         if not self.check_store_accept(obje): return
-        if objo["own"] != obje["own"]: return # TODO
+        if not transfer:
+            if objo["own"] != obje["own"]: return
+        elif objo["own"] != obje["own"]:
+            print("Player", objo["own"], "exports to player", obje["own"], "1", good)
         index = objo["goods"].index(good)
         del objo["goods"][index]
         obje["goods"].append(good)
@@ -285,9 +302,9 @@ class SimGraph:
             if key == "lab": self.run_lab(items[i])
             elif key == "send": self.run_send(items[i])
             elif key == "devel": torm.add(self.run_devel(items[i]))
-            elif key == "store": self.run_store(items[i])
-            elif key == "store2": pass
-            elif key == "mixer": pass
+            elif key == "store": self.run_store(items[i], False)
+            elif key == "store2": self.run_store(items[i], True)
+            elif key == "mixer": self.run_mixer(items[i])
             elif key == "mine": self.run_mine(items[i])
             elif key == "hit": pass
             else: raise ValueError(key)
@@ -305,7 +322,7 @@ class SimGraph:
         self.run_group(self.battlefield["objects"], "devel")
         self.run_group(self.battlefield["objects"], "hit")
         self.run_group(self.battlefield["objects"], "lab")
-        self.run_group(self.battlefield["links"], "store")
+        self.run_group(self.battlefield["links"], "store")        
         self.run_group(self.battlefield["objects"], "mixer")
         self.run_group(self.battlefield["objects"], "mine")
         self.run_group(self.battlefield["links"], "store2")
