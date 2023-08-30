@@ -1,4 +1,4 @@
-import math
+import math, cairo
 from TerrWindow import TerrPainter
 
 TWO_PI = 2 * math.pi
@@ -27,6 +27,7 @@ class SimObject(SimPoint):
 
     def _draw_line(self, xy0, xy1, color, width=None):
         if width is not None: self.context.set_line_width(width)
+        self.context.set_line_cap(cairo.LINE_CAP_ROUND)
         self.context.set_source_rgba(*color)
         xy0  = self.xy[0] + xy0[0], self.xy[1] + xy0[1]
         xy1  = self.xy[0] + xy1[0], self.xy[1] + xy1[1]
@@ -73,6 +74,7 @@ class SimObject(SimPoint):
             
     def _draw_polygon(self, points, color, width=None):
         if width is not None: self.context.set_line_width(width)
+        self.context.set_line_cap(cairo.LINE_CAP_ROUND)
         self.context.set_source_rgba(*color)
         start_x, start_y = points[-1]
         self.context.move_to (self.xy[0] + start_x, self.xy[1] + start_y)
@@ -381,6 +383,7 @@ class SimPainter(TerrPainter, SimPoint):
         else: return self.library["resources"][what]["color"]
 
     def draw_connections(self, context, good=False):
+        context.set_line_cap(cairo.LINE_CAP_ROUND)
         if self.selected_index is not None:
             xy = self.battlefield["objects"][self.selected_index]["xy"]
             obj = self.battlefield["objects"][self.selected_index]["name"]
@@ -388,6 +391,7 @@ class SimPainter(TerrPainter, SimPoint):
         zoom = self.config["window-zoom"]
         r, rr = 0.2 * zoom, 1.5 * zoom
 
+        
         done = set()
         for what, (xo, yo), (xe, ye) in self.battlefield["links"]:
             if self.selected_index is None:

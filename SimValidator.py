@@ -28,7 +28,8 @@ class LibraryValidator(TypeValidator):
         "objects": dict,
         "terrains": dict,
         "resources": dict,
-        "players": dict
+        "players": dict,
+        "technologies": list
     }
 
     def __init__(self, library):

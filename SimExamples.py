@@ -4,6 +4,9 @@ library0 = {
         "modules-for-power": 8,
         "power-by-nuke": 14,
     },
+    "technologies": [
+        "intergrid-transformation", "passive-armor", "construction-recovery", "recycling"
+    ],
     "players": {
         "Aaa": {
             "color": [1.0, 1.0, 0.5, 1.0],
@@ -27,7 +30,7 @@ library0 = {
         "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": 0},
         "post": {"shape": "post-0", "modules": 1, "interval": 2, "range": 0},
         "lab":  {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0, "substracts": ["AC", "BC"]},
-        "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 8, "substracts": ["AB"]},
+        "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 8, "substracts": ["AB", "AB"]},
         "send": {"shape": "send-0", "modules": 2, "interval": 4, "range": 0, "substracts": ["BC"]},
         "hit": {"shape": "hit-0", "modules": 3, "interval": 4, "range": 30, "substracts": ["AC"]},
     },
@@ -76,7 +79,8 @@ battlefield0 = {
         {"xy": (15, 5), "name": "store", "own": "Aaa", "cnt": 2, "armor": False, "work": True, "goods": ["AC", "BC", "AB", "A", "B", "C"]},
         {"xy": (14, 8), "name": "store", "own": "Aaa", "cnt": 1, "armor": False, "work": True, "goods": ["AC", "AC", "AC", "A"]},
         {"xy": (17, 8), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": False, "goods": []},
-        {"xy": (26, 12), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": True, "goods": ["BC", "BC", "BC", "BC", "BC"]},
+        {"xy": (26, 12), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": True, "goods": ["BC", "BC", "AB", "AB", "AB"]},
+        {"xy": (24, 20), "name": "store", "own": "Aaa", "cnt": 2, "armor": True, "work": True, "goods": ["AB", "AB"]},
         {"xy": (20, 9), "name": "mine", "own": "Aaa", "cnt": 1, "armor": False, "out": "A"},
         {"xy": (24, 16), "name": "send", "own": "Aaa", "cnt": 2, "armor": True, "work": True},
         {"xy": (14, 12), "name": "lab", "own": "Aaa", "cnt": -1, "armor": False, "work": False},
@@ -93,7 +97,7 @@ battlefield0 = {
             "research": 0,
             "destroyed": 0,
             "lost": 0,
-            "technologies": [],
+            "technologies": ["intergrid-transformation", "construction-recovery", "passive-armor"],
             "power-share": {"Bbb": 2}
         },
         "Bbb": {
