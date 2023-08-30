@@ -41,53 +41,53 @@ class SimGraph:
         for obj in self.battlefield["objects"]:
             if obj["xy"] != xy: continue
             if name is None: return obj
-            elif obj["name"] == name: return obj
+            elif obj["name"] == name:
+                return obj
             else: return None
         return None
-    def get_first_target(self, xy, name=None, good=None):
+
+    def find_by_xy_source_and_target_name(self, xy, name=None, good=None):
         indexes = list(range(len(self.battlefield["links"])))
         random.shuffle(indexes)
         for i in indexes:
             link = self.battlefield["links"][i]
-            if good is not None and good != link[0]: continue
             if link[1] != xy: continue
+            if good is not None and good != link[0]: continue
             obj = self.get_object_by_xy(link[2], name)
-            if obj is not None: return obj
-        return None
-
-    def get_first_link_to(self, obj, good=None):
+            if obj is not None: yield link, obj
+    def find_by_xy_target_and_source_name(self, xy, name=None, good=None):
         indexes = list(range(len(self.battlefield["links"])))
         random.shuffle(indexes)
         for i in indexes:
             link = self.battlefield["links"][i]
+            if link[2] != xy: continue
             if good is not None and good != link[0]: continue
-            if link[2] != obj["xy"]: continue
-            return link
-        return None
-    def get_first_link_from(self, obj, good=None):
-        indexes = list(range(len(self.battlefield["links"])))
-        random.shuffle(indexes)
-        for i in indexes:
-            link = self.battlefield["links"][i]
-            if good is not None and good != link[0]: continue
-            if link[1] != obj["xy"]: continue
-            return link
-        return None
+            obj = self.get_object_by_xy(link[1], name)
+            if obj is not None: yield link, obj
 
-    def run_mine(self, obj):
+    def check_store_accept(self, obj):
+        if obj["name"] != "store": return False
+        if self.check_tech(obj["own"], "resource-compresion"):
+            store_capasity = 6
+        else: store_capasity = 4
+        if len(obj["goods"]) >= store_capasity: return False
+        if not obj["work"]: return False
+        return True
+
+    def run_mine(self, obj, first_try=True):
         if obj["name"] != "mine" or obj["out"] is None: return
-        target_obj =self.get_first_target(obj["xy"], "store", obj["out"])
-        if target_obj is None: return
-        if not target_obj["work"]: return
-        if len(target_obj["goods"]) >= 6: return
-        t = self.terr_graph.check_terrain(*obj["xy"])[0]
-        resources = self.library["terrains"][t]["resources"]
-        p = resources.get(obj["out"], 0.0)
-        r = random.random()
-        if r > p: return
-        print("New good in a mine:", obj["out"])
-        target_obj["goods"].append(obj["out"])
-        
+        for _, target in self.find_by_xy_source_and_target_name(obj["xy"], "store", obj["out"]):
+            if not self.check_store_accept(target): continue
+            if obj["own"] != target["own"]: continue
+            t = self.terr_graph.check_terrain(*obj["xy"])[0]
+            resources = self.library["terrains"][t]["resources"]
+            if random.random() < resources.get(obj["out"], 0.0):
+                print("New good in a mine:", obj["out"])
+                target["goods"].append(obj["out"])
+        if not first_try: return
+        if self.check_tech(obj["own"], "advanced-mining"):
+            if random.random() < 0.5: self.run_mine(obj, False)
+
     def run_store(self, link):
         good, xyo, xye = link
         objo, obje = None, None
@@ -96,8 +96,9 @@ class SimGraph:
                 if obj["name"] != "store": return
             if obj["xy"] == xyo: objo = obj
             if obj["xy"] == xye: obje = obj
+        if not objo["work"]: return
         if good not in objo["goods"]: return
-        if len(obje["goods"]) >= 6: return
+        if not self.check_store_accept(obje): return
         if objo["own"] != obje["own"]: return # TODO
         index = objo["goods"].index(good)
         del objo["goods"][index]
@@ -167,16 +168,17 @@ class SimGraph:
     def calc_distance(self, obj, obj2):
         d2 = (obj["xy"][0] - obj2["xy"][0]) ** 2 
         d2 += (obj["xy"][1] - obj2["xy"][1]) ** 2
-        if d2 == 0: return 0
+        if d2 == 0: return 0.0
         return  math.sqrt(d2)
 
     def run_devel(self, obj):
         if obj["name"] != "devel" or not obj["work"]: return
         if obj["cnt"] <= 0: return
         R = self.library["objects"]["devel"]["range"]
-        build = self.get_first_target(obj["xy"], name=None, good="devel")
         subs2 = [self.library["objects"]["devel"]["substracts"][0]]
         recovery_tech = self.check_tech(obj["own"], "construction-recovery")
+        for _, build in self.find_by_xy_source_and_target_name(obj["xy"], good="devel"): break
+        else: build = None
         if build is not None:
             armor_tech = self.check_tech(obj["own"], "passive-armor")
             M = self.library["objects"][build["name"]]["modules"]
@@ -201,15 +203,26 @@ class SimGraph:
                 if build["cnt"] < 0: build["cnt"] -= 1
                 if build["cnt"] == -M: build["cnt"] = M
                 f"Player {obj['own']} builds one module of {build['name']}"
-        elif self.check_tech(obj["own"], "recycling"):
-            link_to = self.get_first_link_to(obj, good="devel")            
-            link_from = self.get_first_link_from(obj, good=subs2[0])
-            if link_from is None: return
-            if link_to is None: return
-            # TODO....
+        elif self.check_tech(obj["own"], "build-recycling"):
+            for _, build in self.find_by_xy_target_and_source_name(obj["xy"], name=None, good="devel"): break
+            else: return
+            store = None
+            for _, obj2 in self.find_by_xy_source_and_target_name(obj["xy"], name="store", good=subs2[0]):
+                if not self.check_store_accept(obj2): continue
+                store = obj2
+            if store is None: return
+            dist = self.calc_distance(obj, build)
+            if dist <= R: P = float(obj["cnt"]) / 3
+            elif dist <= 2 * R: P = float(obj["cnt"]) / 3 - 1.0/6
+            if dist > 2 * R: return
+            if random.random() < P:
+                build["cnt"] -= 1
+                store["goods"].append(subs2[0])
+                if build["cnt"] == 0:
+                    for n, obj2 in enumerate(self.battlefield["objects"]):
+                        if obj2["xy"] != build["xy"]: continue
+                        return n
 
-
-            
     def check_tech(self, player, tech):
         assert tech in self.library["technologies"], f"no-tech: {tech}"
         techs = self.battlefield["players"][player]["technologies"]
@@ -267,16 +280,21 @@ class SimGraph:
     def run_group(self, items, key):
         indexes = list(range(len(items)))
         random.shuffle(indexes)
+        torm = set()
         for i in indexes:
             if key == "lab": self.run_lab(items[i])
             elif key == "send": self.run_send(items[i])
-            elif key == "devel": self.run_devel(items[i])
+            elif key == "devel": torm.add(self.run_devel(items[i]))
             elif key == "store": self.run_store(items[i])
             elif key == "store2": pass
             elif key == "mixer": pass
             elif key == "mine": self.run_mine(items[i])
             elif key == "hit": pass
             else: raise ValueError(key)
+        fsort = lambda x: -1 if x is None else x
+        for n in reversed(sorted(torm, key = fsort)):
+            if n is None: continue
+            self.delete_object(n)
 
     def run(self):
         self.battlefield["iteration"] += 1

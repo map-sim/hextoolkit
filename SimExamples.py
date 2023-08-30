@@ -5,7 +5,8 @@ library0 = {
         "power-by-nuke": 14,
     },
     "technologies": [
-        "intergrid-transformation", "passive-armor", "construction-recovery", "recycling"
+        "intergrid-transformation", "passive-armor", "construction-recovery",
+        "build-recycling", "advanced-mining", "resource-compresion"
     ],
     "players": {
         "Aaa": {
@@ -97,7 +98,7 @@ battlefield0 = {
             "research": 0,
             "destroyed": 0,
             "lost": 0,
-            "technologies": ["intergrid-transformation", "construction-recovery", "passive-armor"],
+            "technologies": ["intergrid-transformation", "construction-recovery", "passive-armor", "build-recycling", "resource-compresion"],
             "power-share": {"Bbb": 2}
         },
         "Bbb": {
