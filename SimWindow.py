@@ -129,6 +129,10 @@ class SimWindow(TerrWindow):
             obj3 = self.battlefield["objects"][self.painter.selected_index]
             if obj3["name"] == "devel" and self.player == obj3["own"]:
                 link = "devel", obj3["xy"], (x, y)
+                dd2 = (obj3["xy"][0] - x) ** 2 + (obj3["xy"][1] - y) ** 2
+                dd = math.sqrt(dd2)
+                if dd > 2 * self.library["objects"]["devel"]["range"]:
+                    return False
                 self.battlefield["links"].append(link)
                 self.battlefield["objects"].append(new_obj)
         self.draw_content()
