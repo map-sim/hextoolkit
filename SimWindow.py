@@ -114,11 +114,11 @@ class SimWindow(TerrWindow):
             d = math.sqrt(d2)
             if d < max([iv1, iv2]):
                 print("To close to:", obj2["name"], obj2["xy"]); return False
-        new_obj = {"xy": (x, y), "name": self.obj, "own": self.player, "cnt": obj["modules"]}
-        if new_obj["name"] == "mixer": new_obj["out"] = None
-        if new_obj["name"] == "mine": new_obj["out"] = None
+        new_obj = {"xy": (x, y), "name": self.obj, "own": self.player, "cnt": 0}
         if new_obj["name"] == "store": new_obj["work"] = False; new_obj["goods"] = []
         if new_obj["name"] == "devel": new_obj["work"] = False
+        if new_obj["name"] == "mixer": new_obj["out"] = None
+        if new_obj["name"] == "mine": new_obj["out"] = None
         if new_obj["name"] == "send": new_obj["work"] = False
         if new_obj["name"] == "lab": new_obj["work"] = False
         if new_obj["name"] == "hit": new_obj["work"] = False
@@ -130,18 +130,19 @@ class SimWindow(TerrWindow):
             if obj3["name"] == "devel" and self.player == obj3["own"]:
                 link = "devel", obj3["xy"], (x, y)
                 self.battlefield["links"].append(link)
-                new_obj["cnt"] = 0
-        self.battlefield["objects"].append(new_obj)
+                self.battlefield["objects"].append(new_obj)
         self.draw_content()
         return True
         
     def try_to_make_link(self, x, y):
+        if self.painter.selected_index is None: return False
         obj = self.battlefield["objects"][self.painter.selected_index]
         if self.good is None: print("No good no-link"); return False
         if self.good != "devel":
             if obj["name"] == "nuke": print("Nuke no-link"); return False
             if obj["name"] == "post": print("Post no-link"); return False
         index = self.find_next_object(x, y)
+        if index is None: return False
         obj2 = self.battlefield["objects"][index]
         if obj["xy"] == obj2["xy"]: print("Self-link not supported!"); return False
         if self.good == "devel" and "devel" not in [obj["name"], obj2["name"]]:
@@ -196,6 +197,7 @@ class SimWindow(TerrWindow):
         obj = self.battlefield["objects"][self.painter.selected_index]
         if self.good is None: print("No good no-del-link"); return
         index = self.find_next_object(x, y)
+        if index is None: return
         obj2 = self.battlefield["objects"][index]
 
         torm = list()
@@ -305,7 +307,7 @@ class SimWindow(TerrWindow):
         if obj["out"] is not None:
             i = (raws.index(obj["out"]) + 1) % len(raws)
             self.good = obj["out"] = raws[i]  
-        else: elf.good = obj["out"] = raws[0]
+        else: self.good = obj["out"] = raws[0]
         print("New goot in mine:", obj["out"])
     def switch_good_in_mixer(self):
         if self.painter.selected_index is None: return
@@ -359,18 +361,24 @@ class SimWindow(TerrWindow):
             self.show_info = False
             self.show_report = True
             self.draw_content()
+        elif key_name == "Return" and self.mode == "run":
+            print("Simulate a single step...")
+            self.painter.selected_index = None
+            self.graphs["sim"].run()
+            self.draw_content()
         elif key_name == "c" and self.mode == "navi":
             self.set_mode_label("navi: check")
             validator = SimValidator()
             validator.validate_config(self.config)
             validator.validate_library(self.library)
             validator.validate_map(self.library, self.battlefield)
-        elif key_name == "Return" and self.mode == "run":
-            print("Simulate a single step...")
-            self.painter.selected_index = None
-            self.graphs["sim"].run()
-            self.draw_content()
-
+        elif key_name == "c" and self.mode == "delete":
+            if self.painter.selected_index is not None:
+                obj = self.battlefield["objects"][self.painter.selected_index]
+                if self.good is not None and obj["name"] == "store":
+                    if self.good in obj["goods"]:
+                        del obj["goods"][obj["goods"].index(self.good)]
+                        self.draw_content()
         elif key_name == "i":
             self.show_info = not self.show_info
             if not self.show_info: self.set_mode_label(self.mode)
@@ -378,14 +386,17 @@ class SimWindow(TerrWindow):
         elif key_name == "r":
             self.show_report = not self.show_report
             if not self.show_report: self.set_mode_label(self.mode)
-            else: self.show_info = False
-            
-        elif key_name == "l" and self.mode == "navi":
+            else: self.show_info = False            
+        elif key_name == "l":
+            self.obj = None
+            self.painter.selected_index = None
             if self.painter.draw_good_links is False:
+                print("Draw links...")
                 self.painter.draw_good_links = self.good
-            else: self.painter.draw_good_links = False
+            else:
+                print("No draw links...")
+                self.painter.draw_good_links = False
             self.draw_content()
-            
         elif key_name == "d" and self.mode == "delete":
             if self.painter.selected_index is not None:
                 self.delete_object()
@@ -401,14 +412,14 @@ class SimWindow(TerrWindow):
             if self.painter.draw_good_links is not False:
                 self.painter.draw_good_links = self.good
                 self.draw_content()                
-        elif key_name == "y" and self.mode == "edit":
+        elif key_name == "y":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
                 if "work" in obj and obj["cnt"] > 0: obj["work"] = True        
             self.switch_good_in_mine()
             self.switch_good_in_mixer()
             self.draw_content()
-        elif key_name == "n" and self.mode == "edit":
+        elif key_name == "n":
             if self.painter.selected_index is not None:
                 obj = self.battlefield["objects"][self.painter.selected_index]
                 if "targets" in obj: obj["targets"] = []

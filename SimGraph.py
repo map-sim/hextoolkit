@@ -30,9 +30,12 @@ class SimGraph:
             los = random.random()
             print(los, "<?", risk)
             if los < risk:
-                obj["cnt"] -= 1
+                if obj["cnt"] > 0:
+                    obj["cnt"] -= 1
+                elif obj["cnt"] < 0:
+                    obj["cnt"] += 1
                 print(f"{obj['own']}'s object: {obj['name']} took 1 demage point from env")
-                if obj["cnt"] <= 0: torm.add(i)
+                if obj["cnt"] == 0: torm.add(i)
         for n in reversed(sorted(torm)):
             print(f"Player {obj['own']} lost object: {obj['name']}")
             self.delete_object(n)
@@ -182,6 +185,30 @@ class SimGraph:
         self.battlefield["players"][obj["own"]]["research"] += 1
         print(f"Player {obj['own']} made 1 research point")
 
+    def check_view(self, obj, obj2):
+        method = self.library["settings"]["view-method"]
+        if method == "equal-or-lower":
+            return self.check_view_eq_low(obj, obj2)
+        else: raise ValueError("view-method")
+
+    def check_view_eq_low(self, obj, obj2):        
+        dxy = self.library["settings"]["view-resolution"]
+        to = self.terr_graph.check_terrain(*obj["xy"])[0]
+        lo = self.library["terrains"][to]["level"]
+        d = self.calc_distance(obj, obj2)
+        no = int(d/dxy)
+        dx = float(obj2["xy"][0] - obj["xy"][0]) / no
+        dy = float(obj2["xy"][1] - obj["xy"][1]) / no
+        for n in range(no):
+            x = obj["xy"][0] + n * dx; y = obj["xy"][1] + n * dy
+            t = self.terr_graph.check_terrain(x, y)[0]
+            lv = self.library["terrains"][t]["level"]
+            if lv > lo: return False
+        t = self.terr_graph.check_terrain(*obj2["xy"])[0]
+        lv = self.library["terrains"][t]["level"]
+        if lv > lo: return False
+        else: return True    
+                
     def calc_distance(self, obj, obj2):
         d2 = (obj["xy"][0] - obj2["xy"][0]) ** 2 
         d2 += (obj["xy"][1] - obj2["xy"][1]) ** 2
@@ -207,19 +234,30 @@ class SimGraph:
             if dist > 2 * R: return
             los = random.random()
             if los > P and not recovery_tech:
-                self._run_effector(obj, subs2); return
-            if los > P and recovery_tech:
-                self._run_effector(obj, subs2)
-                if random.random() > P: return                
+                if self._run_effector(obj, subs2):
+                    print("Devel disaster...")
+                return # return without building
+            elif los > P and recovery_tech:
+                if random.random() > P:
+                    if self._run_effector(obj, subs2):
+                        print("Devel disaster...")
+                    return # return without building
+            print("--------------------------------------->", build)
             if build["cnt"] == M and armor_tech and not build["armor"]:
                 if self._run_effector(obj, subs2):
                     f"Player {obj['own']} build armor on {build['name']}"
                     build["armor"] = True
             if self._run_effector(obj):
-                if build["cnt"] >= 0 and build["cnt"] < M: build["cnt"] += 1
-                if build["cnt"] < 0: build["cnt"] -= 1
-                if build["cnt"] == -M: build["cnt"] = M
+                if build["cnt"] > 0 and build["cnt"] < M: build["cnt"] += 1
+                elif build["cnt"] <= 0: build["cnt"] -= 1
+                if build["name"] == "hit" and build["cnt"] < 0:
+                    build["cnt"] = -build["cnt"]
+                    print("{build['name']} starts to be operated")
+                if build["cnt"] == -M:
+                    build["cnt"] = M
+                    print("{build['name']} starts to be operated")
                 f"Player {obj['own']} builds one module of {build['name']}"
+            print("--------------------------------------->", build)
         elif self.check_tech(obj["own"], "build-recycling"):
             for _, build in self.find_by_xy_target_and_source_name(obj["xy"], name=None, good="devel"): break
             else: return
@@ -320,6 +358,7 @@ class SimGraph:
 
     def run(self):
         self.battlefield["iteration"] += 1
+        print("=================", self.battlefield["iteration"])
         self.run_natural_demage()
         self.run_power_supply()
 

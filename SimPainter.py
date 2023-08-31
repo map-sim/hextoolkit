@@ -390,8 +390,6 @@ class SimPainter(TerrPainter, SimPoint):
         else: xy = None
         zoom = self.config["window-zoom"]
         r, rr = 0.2 * zoom, 1.5 * zoom
-
-        
         done = set()
         for what, (xo, yo), (xe, ye) in self.battlefield["links"]:
             if self.selected_index is None:
