@@ -55,6 +55,16 @@ class MapValidator(TypeValidator):
         self.validate_intervals(battlefield)
         self.validate_links(battlefield)
         self.validate_works_in_progress(battlefield)
+        self.validate_store_capacity(battlefield)
+
+    def validate_store_capacity(self, battlefield):
+        for obj in battlefield["objects"]:
+            if obj["name"] != "store": continue            
+            player = obj["own"]
+            compress = "resource-compresion" in battlefield["players"][player]["technologies"]
+            if compress: assert len(obj["goods"]) <= 6
+            else: assert len(obj["goods"]) <= 4
+        print("map validate_store_capacity... OK")
 
     def validate_works_in_progress(self, battlefield):
         for obj in battlefield["objects"]:
