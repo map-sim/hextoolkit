@@ -7,8 +7,13 @@ library0 = {
         "power-by-nuke": 14,
     },
     "technologies": [
-        "intergrid-transformation", "construction-recovery", "build-recycling", 
-        "advanced-mining", "advanced-processing", "resource-compresion", "passive-armor"
+        "intergrid-transformation", "energy-recovery",
+        "construction-recovery", "build-recycling", 
+        "advanced-mining", "advanced-processing", "resource-compresion",
+        "extended-rnd-department", "sensor-system", "fast-transsmition",
+        "passive-armor", "explosively-formed-projectile",
+        "multiple-targets", "missile-salvo", "centralized-command-system",
+        "satellite-positioning-system", "anti-missile-system",        
     ],
     "players": {
         "Aaa": {
@@ -19,9 +24,9 @@ library0 = {
         }
     },
     "resources": {
-        "A": {"color": [0.9, 0.1, 0.1]},
-        "B": {"color": [0.1, 0.7, 0.1]},
-        "C": {"color": [0.1, 0.1, 0.9]},
+        "A": {"color": [0.9, 0.2, 0.15]},
+        "B": {"color": [0.15, 0.8, 0.1]},
+        "C": {"color": [0.25, 0.5, 1.0]},
         "AB": {"color": [1.0, 0.85, 0.1], "process": {"A": 1, "B": 1}},
         "AC": {"color": [1.0, 0.45, 1.0], "process": {"A": 1, "C": 1}},
         "BC": {"color": [0.1, 0.9, 0.9], "process": {"C": 1, "B": 1}}
@@ -134,15 +139,18 @@ battlefield0 = {
             "destroyed": 0,
             "lost": 0,
             "technologies": ["build-recycling"],
-            "power-share": {}
+            "power-share": {},
+            "view-share": []
         },
         "Bbb": {
             "send": 0,
             "research": 0,
             "destroyed": 0,
             "lost": 0,
-            "technologies": ["intergrid-transformation", "passive-armor"],
-            "power-share": {}
+            "technologies": ["intergrid-transformation",
+                             "passive-armor"],
+            "power-share": {},
+            "view-share": []
         }
     },
     "terrains": [

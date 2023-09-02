@@ -162,10 +162,12 @@ class SimGraph:
             if not substracts2: break
         return True
 
-    def run_send(self, obj):
+    def run_send(self, obj, first=True):
         if obj["name"] != "send" or not obj["work"]: return
         if not self._run_effector(obj): return
         difficulty = self.battlefield["difficulty"]
+        sensor_tech = self.check_tech(obj["own"], "sensor-system")
+        if sensor_tech: difficulty -= 1 
         if difficulty >= 8: p = 0.0 
         if difficulty == 7: p = 1.0/6
         if difficulty == 6: p = 1.0/3
@@ -178,13 +180,19 @@ class SimGraph:
             self.battlefield["players"][obj["own"]]["send"] += 1
             print(f"Player {obj['own']} send 1 resource into space ({los}<{p})")
         else: print(f"Player {obj['own']} fail to send 1 resource into space ({los}>={p})")
+        if first and self.check_tech(obj["own"], "fast-transsmition"):
+            if random.random() < 0.5:
+                self.run_send(obj, first=False)
 
-    def run_lab(self, obj):
+    def run_lab(self, obj, first=True):
         if obj["name"] != "lab" or not obj["work"]: return
         if not self._run_effector(obj): return
         self.battlefield["players"][obj["own"]]["research"] += 1
         print(f"Player {obj['own']} made 1 research point")
-
+        if first and self.check_tech(obj["own"], "extended-rnd-department"):
+            if random.random() < 0.5:
+                self.run_lab(obj, first=False)
+        
     def check_view(self, obj, obj2):
         method = self.library["settings"]["view-method"]
         if method == "equal-or-lower":
@@ -296,11 +304,16 @@ class SimGraph:
                 for n, obj2 in enumerate(self.battlefield["objects"]):
                     if obj2["xy"] == build["xy"]: return n
 
+    def try_to_hit(self, obj, link):
+        print(link)
+        
     def run_hit(self, obj):
         if obj["name"] != "hit" or not obj["work"]: return
         if obj["cnt"] <= 0: return
         R = self.library["objects"]["hit"]["range"]
-
+        for link, _ in self.find_by_xy_source_and_target_name(obj["xy"], good="hit"):
+            self.try_to_hit(obj, link)
+            
     def check_tech(self, player, tech):
         assert tech in self.library["technologies"], f"no-tech: {tech}"
         techs = self.battlefield["players"][player]["technologies"]
@@ -317,7 +330,9 @@ class SimGraph:
             if "out" in obj and obj["out"] is not None: needed_power[obj["own"]] += 1
             elif "work" in obj and obj["work"]: needed_power[obj["own"]] += 1
             if obj["name"] == "nuke" and obj["cnt"] > 0:
-                available_power[obj["own"]] += N
+                if self.check_tech(player, "energy-recovery"): factor = 1.25
+                else: factor = 1.25
+                available_power[obj["own"]] += int(factor * N)
         np_players = ", ".join([f"{p}: {n}" for p,n in needed_power.items()])
         print("Needed Power:", np_players)
         for player in self.library["players"]:
