@@ -11,7 +11,6 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
-
 class SimWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         provider = Gtk.CssProvider()
@@ -407,11 +406,11 @@ class SimWindow(TerrWindow):
                 self.draw_content()
         elif key_name == "x" and self.mode == "edit":
             self.switch_owner(); self.draw_content()
-        elif key_name == "o" and self.mode == "edit":
+        elif key_name == "o":
             self.switch_object(); print(f"object: {self.obj}")
-        elif key_name == "p" and self.mode == "edit":
+        elif key_name == "p":
             self.switch_player(); print(f"player: {self.player}")
-        elif key_name == "g" and self.mode in ["navi", "edit", "delete"]:
+        elif key_name == "g":
             self.switch_good(); print(f"good: {self.good}")
             if self.painter.draw_good_links is not False:
                 self.painter.draw_good_links = self.good
@@ -436,6 +435,12 @@ class SimWindow(TerrWindow):
         else: TerrWindow.on_press(self, widget, event)
         if self.show_report: self.update_report()
         if self.show_info: self.update_info()
+
+# class SimControlWindow(Gtk.Window):
+#     def __init__(self):
+#         Gtk.Window.__init__(self, title="SimControl")
+#         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+#         self.show_all()
 
 def run_example():
     example_config = {
@@ -465,7 +470,7 @@ def run_example():
     validator.validate_config(example_config)
     validator.validate_map(library0, battlefield0)
     SimWindow(example_config, library0, battlefield0)
-
+    # SimControlWindow()
     try: Gtk.main()
     except KeyboardInterrupt:
         print("KeyboardInterrupt")

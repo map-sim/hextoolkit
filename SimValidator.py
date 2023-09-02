@@ -116,8 +116,8 @@ class MapValidator(TypeValidator):
             objdef = self.library["objects"][obj["name"]]
             obj2def = self.library["objects"][obj2["name"]]
             r = objdef["range"] if objdef["range"] > 0 else obj2def["range"]
-            if g == "hit": r *= 2
-            info = f"range {g}, {xy1}{obj['name']}, {xy2}{obj2['name']} < {r}"
+            if g in ["hit", "devel"]: r *= 2
+            info = f"range {g}, {xy1}{obj['name']} -- {xy2}{obj2['name']} < {r}"
             assert math.sqrt(d2) <= r, info 
         print("map validate_links... OK")
             

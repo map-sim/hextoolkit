@@ -260,7 +260,23 @@ class SimGraph:
             print("--------------------------------------->", build)
         elif self.check_tech(obj["own"], "build-recycling"):
             for _, build in self.find_by_xy_target_and_source_name(obj["xy"], name=None, good="devel"): break
-            else: return
+            else:
+                for _, store in self.find_by_xy_source_and_target_name(obj["xy"], name="store", good=subs2[0]):
+                    if not self.check_store_accept(store): continue
+                    print("Auto recycling...!")
+                    P = float(obj["cnt"]) / 3
+                    if random.random() < P:
+                        obj["cnt"] -= 1
+                        store["goods"].append(subs2[0])
+                    elif recovery_tech and random.random() < P:
+                        obj["cnt"] -= 1
+                        store["goods"].append(subs2[0])
+                    if obj["cnt"] == 0:
+                        print("Auto destruction!")
+                        for n, obj2 in enumerate(self.battlefield["objects"]):
+                            if obj2["xy"] == obj["xy"]: return n
+                    else: return                    
+                return
             store = None
             for _, obj2 in self.find_by_xy_source_and_target_name(obj["xy"], name="store", good=subs2[0]):
                 if not self.check_store_accept(obj2): continue
@@ -273,10 +289,12 @@ class SimGraph:
             if random.random() < P:
                 build["cnt"] -= 1
                 store["goods"].append(subs2[0])
-                if build["cnt"] == 0:
-                    for n, obj2 in enumerate(self.battlefield["objects"]):
-                        if obj2["xy"] != build["xy"]: continue
-                        return n
+            elif recovery_tech and random.random() < P:
+                build["cnt"] -= 1
+                store["goods"].append(subs2[0])
+            if build["cnt"] == 0:
+                for n, obj2 in enumerate(self.battlefield["objects"]):
+                    if obj2["xy"] == build["xy"]: return n
 
     def run_hit(self, obj):
         if obj["name"] != "hit" or not obj["work"]: return

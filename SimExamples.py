@@ -133,7 +133,7 @@ battlefield0 = {
             "research": 0,
             "destroyed": 0,
             "lost": 0,
-            "technologies": [],
+            "technologies": ["build-recycling"],
             "power-share": {}
         },
         "Bbb": {
