@@ -213,6 +213,14 @@ class SimWindow(TerrWindow):
         TerrWindow.on_click(self, widget, event)
         
         ox, oy = self.get_click_location(event)
+        if self.mode == "navi" and event.button == 3:
+            if self.painter.selected_index is not None:
+                index_t = self.find_next_object(ox, oy)
+                if index_t is not None:
+                    obj = self.battlefield["objects"][self.painter.selected_index]
+                    obj2 = self.battlefield["objects"][index_t]
+                    status = self.graphs["sim"].check_view(obj, obj2)
+                    print("visibility of target:", status)
         if self.mode == "edit" and event.button == 3:
             print("try to make link", self.good)
             status = self.try_to_make_link(ox, oy)

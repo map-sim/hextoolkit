@@ -1,7 +1,7 @@
 library0 = {
     "settings": {
         "view-method": "equal-or-lower",
-        "view-resolution": 0.01,
+        "view-resolution": 0.1,
         "difficulty-method": "random",
         "modules-for-power": 8,
         "power-by-nuke": 14,
