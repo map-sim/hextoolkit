@@ -305,14 +305,16 @@ class SimGraph:
                     if obj2["xy"] == build["xy"]: return n
 
     def try_to_hit(self, obj, link):
-        print(link)
-        
+        target = self.get_object_by_xy(link[2])
+        print(obj, "-->", link, "-->", target)
+        return False
+    
     def run_hit(self, obj):
         if obj["name"] != "hit" or not obj["work"]: return
         if obj["cnt"] <= 0: return
         R = self.library["objects"]["hit"]["range"]
         for link, _ in self.find_by_xy_source_and_target_name(obj["xy"], good="hit"):
-            self.try_to_hit(obj, link)
+            if self.try_to_hit(obj, link): return
             
     def check_tech(self, player, tech):
         assert tech in self.library["technologies"], f"no-tech: {tech}"
@@ -330,7 +332,7 @@ class SimGraph:
             if "out" in obj and obj["out"] is not None: needed_power[obj["own"]] += 1
             elif "work" in obj and obj["work"]: needed_power[obj["own"]] += 1
             if obj["name"] == "nuke" and obj["cnt"] > 0:
-                if self.check_tech(player, "energy-recovery"): factor = 1.25
+                if self.check_tech(obj["own"], "energy-recovery"): factor = 1.25
                 else: factor = 1.25
                 available_power[obj["own"]] += int(factor * N)
         np_players = ", ".join([f"{p}: {n}" for p,n in needed_power.items()])
