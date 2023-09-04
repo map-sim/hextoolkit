@@ -5,6 +5,8 @@ library0 = {
         "difficulty-method": "random",
         "modules-for-power": 8,
         "power-by-nuke": 14,
+        "energy-recovery": 0.25,
+        "anti-rockets": 2,
     },
     "technologies": [
         "intergrid-transformation", "energy-recovery",

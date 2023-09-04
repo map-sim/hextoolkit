@@ -315,19 +315,35 @@ class SimGraph:
                 for n, obj2 in enumerate(self.battlefield["objects"]):
                     if obj2["xy"] == build["xy"]: return n
 
-    def try_to_hit(self, obj, link):
+    def try_to_hit(self, obj, link, first):
         target = self.get_object_by_xy(link[2])
         view = self.check_coss_view(obj, target)
-        print(obj, "-->", link, "-->", target, "[v]", view)
+        d = self.calc_distance(obj, target)
+
+        print(obj, "-->", link, f" ({d}) -->", target, "[v]", view)
+        
         return False
 
     def run_hit(self, obj):
         if obj["name"] != "hit" or not obj["work"]: return
         if obj["cnt"] <= 0: return
-        R = self.library["objects"]["hit"]["range"]
+        R, counter = self.library["objects"]["hit"]["range"], 0
+        salvo = int(self.check_tech(obj["own"], "missile-salvo"))
         for link, _ in self.find_by_xy_source_and_target_name(obj["xy"], good="hit"):
-            if self.try_to_hit(obj, link): return
-            
+            if counter >= 2 + salvo: return
+            else: counter += 1
+            if self.try_to_hit(obj, link, True):
+                if self.check_tech(obj["own"], "multiple-targets"): continue
+                else: return
+            if counter >= 2 + salvo: return
+            else: counter += 1                
+            if self.try_to_hit(obj, link, False):
+                if self.check_tech(obj["own"], "multiple-targets"): continue
+                else: return
+            if counter >= 2 + salvo: return
+            else: counter += 1                            
+            self.try_to_hit(obj, link, False)
+
     def check_tech(self, player, tech):
         assert tech in self.library["technologies"], f"no-tech: {tech}"
         techs = self.battlefield["players"][player]["technologies"]
@@ -344,9 +360,10 @@ class SimGraph:
             if "out" in obj and obj["out"] is not None: needed_power[obj["own"]] += 1
             elif "work" in obj and obj["work"]: needed_power[obj["own"]] += 1
             if obj["name"] == "nuke" and obj["cnt"] > 0:
-                if self.check_tech(obj["own"], "energy-recovery"): factor = 1.25
-                else: factor = 1.25
-                available_power[obj["own"]] += int(factor * N)
+                if self.check_tech(obj["own"], "energy-recovery"):
+                    factor = 1.0 + self.library["settings"]["energy-recovery"]
+                    available_power[obj["own"]] += int(factor * N)
+                else: available_power[obj["own"]] += N               
         np_players = ", ".join([f"{p}: {n}" for p,n in needed_power.items()])
         print("Needed Power:", np_players)
         for player in self.library["players"]:
