@@ -137,18 +137,18 @@ battlefield0 = {
     "players": {
         "Aaa": {
             "send": 0,
-            "research": 0,
-            "destroyed": 0,
             "lost": 0,
+            "trophy": 0,
+            "research": 0,
             "technologies": ["build-recycling"],
             "power-share": {},
             "view-share": []
         },
         "Bbb": {
             "send": 0,
-            "research": 0,
-            "destroyed": 0,
             "lost": 0,
+            "trophy": 0,
+            "research": 0,
             "technologies": ["intergrid-transformation",
                              "passive-armor"],
             "power-share": {},

@@ -567,7 +567,7 @@
 		     'view-share': [],
                      'research': 0,
                      'send': 0,
-                     'technologies': ['build-recycling']},
+                     'technologies': ['missile-salvo', 'build-recycling']},
              'Bbb': {'destroyed': 0,
                      'lost': 0,
                      'power-share': {},
