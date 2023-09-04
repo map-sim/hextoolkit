@@ -199,6 +199,17 @@ class SimGraph:
             return self.check_view_eq_low(obj, obj2)
         else: raise ValueError("view-method")
 
+    def check_coss_view(self, obj, obj2):
+        if not self.check_tech(obj["own"], "centralized-command-system"):
+            return self.check_view(obj, obj2)
+        for obj3 in self.battlefield["objects"]:
+            if obj3["own"] == obj["own"]:
+                if self.check_view(obj3, obj2): return True
+            if obj["own"] in self.battlefield["players"][obj3["own"]]["view-share"]:
+                if self.check_tech(obj3["own"], "centralized-command-system"):
+                    if self.check_view(obj3, obj2): return True
+        return False
+
     def check_view_eq_low(self, obj, obj2):        
         dxy = self.library["settings"]["view-resolution"]
         to = self.terr_graph.check_terrain(*obj["xy"])[0]
@@ -306,9 +317,10 @@ class SimGraph:
 
     def try_to_hit(self, obj, link):
         target = self.get_object_by_xy(link[2])
-        print(obj, "-->", link, "-->", target)
+        view = self.check_coss_view(obj, target)
+        print(obj, "-->", link, "-->", target, "[v]", view)
         return False
-    
+
     def run_hit(self, obj):
         if obj["name"] != "hit" or not obj["work"]: return
         if obj["cnt"] <= 0: return
