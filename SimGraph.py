@@ -315,7 +315,10 @@ class SimGraph:
                 for n, obj2 in enumerate(self.battlefield["objects"]):
                     if obj2["xy"] == build["xy"]: return n
 
-    def try_to_hit(self, obj, link, first, antihits):
+    def try_to_intercept(self, target):
+        return False
+
+    def try_to_hit(self, obj, link, first, hits, antihits):
         target = self.get_object_by_xy(link[2])
         view = self.check_coss_view(obj, target)
         sps = self.check_tech(obj["own"], "satellite-positioning-system")
@@ -330,35 +333,38 @@ class SimGraph:
         elif d <= R: P = 2/3
         elif d <= 2*R: P = 1/3
         else: raise ValueError("hit")
-        print(obj, "-->", link, f" ({d}) -->", target, "[v]", view)
+        print("try-hit", obj, "-->", link, f" ({d}) -->", target, "[v]", view)
         los = random.random()
         if self._run_effector(obj):
+            print("Hit loaded!")
             if los > P: return False
-            print("HIT!")
-            # try - to - anti hit
-            # reduce modules
-            # count points
+            print("On target!")
+            if self.check_tech(target["own"], "anti-missile-system"):
+                if self.try_to_intercept(target):
+                    print("Interxepted!")
+                    return False
+            hits.append((obj, target))
             return True
         return False
 
-    def run_hit(self, obj, antihits):
+    def run_hit(self, obj, hits, antihits):
         if obj["name"] != "hit" or not obj["work"]: return
         if obj["cnt"] <= 0: return
         salvo = int(self.check_tech(obj["own"], "missile-salvo")); counter = 0
         for link, _ in self.find_by_xy_source_and_target_name(obj["xy"], good="hit"):
             if counter >= 2 + salvo: return
             else: counter += 1
-            if self.try_to_hit(obj, link, True, antihits):
+            if self.try_to_hit(obj, link, True, hits, antihits):
                 if self.check_tech(obj["own"], "multiple-targets"): continue
                 else: return
             if counter >= 2 + salvo: return
             else: counter += 1                
-            if self.try_to_hit(obj, link, False, antihits):
+            if self.try_to_hit(obj, link, False, hits, antihits):
                 if self.check_tech(obj["own"], "multiple-targets"): continue
                 else: return
             if counter >= 2 + salvo: return
             else: counter += 1                            
-            self.try_to_hit(obj, link, False, antihits)
+            self.try_to_hit(obj, link, False, hits, antihits)
 
     def check_tech(self, player, tech):
         assert tech in self.library["technologies"], f"no-tech: {tech}"
@@ -420,7 +426,8 @@ class SimGraph:
     def run_group(self, items, key):
         indexes = list(range(len(items)))
         random.shuffle(indexes)
-        torm, antihits = set(), {}
+        torm, hits = set(), []
+        antihits = dict()
         for i in indexes:
             if key == "lab": self.run_lab(items[i])
             elif key == "send": self.run_send(items[i])
@@ -429,8 +436,10 @@ class SimGraph:
             elif key == "store2": self.run_store(items[i], True)
             elif key == "mixer": self.run_mixer(items[i])
             elif key == "mine": self.run_mine(items[i])
-            elif key == "hit": self.run_hit(items[i], antihits)
+            elif key == "hit": self.run_hit(items[i], hits, antihits)
             else: raise ValueError(key)
+        for launcher, target in hits:
+            print(launcher, "-->", target)
         fsort = lambda x: -1 if x is None else x
         for n in reversed(sorted(torm, key = fsort)):
             if n is None: continue
