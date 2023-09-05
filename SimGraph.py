@@ -341,7 +341,7 @@ class SimGraph:
             print("On target!")
             if self.check_tech(target["own"], "anti-missile-system"):
                 if self.try_to_intercept(target):
-                    print("Interxepted!")
+                    print("Intercepted!")
                     return False
             hits.append((obj, target))
             return True
@@ -439,7 +439,22 @@ class SimGraph:
             elif key == "hit": self.run_hit(items[i], hits, antihits)
             else: raise ValueError(key)
         for launcher, target in hits:
-            print(launcher, "-->", target)
+            if target["cnt"] == 0: continue
+            if target["armor"]: target["armor"] = False; continue
+            if target["cnt"] < 0:
+                target["cnt"] += 1
+            if target["cnt"] > 0:
+                target["cnt"] -= 1
+            if self.check_tech(launcher["own"], "marketing campaign"):
+                self.battlefield["players"][launcher["own"]]["trophy"] += 1
+            elif target["cnt"] == 0:
+                self.battlefield["players"][launcher["own"]]["trophy"] += 1
+            if target["cnt"] == 0:
+                self.battlefield["players"][target["own"]]["losses"] += 1
+                for n, obj in enumerate(self.battlefield["objects"]):
+                    if obj["xy"] == target["xy"]:
+                        print("destroyed!!!")
+                        torm.add(n); break
         fsort = lambda x: -1 if x is None else x
         for n in reversed(sorted(torm, key = fsort)):
             if n is None: continue

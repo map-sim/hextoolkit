@@ -57,9 +57,9 @@ class SimWindow(TerrWindow):
         players = self.library["players"]
         send_row = [f"{p}: {self.battlefield['players'][p]['send']}" for p in players]
         content += f"send resources        => {', '.join(send_row)}\n"
-        destroy_row = [f"{p}: {self.battlefield['players'][p]['destroyed']}" for p in players]
-        content += f"destruction points   => {', '.join(destroy_row)}\n"
-        lost_row = [f"{p}: {self.battlefield['players'][p]['lost']}" for p in players]
+        destroy_row = [f"{p}: {self.battlefield['players'][p]['trophy']}" for p in players]
+        content += f"trophy points          => {', '.join(destroy_row)}\n"
+        lost_row = [f"{p}: {self.battlefield['players'][p]['losses']}" for p in players]
         content += f"lost builds/modules => {', '.join(lost_row)}\n"
         tex_row = [f"{p}: {len(self.battlefield['players'][p]['technologies'])}" for p in players]
         content += f"found technologies => {', '.join(tex_row)}\n"

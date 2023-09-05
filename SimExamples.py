@@ -137,7 +137,7 @@ battlefield0 = {
     "players": {
         "Aaa": {
             "send": 0,
-            "lost": 0,
+            "losses": 0,
             "trophy": 0,
             "research": 0,
             "technologies": ["build-recycling"],
@@ -146,7 +146,7 @@ battlefield0 = {
         },
         "Bbb": {
             "send": 0,
-            "lost": 0,
+            "losses": 0,
             "trophy": 0,
             "research": 0,
             "technologies": ["intergrid-transformation",
