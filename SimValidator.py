@@ -95,8 +95,8 @@ class MapValidator(TypeValidator):
         counters = {}
         for g, xy1, xy2 in battlefield["links"]:
             assert xy1 != xy2, "link other to other"
-            try: counters[g, *xy1, *xy2] += 1
-            except KeyError: counters[g, *xy1, *xy2] = 1
+            try: counters[g, xy1, xy2] += 1
+            except KeyError: counters[g, xy1, xy2] = 1
 
             o_is, e_is = False, False
             for obj in battlefield["objects"]:

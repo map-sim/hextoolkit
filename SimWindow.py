@@ -99,6 +99,32 @@ class SimWindow(TerrWindow):
         self.graphs["sim"].delete_object(self.painter.selected_index)
         self.painter.selected_index = None
 
+    def try_to_move_object(self, dx, dy):
+        if self.painter.selected_index is None: return
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        nx = obj["xy"][0] + int(dx); ny = obj["xy"][1] + int(dy)
+        # iv1 = self.library["objects"][obj["name"]]["interval"]
+        # for obj2 in self.battlefield["objects"]:
+        #     if obj["xy"] == obj2["xy"]: continue
+        #     iv2 = self.library["objects"][obj2["name"]]["interval"]
+        #     d2 = (nx - obj2["xy"][0]) ** 2 + (ny - obj2["xy"][1]) ** 2
+        #     d = math.sqrt(d2)
+        #     if d < max([iv1, iv2]):
+        #         print("To close to:", obj2["name"], obj2["xy"]); return
+        for k, link in enumerate(self.battlefield["links"]):
+            if link[1] == obj["xy"]:
+                self.battlefield["links"][k] = link[0], (nx, ny), link[2]
+            if link[2] == obj["xy"]:
+                self.battlefield["links"][k] = link[0], link[1], (nx, ny)
+        obj["xy"] = (nx, ny)
+
+        try:
+            validator = SimValidator()
+            validator.validate_map(self.library, self.battlefield)
+        except Exception as err:
+            print(err)
+            self.try_to_move_object(-dx, -dy)
+        
     def try_to_add_obj(self, x, y):
         x = int(x); y = int(y)
         terr = self.graphs["terr"].check_terrain(x, y)
@@ -128,15 +154,13 @@ class SimWindow(TerrWindow):
             obj3 = self.battlefield["objects"][self.painter.selected_index]
             if obj3["name"] == "devel" and self.player == obj3["own"]:
                 link = "devel", obj3["xy"], (x, y)
-                dd2 = (obj3["xy"][0] - x) ** 2 + (obj3["xy"][1] - y) ** 2
-                dd = math.sqrt(dd2)
-                if dd > 2 * self.library["objects"]["devel"]["range"]:
-                    return False
+                dd = math.sqrt((obj3["xy"][0] - x) ** 2 + (obj3["xy"][1] - y) ** 2)
+                if dd > 2 * self.library["objects"]["devel"]["range"]: return False
                 self.battlefield["links"].append(link)
-                self.battlefield["objects"].append(new_obj)
+        self.battlefield["objects"].append(new_obj)
         self.draw_content()
-        return True
-        
+        return False 
+
     def try_to_make_link(self, x, y):
         if self.painter.selected_index is None: return False
         obj = self.battlefield["objects"][self.painter.selected_index]
@@ -272,6 +296,19 @@ class SimWindow(TerrWindow):
         with open(fmap(cnt), "w") as fd:
             fd.write(pformat(self.battlefield))
         print("Save battlefield:", fmap(cnt))
+
+    def switch_armor(self):
+        if self.painter.selected_index is None: return
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        if obj["name"] == "nuke": return
+        obj["armor"] = not obj["armor"]
+
+    def switch_cnt(self):
+        if self.painter.selected_index is None: return
+        obj = self.battlefield["objects"][self.painter.selected_index]
+        L = self.library["objects"][obj["name"]]["modules"]
+        if obj["cnt"] == L: obj["cnt"] == -L 
+        obj["cnt"] += 1
 
     def switch_owner(self):
         if self.painter.selected_index is None: return
@@ -412,6 +449,26 @@ class SimWindow(TerrWindow):
             if self.painter.selected_index is not None:
                 self.delete_object()
                 self.draw_content()
+        elif key_name == "KP_6" and self.mode == "edit":
+                self.try_to_move_object(1, 0); self.draw_content()
+        elif key_name == "KP_4" and self.mode == "edit":
+                self.try_to_move_object(-1, 0); self.draw_content()
+        elif key_name == "KP_8" and self.mode == "edit":
+                self.try_to_move_object(0, -1); self.draw_content()
+        elif key_name == "KP_2" and self.mode == "edit":
+                self.try_to_move_object(0, 1); self.draw_content()
+        elif key_name == "KP_9" and self.mode == "edit":
+                self.try_to_move_object(1, -1); self.draw_content()
+        elif key_name == "KP_7" and self.mode == "edit":
+                self.try_to_move_object(-1, -1); self.draw_content()
+        elif key_name == "KP_3" and self.mode == "edit":
+                self.try_to_move_object(1, 1); self.draw_content()
+        elif key_name == "KP_1" and self.mode == "edit":
+                self.try_to_move_object(-1, 1); self.draw_content()
+        elif key_name == "a" and self.mode == "edit":
+            self.switch_armor(); self.draw_content()
+        elif key_name == "v" and self.mode == "edit":
+            self.switch_cnt(); self.draw_content()
         elif key_name == "x" and self.mode == "edit":
             self.switch_owner(); self.draw_content()
         elif key_name == "o":
