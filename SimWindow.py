@@ -103,21 +103,12 @@ class SimWindow(TerrWindow):
         if self.painter.selected_index is None: return
         obj = self.battlefield["objects"][self.painter.selected_index]
         nx = obj["xy"][0] + int(dx); ny = obj["xy"][1] + int(dy)
-        # iv1 = self.library["objects"][obj["name"]]["interval"]
-        # for obj2 in self.battlefield["objects"]:
-        #     if obj["xy"] == obj2["xy"]: continue
-        #     iv2 = self.library["objects"][obj2["name"]]["interval"]
-        #     d2 = (nx - obj2["xy"][0]) ** 2 + (ny - obj2["xy"][1]) ** 2
-        #     d = math.sqrt(d2)
-        #     if d < max([iv1, iv2]):
-        #         print("To close to:", obj2["name"], obj2["xy"]); return
         for k, link in enumerate(self.battlefield["links"]):
             if link[1] == obj["xy"]:
                 self.battlefield["links"][k] = link[0], (nx, ny), link[2]
             if link[2] == obj["xy"]:
                 self.battlefield["links"][k] = link[0], link[1], (nx, ny)
         obj["xy"] = (nx, ny)
-
         try:
             validator = SimValidator()
             validator.validate_map(self.library, self.battlefield)
@@ -373,7 +364,8 @@ class SimWindow(TerrWindow):
         print("New goot in mixer:", obj["out"])
         
     def on_press(self, widget, event):
-        key_name = Gdk.keyval_name(event.keyval)
+        if isinstance(event, str): key_name = event
+        else: key_name = Gdk.keyval_name(event.keyval)
         if key_name == "Escape":
             print("##> mode: navi & zoom reset")
             self.config["window-offset"] = self.config_backup["window-offset"]
@@ -409,6 +401,15 @@ class SimWindow(TerrWindow):
             self.show_info = False
             self.show_report = True
             self.draw_content()
+        elif key_name == "Tab":
+            if self.painter.selected_index is None:
+                self.painter.set_selected_object(0)
+            else:
+                num = len(self.battlefield["objects"])
+                k = (self.painter.selected_index + 1) % num
+                self.painter.set_selected_object(k)
+            self.draw_content()
+
         elif key_name == "Return" and self.mode == "run":
             print("Simulate a single step...")
             self.painter.selected_index = None
@@ -501,11 +502,46 @@ class SimWindow(TerrWindow):
         if self.show_report: self.update_report()
         if self.show_info: self.update_info()
 
-# class SimControlWindow(Gtk.Window):
-#     def __init__(self):
-#         Gtk.Window.__init__(self, title="SimControl")
-#         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
-#         self.show_all()
+class SimControlWindow(Gtk.Window):
+    def __init__(self, main_window):
+        Gtk.Window.__init__(self, title="SimControl")
+        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+        self.main_window = main_window
+        hbox = Gtk.Box(spacing=6)
+        self.add(hbox)
+
+        button_navi = Gtk.Button.new_with_mnemonic("_NAVI")
+        button_navi.connect("clicked", self.on_click_navi)
+        hbox.pack_start(button_navi, True, True, 0)
+
+        button_edit = Gtk.Button.new_with_mnemonic("_EDIT")
+        button_edit.connect("clicked", self.on_click_edit)
+        hbox.pack_start(button_edit, True, True, 0)
+        
+        button_del = Gtk.Button.new_with_mnemonic("_DELETE")
+        button_del.connect("clicked", self.on_click_del)
+        hbox.pack_start(button_del, True, True, 0)
+
+        button_run = Gtk.Button.new_with_mnemonic("_RUN")
+        button_run.connect("clicked", self.on_click_run)
+        hbox.pack_start(button_run, True, True, 0)
+
+        button_tab = Gtk.Button.new_with_mnemonic("_TAB")
+        button_tab.connect("clicked", self.on_click_tab)
+        hbox.pack_start(button_tab, True, True, 0)
+
+        self.show_all()
+
+    def on_click_navi(self, button):
+        self.main_window.on_press(None, "F1")
+    def on_click_edit(self, button):
+        self.main_window.on_press(None, "F2")
+    def on_click_del(self, button):
+        self.main_window.on_press(None, "F3")
+    def on_click_run(self, button):
+        self.main_window.on_press(None, "F4")
+    def on_click_tab(self, button):
+        self.main_window.on_press(None, "Tab")
 
 def run_example():
     example_config = {
@@ -534,8 +570,8 @@ def run_example():
     validator.validate_library(library0)
     validator.validate_config(example_config)
     validator.validate_map(library0, battlefield0)
-    SimWindow(example_config, library0, battlefield0)
-    # SimControlWindow()
+    win = SimWindow(example_config, library0, battlefield0)
+    SimControlWindow(win)
     try: Gtk.main()
     except KeyboardInterrupt:
         print("KeyboardInterrupt")
