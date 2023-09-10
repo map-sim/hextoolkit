@@ -88,6 +88,7 @@ class MapValidator(TypeValidator):
 
     def validate_terrains(self, battlefield):
         for row in battlefield["terrains"]:
+            if row[0] == "grid": continue
             assert row[1] in self.library["terrains"]
         print("map validate_terrains... OK")
 

@@ -11,6 +11,8 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
 class TerrPainter:
+    sqrt3 = math.sqrt(3)
+    
     def __init__(self, config, library, battlefield):
         self.battlefield =  battlefield
         self.library = library
@@ -65,14 +67,12 @@ class TerrPainter:
         context.fill()
         context.stroke()
 
-    def draw_polygon(self, context, terrain, params):
+    def _draw_closed_lines(self, context, color, params):
         zoom = self.config["window-zoom"]
         xoffset, yoffset = self.config["window-offset"]
-        color = self.library["terrains"][terrain]["color"]
-
         if not TerrPainter.is_convex_polygon(params):
             print("WARNING! Polygon is not convex!")
-            color = 1, 0, 0
+            color = 1, 0, 0, 1
         context.set_source_rgba(*color)
 
         start_x, start_y = params[-1]
@@ -84,13 +84,66 @@ class TerrPainter:
             stop_x, stop_y = stop_x*zoom, stop_y*zoom
             stop_x, stop_y = stop_x + xoffset, stop_y + yoffset
             context.line_to (stop_x, stop_y)
+    def draw_polygon(self, context, terrain, params):
+        color = self.library["terrains"][terrain]["color"]
+        self._draw_closed_lines(context, color, params)
         context.fill()
         context.stroke()
+
+    def draw_hex(self, context, terrain, params):
+        r = 1 if len(params) == 1 else  params[1]
+        x, y = params[0]; h = 0.5 * r * self.sqrt3    
+        points = [(x, y+r), (x+h, y+r/2), (x+h, y-r/2),
+                  (x, y-r), (x-h, y-r/2), (x-h, y+r/2)]
+        return self.draw_polygon(context, terrain, points)
+
+    def _draw_skeleton(self, context, color, params):
+        self._draw_closed_lines(context, color, params)
+        zoom = self.config["window-zoom"]
+        context.set_line_cap(cairo.LINE_CAP_ROUND)
+        context.set_line_width(0.2*zoom)
+    def _hex_to_int(self, xyo, xy, r):
+        xo, yo = xyo; x, y = xy
+        yc = yo + 1.5 * y * r
+        if y % 2 == 0: xc = xo + x * r * self.sqrt3
+        else: xc = xo + (x + 0.5) * r * self.sqrt3
+        return xc, yc
+
+    def draw_vex(self, context, terrain, params):
+        r = 1 if len(params) == 1 else params[1]
+        xc, yc = self._hex_to_int((0, 0), params[0], r)
+        self.draw_hex(context, terrain, ((xc, yc), r))
+    def draw_gex(self, context, color, params):
+        r = 1 if len(params) == 2 else params[2]
+        xc, yc = self._hex_to_int(params[0], params[1], r)
+        h = 0.5 * r * self.sqrt3
+        points = [(xc, yc+r), (xc+h, yc+r/2), (xc+h, yc-r/2),
+                  (xc, yc-r), (xc-h, yc-r/2), (xc-h, yc+r/2)]
+        self._draw_skeleton(context, color, points)
+
+    def draw_grid(self, context, color, params):
+        r = 1 if len(params) == 1 else params[1]        
+        w, h = self.config["window-size"]
+        dx, dy = self.config["window-offset"]
+        zoom = self.config["window-zoom"]
+
+        xio = -int(round(dx / r / zoom / self.sqrt3)) - 1
+        xie = int(round(xio +  w / r / zoom / self.sqrt3)) + 4
+        yio = -int(round(dy / 1.5 / r / zoom) + 0.5) - 1 
+        yie = int(round(yio + h / 1.5 / zoom)) + 4
+        if (yie - yio) * (xie - xio) > 8000: return
+                
+        for xi in range(xio, xie):
+            for yi in range(yio, yie):
+                self.draw_gex(context, color, [params[0], (xi, yi), r])
+        context.stroke()        
         
     def draw(self, context):
         for shape, ter, *params in self.battlefield["terrains"]:
-            color = self.library["terrains"][ter]["color"]
             if shape == "base": self.draw_base(context, ter)
+            elif shape == "hex": self.draw_hex(context, ter, params)
+            elif shape == "vex": self.draw_vex(context, ter, params)
+            elif shape == "grid": self.draw_grid(context, ter, params)
             elif shape == "rect": self.draw_rect(context, ter, params)
             elif shape == "polygon": self.draw_polygon(context, ter, params)
             else: raise ValueError(f"Not supported shape: {shape}")
