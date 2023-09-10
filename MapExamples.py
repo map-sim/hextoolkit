@@ -227,7 +227,11 @@ battlefield0 = {
          (-618.13, 1532.24),
          (-659.77, 1097.36),
         ),
-#       ("hex", "toxic-sea-0", (1, 1.75), 2),
+        ("hex", "toxic-sea-0", (-3, 1.75), 2),
+        ("hex", "toxic-sea-0", (3, 1.75)),
+        ("hex", "toxic-sea-0", (0, 0)),
+        ("hex", "toxic-sea-0", (2, 0)),
+        ("hex", "toxic-sea-0", (4, 0)),
         ("vex", "desert-2", (4, 4)),
         ("vex", "desert-2", (5, 4)),
         ("vex", "desert-2", (6, 4)),
@@ -236,12 +240,7 @@ battlefield0 = {
         ("vex", "desert-2", (6, 5)),
         ("vex", "desert-2", (4, 6)),
         ("vex", "desert-2", (5, 6)),
-        ("vex", "desert-2", (6, 6)),
-        ("hex", "toxic-sea-0", (-3, 1.75), 2),
-        ("hex", "toxic-sea-0", (3, 1.75)),
-        ("hex", "toxic-sea-0", (0, 0)),
-        ("hex", "toxic-sea-0", (2, 0)),
-        ("hex", "toxic-sea-0", (4, 0)),
-        ("grid", (0.5, 0.5, 0.5), (0, 0))
+        ("vex", "desert-2", (6, 6), 2),
+        ("grid", (0.5, 0.5, 0.5), 3)
     ]
 }

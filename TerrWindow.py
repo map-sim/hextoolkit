@@ -10,9 +10,8 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
-class TerrPainter:
-    sqrt3 = math.sqrt(3)
-    
+SQRT3 = math.sqrt(3)
+class TerrPainter:    
     def __init__(self, config, library, battlefield):
         self.battlefield =  battlefield
         self.library = library
@@ -92,7 +91,7 @@ class TerrPainter:
 
     def draw_hex(self, context, terrain, params):
         r = 1 if len(params) == 1 else  params[1]
-        x, y = params[0]; h = 0.5 * r * self.sqrt3    
+        x, y = params[0]; h = 0.5 * r * SQRT3    
         points = [(x, y+r), (x+h, y+r/2), (x+h, y-r/2),
                   (x, y-r), (x-h, y-r/2), (x-h, y+r/2)]
         return self.draw_polygon(context, terrain, points)
@@ -102,40 +101,39 @@ class TerrPainter:
         zoom = self.config["window-zoom"]
         context.set_line_cap(cairo.LINE_CAP_ROUND)
         context.set_line_width(0.2*zoom)
-    def _hex_to_int(self, xyo, xy, r):
-        xo, yo = xyo; x, y = xy
-        yc = yo + 1.5 * y * r
-        if y % 2 == 0: xc = xo + x * r * self.sqrt3
-        else: xc = xo + (x + 0.5) * r * self.sqrt3
+
+    @staticmethod
+    def _xy_hex_to_xy_loc(xy, r):        
+        x, y = xy; yc = 1.5 * y * r
+        if y % 2 == 0: xc = x * r * SQRT3
+        else: xc = (x + 0.5) * r * SQRT3
         return xc, yc
 
     def draw_vex(self, context, terrain, params):
         r = 1 if len(params) == 1 else params[1]
-        xc, yc = self._hex_to_int((0, 0), params[0], r)
+        xc, yc = TerrPainter._xy_hex_to_xy_loc(params[0], r)
         self.draw_hex(context, terrain, ((xc, yc), r))
     def draw_gex(self, context, color, params):
-        r = 1 if len(params) == 2 else params[2]
-        xc, yc = self._hex_to_int(params[0], params[1], r)
-        h = 0.5 * r * self.sqrt3
+        r = 1 if len(params) == 1 else params[1]
+        xc, yc = TerrPainter._xy_hex_to_xy_loc(params[0], r)
+        h = 0.5 * r * SQRT3
         points = [(xc, yc+r), (xc+h, yc+r/2), (xc+h, yc-r/2),
                   (xc, yc-r), (xc-h, yc-r/2), (xc-h, yc+r/2)]
         self._draw_skeleton(context, color, points)
 
     def draw_grid(self, context, color, params):
-        r = 1 if len(params) == 1 else params[1]        
+        r = 1 if len(params) == 0 else params[0]
         w, h = self.config["window-size"]
         dx, dy = self.config["window-offset"]
         zoom = self.config["window-zoom"]
-
-        xio = -int(round(dx / r / zoom / self.sqrt3)) - 1
-        xie = int(round(xio +  w / r / zoom / self.sqrt3)) + 4
+        xio = -int(round(dx / r / zoom / SQRT3)) - 1
+        xie = int(round(xio +  w / r / zoom / SQRT3)) + 4
         yio = -int(round(dy / 1.5 / r / zoom) + 0.5) - 1 
         yie = int(round(yio + h / 1.5 / zoom)) + 4
-        if (yie - yio) * (xie - xio) > 8000: return
-                
+        if (yie - yio) * (xie - xio) > 8000: return                
         for xi in range(xio, xie):
             for yi in range(yio, yie):
-                self.draw_gex(context, color, [params[0], (xi, yi), r])
+                self.draw_gex(context, color, [(xi, yi), r])
         context.stroke()        
         
     def draw(self, context):
@@ -150,7 +148,11 @@ class TerrPainter:
 
 class TerrGraph:
     def __init__(self, battlefield):
-        self.battlefield = battlefield
+        self.battlefield, self.vex_dict = battlefield, {}
+        for shape, terr, *params in self.battlefield["terrains"]:
+            if shape == "base": self.default_vex_terr = terr
+        for shape, terr, *params in self.battlefield["terrains"]:
+            if shape == "vex": self.vex_dict[params[0]] = terr
 
     def check_in_polygon(self, xyloc, xypoints):
         (x, y), pos, neg = xyloc, 0, 0
@@ -183,6 +185,24 @@ class TerrGraph:
                 if self.check_in_polygon((xloc, yloc), params):
                     output_row = shape, terr, params
                     output_terr = terr
+            elif shape == "hex":
+                r = 1 if len(params) == 1 else  params[1]
+                x, y = params[0]; h = 0.5 * r * SQRT3    
+                points = [(x, y+r), (x+h, y+r/2), (x+h, y-r/2),
+                          (x, y-r), (x-h, y-r/2), (x-h, y+r/2)]                
+                if self.check_in_polygon((xloc, yloc), points):
+                    output_row = shape, terr, params
+                    output_terr = terr
+            elif shape == "vex":
+                r = 1 if len(params) == 1 else params[1]
+                h = 0.5 * r * SQRT3
+                x, y = TerrPainter._xy_hex_to_xy_loc(params[0], r)
+                points = [(x, y+r), (x+h, y+r/2), (x+h, y-r/2),
+                          (x, y-r), (x-h, y-r/2), (x-h, y+r/2)]                
+                if self.check_in_polygon((xloc, yloc), points):
+                    output_row = shape, terr, params
+                    output_terr = terr
+            elif shape == "grid": continue
             else: raise ValueError(f"not supported: {shape}")
         return output_terr, output_row
         
