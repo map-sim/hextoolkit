@@ -241,6 +241,11 @@ battlefield0 = {
         ("vex", "desert-2", (4, 6)),
         ("vex", "desert-2", (5, 6)),
         ("vex", "desert-2", (6, 6), 2),
-        ("grid", (0.5, 0.5, 0.5), 3)
+        ("vex", "desert-2", (7, 6), 2),
+        ("vex", "desert-2", (7, 7), 2),
+        ("vex", "desert-2", (8, 8), 2),
+        ("vex", "desert-2", (8, 9), 2),
+        ("vex", "desert-2", (9, 9), 2),
+        ("grid", (0.5, 0.5, 0.5), 2)
     ]
 }

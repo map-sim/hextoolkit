@@ -148,11 +148,38 @@ class TerrPainter:
 
 class TerrGraph:
     def __init__(self, battlefield):
+        self.grid_radius = 1.0
+        self.default_vex_terr = None
+        base_counter = 0; grid_counter = 0
         self.battlefield, self.vex_dict = battlefield, {}
         for shape, terr, *params in self.battlefield["terrains"]:
-            if shape == "base": self.default_vex_terr = terr
+            if shape == "base":
+                self.default_vex_terr = terr
+                base_counter += 1
+            if shape == "grid":
+                grid_counter += 1
+                self.grid_radius = 1.0 if len(params) == 0 else params[0]
+        assert grid_counter <= 1, "grid"
+        assert base_counter <= 1, "base"
         for shape, terr, *params in self.battlefield["terrains"]:
             if shape == "vex": self.vex_dict[params[0]] = terr
+
+    def get_hex_terr(self, xy):
+        return self.vex_dict.get(xy, self.default_vex_terr)
+
+    def transform_to_vex(self, xloc, yloc):
+        h = SQRT3 * self.grid_radius / 2 
+        ynorm = int(round(yloc / (1.5 * self.grid_radius)))
+        yo = ynorm * 1.5 * self.grid_radius
+        if ynorm % 2 == 1:
+            xnorm = int(round((xloc - h) / (2 * h)))
+            xo = xnorm * 2 * h + h
+        else:
+            xnorm = int(round(xloc / (2 * h)))
+            xo = xnorm * 2 * h
+        # dx = xloc - xo; dy = yloc - yo
+        # print(xnorm, ynorm, "--", xo, yo, "--", dx, dy)        
+        return (xnorm, ynorm), (xo, yo)
 
     def check_in_polygon(self, xyloc, xypoints):
         (x, y), pos, neg = xyloc, 0, 0
@@ -232,7 +259,9 @@ class TerrWindow(NaviWindow):
             print(f"({round(ox, 2)}, {round(oy, 2)}),")
         elif event.button == 3:
             terr = self.graph.check_terrain(ox, oy)
-            print(f"({round(ox, 2)}, {round(oy, 2)}) --> {terr}")
+            hex_xyi, hex_xyo = self.graph.transform_to_vex(ox, oy)
+            hex_terr = self.graph.get_hex_terr(hex_xyi)
+            print(f"({round(ox, 2)}, {round(oy, 2)}) --> {terr} -- HEX {hex_xyi} / {hex_terr}")
         return True
         
 def run_example():
