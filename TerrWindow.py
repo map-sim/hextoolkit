@@ -181,6 +181,14 @@ class TerrGraph:
         # print(xnorm, ynorm, "--", xo, yo, "--", dx, dy)        
         return (xnorm, ynorm), (xo, yo)
 
+    def transform_to_oxy(self, xhex, yhex):
+        h = SQRT3 * self.grid_radius / 2 
+        yo = yhex * 1.5 * self.grid_radius
+        if yhex % 2 == 1:
+            xo = xhex * 2 * h + h
+        else: xo = xhex * 2 * h
+        return xo, yo
+
     def check_in_polygon(self, xyloc, xypoints):
         (x, y), pos, neg = xyloc, 0, 0
         for index in range(len(xypoints)):
