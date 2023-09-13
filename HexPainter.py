@@ -335,17 +335,30 @@ class HexPainter:
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
         self.terr_graph = TerrGraph(battlefield)
+        self.selected_vex = None
+        self.selected_xy = None
 
         self.battlefield =  battlefield
         self.library = library
         self.config = config
+        
+    def set_selection(self, vex, xyo):
+        self.selected_vex = vex
+        self.selected_xy = xyo
+    def draw_selection(self, context):
+        if self.selected_vex is None: return
+        gex = (self.selected_vex, self.terr_graph.grid_radius)
+        self.terr_painter.draw_gex(context, (1, 0, 1, 0.3), gex)
+        context.fill(); context.stroke()
+        self.terr_painter.draw_gex(context, (0.3, 0, 0.3), gex)
+        context.stroke()
 
     def draw(self, context):
         self.terr_painter.draw(context)
+        self.draw_selection(context)
 
         for (xhex, yhex), obj in self.battlefield["objects"].items():
             ox, oy = self.terr_graph.transform_to_oxy(xhex, yhex)
-            
             shape = self.library["objects"][obj["name"]]["shape"]
             if shape == "nuke-0": SimNuke_0(self.config, self.library, context, (ox, oy), **obj).draw()
             elif shape == "lab-0": SimLab_0(self.config, self.library, context, (ox, oy), **obj).draw()
@@ -357,5 +370,3 @@ class HexPainter:
             elif shape == "send-0": SimSend_0(self.config, self.library, context, (ox, oy), **obj).draw()
             elif shape == "post-0": SimPost_0(self.config, self.library, context, (ox, oy), **obj).draw()
             else: raise ValueError(f"Not supported object: {obj['name']}")
-
-        

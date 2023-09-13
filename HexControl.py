@@ -28,7 +28,26 @@ class HexControl(Gtk.Window):
         self.make_key_button("Right", "Right")
         
         self.make_key_button("_Save", "s", (0, 1, 1, 1))
+        self.make_key_button("<", "less")
+        self.make_key_button(">", "greater")
+        self.make_key_button("Load", "l")
+
+        self.snapshot_label = Gtk.Label()
+        self.grid.attach_next_to(self.snapshot_label, self.last_button, Gtk.PositionType.RIGHT, 1, 1)
+        self.refresh_snapshot_label()
+        self.vex_label = Gtk.Label()
+        self.grid.attach_next_to(self.vex_label, self.snapshot_label, Gtk.PositionType.RIGHT, 1, 1)
+        self.refresh_vex_label()
         self.show_all()
+
+    def refresh_snapshot_label(self):
+        snapshot = self.main_window.state["game-index"]
+        if snapshot is None: self.snapshot_label.set_markup("--")
+        else: self.snapshot_label.set_markup(str(snapshot))
+    def refresh_vex_label(self):
+        vex = self.main_window.painter.selected_vex
+        if vex is None: self.vex_label.set_markup("--")
+        else: self.vex_label.set_markup(str(vex))
 
     def on_scroll(self, widget, event):
         self.main_window.on_scroll(widget, event)
