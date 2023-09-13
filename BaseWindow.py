@@ -40,8 +40,8 @@ class BaseWindow(Gtk.Window):
         event_mask |= Gdk.EventMask.SCROLL_MASK
         self.drawing_area.set_events(event_mask)
 
-        self.drawing_area.connect("scroll-event",self.on_scroll)
-        self.drawing_area.connect("button-press-event",self.on_click)
+        self.drawing_area.connect("scroll-event", self.on_scroll)
+        self.drawing_area.connect("button-press-event", self.on_click)
         self.drawing_area.connect("configure-event", self.on_configure)   
         self.drawing_area.connect("draw", self.on_draw)
         self.init_window()

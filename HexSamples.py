@@ -60,17 +60,17 @@ battlefield_0 = {
     "difficulty": 2,
     "links": [
     ],
-    "objects": [
-        {"xy": (-2, -2), "name": "nuke", "own": "Bbb", "cnt": 8},
-        {"xy": (2, 2), "name": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": None},
-        {"xy": (3, 3), "name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "A", "A", "A"]},
-        {"xy": (4, 3), "name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "B", "C", "AB", "AC", "BC"]},
-        {"xy": (4, 4), "name": "mixer", "own": "Bbb", "cnt": 2, "armor": False, "out": "AC"},
-        {"xy": (5, 5), "name": "hit", "own": "Bbb", "cnt": 3, "armor": True, "work": True},
-        {"xy": (7, 5), "name": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
-        {"xy": (7, 9), "name": "send", "own": "Aaa", "cnt": 2, "armor": False, "work": False},
-        {"xy": (9, 5), "name": "post", "own": "Aaa", "cnt": 1, "armor": True},
-    ],
+    "objects": {
+        (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
+        (2, 2): {"name": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": None},
+        (3, 3): {"name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "A", "A", "A"]},
+        (4, 3): {"name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "B", "C", "AB", "AC", "BC"]},
+        (4, 4): {"name": "mixer", "own": "Bbb", "cnt": 2, "armor": False, "out": "AC"},
+        (5, 5): {"name": "hit", "own": "Bbb", "cnt": 3, "armor": True, "work": True},
+        (7, 5): {"name": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
+        (7, 9): {"name": "send", "own": "Aaa", "cnt": 2, "armor": False, "work": False},
+        (9, 5): {"name": "post", "own": "Aaa", "cnt": 1, "armor": True},
+    },
     "players": {
         "Aaa": {
             "send": 0,
@@ -97,7 +97,7 @@ battlefield_0 = {
         ("vex", "crater-crown-0", (0, 0), 2),
         ("vex", "crater-crown-0", (1, 0), 2),
         ("vex", "crater-crown-0", (1, 1), 2),
-        ("grid", (0.5, 0.5, 0.5), 2)
+        ("grid", (0.825, 0.825, 0.825), 2)
     ]
 }
 

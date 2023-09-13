@@ -53,7 +53,8 @@ class NaviWindow(BaseWindow):
         self.show_all()
 
     def on_press(self, widget, event):
-        key_name = Gdk.keyval_name(event.keyval)
+        if isinstance(event, str): key_name = event
+        else: key_name = Gdk.keyval_name(event.keyval)
         if key_name == "Escape":
             print("##> move center & redraw")
             self.config["window-offset"] = self.config_backup["window-offset"]
