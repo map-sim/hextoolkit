@@ -18,8 +18,7 @@ class HexWindow(TerrWindow):
         self.show_all(); self.state = {}
         self.state["game-index"] = None
         self.state["saved-games"] = []
-        self.state["selected-vex"] = None
-        self.state["selected-xy"] = None
+        self.state["selected-terr"] = None
         self.control_panel = None
 
         self.graph_terr = TerrGraph(battlefield)
@@ -36,6 +35,26 @@ class HexWindow(TerrWindow):
             self.control_panel.refresh_vex_label()
             self.draw_content()
 
+    def set_terrain(self):
+        if self.state["selected-terr"] is None: return
+        if self.painter.selected_vex is None: return
+        terr = self.state["selected-terr"]
+        vex = self.painter.selected_vex
+        self.graph_terr.vex_dict[vex] = terr
+        row = "vex", terr, vex, self.graph_terr.grid_radius
+        self.battlefield["terrains"].insert(-2, row)
+        print("Insert:", row)
+        self.draw_content()
+
+    def switch_terrain(self):
+        terrs = list(sorted(self.library["terrains"].keys()))
+        if self.state["selected-terr"] is not None:
+            i =  terrs.index(self.state["selected-terr"])
+            i += 1; i %= len(terrs)
+            self.state["selected-terr"] = terrs[i]
+        else: self.state["selected-terr"] = terrs[0]
+        print("Terrain:", self.state["selected-terr"])
+        
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
@@ -46,6 +65,8 @@ class HexWindow(TerrWindow):
             self.painter.set_selection(None, None)
             self.control_panel.refresh_vex_label()
             self.draw_content()
+        elif key_name == "T": self.set_terrain()
+        elif key_name == "t": self.switch_terrain()
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
         elif key_name in ("comma", "less"):
@@ -97,6 +118,10 @@ class HexWindow(TerrWindow):
         self.control_panel.refresh_snapshot_label()
 
 def run_example():
+    import ast, sys
+    from HexControl import HexControl
+    from HexSamples import library_0
+    from HexSamples import battlefield_0
     example_config = {
         "window-title": "MainMap",
         "window-size": (1800, 820),
@@ -104,11 +129,6 @@ def run_example():
         "window-zoom": 15.0,
         "move-sensitive": 50
     }
-
-    import ast, sys
-    from HexControl import HexControl
-    from HexSamples import library_0
-    from HexSamples import battlefield_0
 
     if len(sys.argv) >= 2:
         print("try to load map", sys.argv[1])
