@@ -19,6 +19,7 @@ class HexWindow(TerrWindow):
         self.state["game-index"] = None
         self.state["saved-games"] = []
         self.state["selected-terr"] = None
+        self.state["selected-obj"] = None
         self.control_panel = None
 
         self.graph_terr = TerrGraph(battlefield)
@@ -33,6 +34,9 @@ class HexWindow(TerrWindow):
         if event.button == 1:
             self.painter.set_selection(vex, xyo)
             self.control_panel.refresh_vex_label()
+            default_terr = self.graph_terr.default_vex_terr
+            terr = self.graph_terr.vex_dict.get(vex, default_terr)
+            self.control_panel.refresh_selected_terr_label(terr)
             self.draw_content()
 
     def set_terrain(self):
@@ -55,6 +59,15 @@ class HexWindow(TerrWindow):
         else: self.state["selected-terr"] = terrs[0]
         print("Terrain:", self.state["selected-terr"])
         self.control_panel.refresh_terr_label()
+    def switch_object(self):
+        objs = list(sorted(self.library["objects"].keys()))
+        if self.state["selected-obj"] is not None:
+            i =  objs.index(self.state["selected-obj"])
+            i += 1; i %= len(objs)
+            self.state["selected-obj"] = objs[i]
+        else: self.state["selected-obj"] = objs[0]
+        print("Object:", self.state["selected-obj"])
+        self.control_panel.refresh_obj_label()
         
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -64,14 +77,17 @@ class HexWindow(TerrWindow):
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.set_selection(None, None)
+            self.control_panel.refresh_selected_terr_label(None)
             self.control_panel.refresh_vex_label()
             self.draw_content()
         elif key_name == "grave": 
             self.painter.set_selection(None, None)
+            self.control_panel.refresh_selected_terr_label(None)
             self.control_panel.refresh_vex_label()
             self.draw_content()
         elif key_name == "T": self.set_terrain()
         elif key_name == "t": self.switch_terrain()
+        elif key_name == "o": self.switch_object()
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
         elif key_name in ("comma", "less"):

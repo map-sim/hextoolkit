@@ -32,6 +32,7 @@ class HexControl(Gtk.Window):
         self.make_key_button(">", "greater")
         self.make_key_button("Load", "l")
         nargs = Gtk.PositionType.RIGHT, 1, 1
+        nargs2 = Gtk.PositionType.RIGHT, 2, 1
         self.snapshot_label = Gtk.Label()
         self.grid.attach_next_to(self.snapshot_label, self.last_button, *nargs)
         self.refresh_snapshot_label()
@@ -43,12 +44,21 @@ class HexControl(Gtk.Window):
         self.vex_label = Gtk.Label()
         self.grid.attach_next_to(self.vex_label, title_vex_label, *nargs)
         self.refresh_vex_label()
+        self.selected_terr_label = Gtk.Label()
+        self.grid.attach_next_to(self.selected_terr_label, self.vex_label, *nargs2)
+        self.refresh_selected_terr_label(None)
 
         self.make_key_button("Terr-toogle", "t", (0, 3, 1, 1))
         self.make_key_button("Terr-set", "T")
         self.terr_label = Gtk.Label()
-        self.grid.attach_next_to(self.terr_label, self.last_button, *nargs)
+        self.grid.attach_next_to(self.terr_label, self.last_button, *nargs2)
         self.refresh_terr_label()
+
+        self.make_key_button("Obj-toogle", "o", (0, 4, 1, 1))
+        self.make_key_button("Obj-set", "O")
+        self.obj_label = Gtk.Label()
+        self.grid.attach_next_to(self.obj_label, self.last_button, *nargs)
+        self.refresh_obj_label()
 
         self.show_all()
 
@@ -64,7 +74,14 @@ class HexControl(Gtk.Window):
         terr = self.main_window.state["selected-terr"]
         if terr is None: self.terr_label.set_markup("--")
         else: self.terr_label.set_markup(str(terr))
-        
+    def refresh_selected_terr_label(self, terr):
+        if terr is None: self.selected_terr_label.set_markup("--")
+        else: self.selected_terr_label.set_markup(str(terr))
+    def refresh_obj_label(self):
+        obj = self.main_window.state["selected-obj"]
+        if obj is None: self.obj_label.set_markup("--")
+        else: self.obj_label.set_markup(str(obj))
+    
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
     def on_scroll(self, widget, event):

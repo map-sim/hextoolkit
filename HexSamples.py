@@ -69,6 +69,7 @@ battlefield_0 = {
         (5, 5): {"name": "hit", "own": "Bbb", "cnt": 3, "armor": True, "work": True},
         (7, 5): {"name": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
         (7, 9): {"name": "send", "own": "Aaa", "cnt": 2, "armor": False, "work": False},
+        (9, 9): {"name": "lab", "own": "Aaa", "cnt": 2, "armor": False, "work": True},
         (9, 5): {"name": "post", "own": "Aaa", "cnt": 1, "armor": True},
     },
     "players": {
@@ -97,6 +98,10 @@ battlefield_0 = {
         ("vex", "crater-crown-0", (0, 0), 2),
         ("vex", "crater-crown-0", (1, 0), 2),
         ("vex", "crater-crown-0", (1, 1), 2),
+        ("vex", "toxic-sea-0", (-3, 0), 2),
+        ("vex", "toxic-sea-0", (-4, 0), 2),
+        ("vex", "toxic-sea-0", (-4, -1), 2),
+        ("vex", "toxic-sea-0", (-5, -1), 2),
         ("grid", (0.825, 0.825, 0.825), 2)
     ]
 }

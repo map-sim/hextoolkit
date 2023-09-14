@@ -94,8 +94,10 @@ class NaviWindow(BaseWindow):
             self.draw_content()
         else:
             print("not supported key:")
-            print("\tkey name:", Gdk.keyval_name(event.keyval))
-            print("\tkey value:", event.keyval)
+            if not isinstance(event, str):
+                print("\tkey name:", Gdk.keyval_name(event.keyval))
+                print("\tkey value:", event.keyval)
+            else: print("\tkey name:", event)
         return True
 
     @BaseWindow.double_buffering

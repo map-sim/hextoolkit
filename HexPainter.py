@@ -237,7 +237,7 @@ class SimLab_0(SimObject):
         self.context.set_source_rgba(*self.color)
         self.context.arc(*self.xy, rr, 0, TWO_PI)
         self.context.fill()
-        self._draw_modules("lab", (0.75 * r, 0.5 * r))
+        self._draw_modules("lab", (0.75 * r, 0.35 * r))
         self._draw_resource((-rr, rr), self.work)
         self._draw_center()
 
