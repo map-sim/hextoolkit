@@ -54,6 +54,7 @@ class HexWindow(TerrWindow):
             self.state["selected-terr"] = terrs[i]
         else: self.state["selected-terr"] = terrs[0]
         print("Terrain:", self.state["selected-terr"])
+        self.control_panel.refresh_terr_label()
         
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -62,6 +63,10 @@ class HexWindow(TerrWindow):
             print("##> mode: navi & zoom reset")
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
+            self.painter.set_selection(None, None)
+            self.control_panel.refresh_vex_label()
+            self.draw_content()
+        elif key_name == "grave": 
             self.painter.set_selection(None, None)
             self.control_panel.refresh_vex_label()
             self.draw_content()

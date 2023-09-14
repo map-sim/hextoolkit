@@ -31,22 +31,24 @@ class HexControl(Gtk.Window):
         self.make_key_button("<", "less")
         self.make_key_button(">", "greater")
         self.make_key_button("Load", "l")
-
         nargs = Gtk.PositionType.RIGHT, 1, 1
         self.snapshot_label = Gtk.Label()
         self.grid.attach_next_to(self.snapshot_label, self.last_button, *nargs)
         self.refresh_snapshot_label()
-        
+
+        self.make_key_button("Unselect", "grave", (0, 2, 1, 1))
         title_vex_label = Gtk.Label()
-        self.grid.attach_next_to(title_vex_label, self.snapshot_label, *nargs)
+        self.grid.attach_next_to(title_vex_label, self.last_button, *nargs)
         title_vex_label.set_markup("Selection:")
-        
         self.vex_label = Gtk.Label()
         self.grid.attach_next_to(self.vex_label, title_vex_label, *nargs)
         self.refresh_vex_label()
 
-        self.make_key_button("Terr-toogle", "t", (0, 2, 1, 1))
+        self.make_key_button("Terr-toogle", "t", (0, 3, 1, 1))
         self.make_key_button("Terr-set", "T")
+        self.terr_label = Gtk.Label()
+        self.grid.attach_next_to(self.terr_label, self.last_button, *nargs)
+        self.refresh_terr_label()
 
         self.show_all()
 
@@ -58,6 +60,10 @@ class HexControl(Gtk.Window):
         vex = self.main_window.painter.selected_vex
         if vex is None: self.vex_label.set_markup("--")
         else: self.vex_label.set_markup(f"{vex[0]} : {vex[1]}")
+    def refresh_terr_label(self):
+        terr = self.main_window.state["selected-terr"]
+        if terr is None: self.terr_label.set_markup("--")
+        else: self.terr_label.set_markup(str(terr))
         
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
