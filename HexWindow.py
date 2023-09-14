@@ -7,6 +7,9 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
+from HexValidator import ConfigValidator
+from HexValidator import LibraryValidator
+from HexValidator import MapValidator
 from HexPainter import HexPainter
 from TerrWindow import TerrWindow
 from TerrWindow import TerrGraph
@@ -15,9 +18,10 @@ from TerrWindow import TerrGraph
 class HexWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         TerrWindow.__init__(self, config, library, battlefield)
-        self.show_all(); self.state = {}
+        self.validate(); self.show_all(); self.state = {}
         self.state["game-index"] = None
         self.state["saved-games"] = []
+        self.state["selected-player"] = None
         self.state["selected-terr"] = None
         self.state["selected-obj"] = None
         self.control_panel = None
@@ -33,10 +37,9 @@ class HexWindow(TerrWindow):
         vex, xyo = self.graph_terr.transform_to_vex(ox, oy)
         if event.button == 1:
             self.painter.set_selection(vex, xyo)
-            self.control_panel.refresh_vex_label()
             default_terr = self.graph_terr.default_vex_terr
             terr = self.graph_terr.vex_dict.get(vex, default_terr)
-            self.control_panel.refresh_selected_terr_label(terr)
+            self.control_panel.refresh_selection_label(terr)
             self.draw_content()
 
     def set_terrain(self):
@@ -68,6 +71,15 @@ class HexWindow(TerrWindow):
         else: self.state["selected-obj"] = objs[0]
         print("Object:", self.state["selected-obj"])
         self.control_panel.refresh_obj_label()
+    def switch_player(self):
+        players = list(sorted(self.library["players"].keys()))
+        if self.state["selected-player"] is not None:
+            i =  players.index(self.state["selected-player"])
+            i += 1; i %= len(players)
+            self.state["selected-player"] = players[i]
+        else: self.state["selected-player"] = players[0]
+        print("player:", self.state["selected-player"])
+        self.control_panel.refresh_player_label()
         
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -77,19 +89,19 @@ class HexWindow(TerrWindow):
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.set_selection(None, None)
-            self.control_panel.refresh_selected_terr_label(None)
-            self.control_panel.refresh_vex_label()
+            self.control_panel.refresh_selection_label()
             self.draw_content()
         elif key_name == "grave": 
             self.painter.set_selection(None, None)
-            self.control_panel.refresh_selected_terr_label(None)
-            self.control_panel.refresh_vex_label()
+            self.control_panel.refresh_selection_label()
             self.draw_content()
         elif key_name == "T": self.set_terrain()
         elif key_name == "t": self.switch_terrain()
         elif key_name == "o": self.switch_object()
+        elif key_name == "p": self.switch_player()
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
+        elif key_name == "v": self.validate()
         elif key_name in ("comma", "less"):
             length = len(self.state["saved-games"])
             if self.state["game-index"] is None:
@@ -138,6 +150,11 @@ class HexWindow(TerrWindow):
         self.state["game-index"] = len(self.state["saved-games"]) - 1
         self.control_panel.refresh_snapshot_label()
 
+    def validate(self):        
+        ConfigValidator(self.config)
+        LibraryValidator(self.library)
+        MapValidator(self.library, self.battlefield)
+        
 def run_example():
     import ast, sys
     from HexControl import HexControl

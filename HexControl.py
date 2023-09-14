@@ -27,36 +27,41 @@ class HexControl(Gtk.Window):
         self.make_key_button("Down", "Down")
         self.make_key_button("Right", "Right")
         
-        self.make_key_button("Save", "s", (0, 1, 1, 1))
+        self.make_key_button("Verify", "v", (0, 1, 1, 1))
+        self.make_key_button("Save", "s")
         self.make_key_button("<", "less")
         self.make_key_button(">", "greater")
         self.make_key_button("Load", "l")
         nargs = Gtk.PositionType.RIGHT, 1, 1
         nargs2 = Gtk.PositionType.RIGHT, 2, 1
+        nargs6 = Gtk.PositionType.RIGHT, 6, 1
         self.snapshot_label = Gtk.Label()
+        self.snapshot_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.snapshot_label, self.last_button, *nargs)
         self.refresh_snapshot_label()
 
-        self.make_key_button("Unselect", "grave", (0, 2, 1, 1))
-        title_vex_label = Gtk.Label()
-        self.grid.attach_next_to(title_vex_label, self.last_button, *nargs)
-        title_vex_label.set_markup("Selection:")
-        self.vex_label = Gtk.Label()
-        self.grid.attach_next_to(self.vex_label, title_vex_label, *nargs)
-        self.refresh_vex_label()
-        self.selected_terr_label = Gtk.Label()
-        self.grid.attach_next_to(self.selected_terr_label, self.vex_label, *nargs2)
-        self.refresh_selected_terr_label(None)
-
+        self.make_key_button("Unselect", "grave", (0, 2, 1, 1))        
+        self.selection_label = Gtk.Label()
+        self.selection_label.set_alignment(0.05, 0.5)
+        self.grid.attach_next_to(self.selection_label, self.last_button, *nargs6)
+        self.refresh_selection_label()
+        
         self.make_key_button("Terr-toogle", "t", (0, 3, 1, 1))
         self.make_key_button("Terr-set", "T")
         self.terr_label = Gtk.Label()
+        self.terr_label.set_alignment(0.05, 0.5)
         self.grid.attach_next_to(self.terr_label, self.last_button, *nargs2)
         self.refresh_terr_label()
+        self.make_key_button("Player-toogle", "p", (4, 3, 2, 1))
+        self.player_label = Gtk.Label()
+        self.player_label.set_alignment(0.1, 0.5)
+        self.grid.attach_next_to(self.player_label, self.last_button, *nargs)
+        self.refresh_player_label()
 
         self.make_key_button("Obj-toogle", "o", (0, 4, 1, 1))
         self.make_key_button("Obj-set", "O")
         self.obj_label = Gtk.Label()
+        self.obj_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.obj_label, self.last_button, *nargs)
         self.refresh_obj_label()
 
@@ -66,21 +71,24 @@ class HexControl(Gtk.Window):
         snapshot = self.main_window.state["game-index"]
         if snapshot is None: self.snapshot_label.set_markup("--")
         else: self.snapshot_label.set_markup(str(snapshot))
-    def refresh_vex_label(self):
+    def refresh_selection_label(self, terr=None):
         vex = self.main_window.painter.selected_vex
-        if vex is None: self.vex_label.set_markup("--")
-        else: self.vex_label.set_markup(f"{vex[0]} : {vex[1]}")
+        if vex is not None:
+            label = f" Selection: {vex[0]} : {vex[1]} | {terr} "
+            self.selection_label.set_markup(label)
+        else: self.selection_label.set_markup("Selection: --")
     def refresh_terr_label(self):
         terr = self.main_window.state["selected-terr"]
         if terr is None: self.terr_label.set_markup("--")
         else: self.terr_label.set_markup(str(terr))
-    def refresh_selected_terr_label(self, terr):
-        if terr is None: self.selected_terr_label.set_markup("--")
-        else: self.selected_terr_label.set_markup(str(terr))
     def refresh_obj_label(self):
         obj = self.main_window.state["selected-obj"]
         if obj is None: self.obj_label.set_markup("--")
         else: self.obj_label.set_markup(str(obj))
+    def refresh_player_label(self):
+        player = self.main_window.state["selected-player"]
+        if player is None: self.player_label.set_markup("--")
+        else: self.player_label.set_markup(str(player))
     
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)

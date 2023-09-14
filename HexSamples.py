@@ -58,8 +58,8 @@ library_0 = {
 battlefield_0 = {
     "iteration": 0,
     "difficulty": 2,
-    "links": [
-    ],
+    "links": {
+    },
     "objects": {
         (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
         (2, 2): {"name": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": None},
