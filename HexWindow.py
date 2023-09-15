@@ -22,6 +22,7 @@ class HexWindow(TerrWindow):
         self.state["game-index"] = None
         self.state["saved-games"] = []
         self.state["selected-player"] = None
+        self.state["selected-good"] = None
         self.state["selected-terr"] = None
         self.state["selected-obj"] = None
         self.control_panel = None
@@ -39,7 +40,8 @@ class HexWindow(TerrWindow):
             self.painter.set_selection(vex, xyo)
             default_terr = self.graph_terr.default_vex_terr
             terr = self.graph_terr.vex_dict.get(vex, default_terr)
-            self.control_panel.refresh_selection_label(terr)
+            obj = self.battlefield["objects"].get(vex)
+            self.control_panel.refresh_selection_label(terr, obj)
             self.draw_content()
 
     def set_terrain(self):
@@ -53,33 +55,24 @@ class HexWindow(TerrWindow):
         print("Insert:", row)
         self.draw_content()
 
-    def switch_terrain(self):
-        terrs = list(sorted(self.library["terrains"].keys()))
-        if self.state["selected-terr"] is not None:
-            i =  terrs.index(self.state["selected-terr"])
-            i += 1; i %= len(terrs)
-            self.state["selected-terr"] = terrs[i]
-        else: self.state["selected-terr"] = terrs[0]
-        print("Terrain:", self.state["selected-terr"])
-        self.control_panel.refresh_terr_label()
-    def switch_object(self):
-        objs = list(sorted(self.library["objects"].keys()))
-        if self.state["selected-obj"] is not None:
-            i =  objs.index(self.state["selected-obj"])
-            i += 1; i %= len(objs)
-            self.state["selected-obj"] = objs[i]
-        else: self.state["selected-obj"] = objs[0]
-        print("Object:", self.state["selected-obj"])
-        self.control_panel.refresh_obj_label()
-    def switch_player(self):
-        players = list(sorted(self.library["players"].keys()))
-        if self.state["selected-player"] is not None:
-            i =  players.index(self.state["selected-player"])
-            i += 1; i %= len(players)
-            self.state["selected-player"] = players[i]
-        else: self.state["selected-player"] = players[0]
-        print("player:", self.state["selected-player"])
-        self.control_panel.refresh_player_label()
+    def switch_terrain(self): self.switch_item("terrains", "selected-terr")
+    def switch_player(self): self.switch_item("players", "selected-player")
+    def switch_object(self): self.switch_item("objects", "selected-obj")        
+    def switch_good(self): self.switch_item("resources", "selected-good")
+
+    def switch_item(self, key, state):
+        items = list(sorted(self.library[key].keys()))
+        if self.state[state] is not None:
+            i =  items.index(self.state[state])
+            i += 1; i %= len(items)
+            self.state[state] = items[i]
+        else: self.state[state] = items[0]
+        print(f"{key}:", self.state[state])
+        if key == "resources": self.control_panel.refresh_good_label()
+        elif key == "players": self.control_panel.refresh_player_label()
+        elif key == "terrains": self.control_panel.refresh_terr_label()
+        elif key == "objects": self.control_panel.refresh_obj_label()
+        else: raise KeyError(key)
         
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -99,6 +92,7 @@ class HexWindow(TerrWindow):
         elif key_name == "t": self.switch_terrain()
         elif key_name == "o": self.switch_object()
         elif key_name == "p": self.switch_player()
+        elif key_name == "g": self.switch_good()
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
         elif key_name == "v": self.validate()
@@ -162,7 +156,7 @@ def run_example():
     from HexSamples import battlefield_0
     example_config = {
         "window-title": "MainMap",
-        "window-size": (1800, 820),
+        "window-size": (1800, 780),
         "window-offset": (840, 125),
         "window-zoom": 15.0,
         "move-sensitive": 50

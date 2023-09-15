@@ -28,9 +28,9 @@ class HexControl(Gtk.Window):
         self.make_key_button("Right", "Right")
         
         self.make_key_button("Verify", "v", (0, 1, 1, 1))
-        self.make_key_button("Save", "s")
         self.make_key_button("<", "less")
         self.make_key_button(">", "greater")
+        self.make_key_button("Save", "s")
         self.make_key_button("Load", "l")
         nargs = Gtk.PositionType.RIGHT, 1, 1
         nargs2 = Gtk.PositionType.RIGHT, 2, 1
@@ -64,17 +64,27 @@ class HexControl(Gtk.Window):
         self.obj_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.obj_label, self.last_button, *nargs)
         self.refresh_obj_label()
+        self.make_key_button("Good-toogle", "g", (4, 4, 2, 1))
+        self.good_label = Gtk.Label()
+        self.good_label.set_alignment(0.1, 0.5)
+        self.grid.attach_next_to(self.good_label, self.last_button, *nargs)
+        self.refresh_good_label()
 
+        self.make_key_button("Make-obj", "n", (0, 5, 1, 1))
+        self.make_key_button("Delete-obj", "d")
         self.show_all()
 
     def refresh_snapshot_label(self):
         snapshot = self.main_window.state["game-index"]
         if snapshot is None: self.snapshot_label.set_markup("--")
         else: self.snapshot_label.set_markup(str(snapshot))
-    def refresh_selection_label(self, terr=None):
+    def refresh_selection_label(self, terr=None, obj=None):
         vex = self.main_window.painter.selected_vex
         if vex is not None:
             label = f" Selection: {vex[0]} : {vex[1]} | {terr} "
+            if obj is not None:
+                name, owner = obj["name"], obj["own"]
+                label = f"{label}| {name} / {owner} "
             self.selection_label.set_markup(label)
         else: self.selection_label.set_markup("Selection: --")
     def refresh_terr_label(self):
@@ -89,6 +99,10 @@ class HexControl(Gtk.Window):
         player = self.main_window.state["selected-player"]
         if player is None: self.player_label.set_markup("--")
         else: self.player_label.set_markup(str(player))
+    def refresh_good_label(self):
+        good = self.main_window.state["selected-good"]
+        if good is None: self.good_label.set_markup("--")
+        else: self.good_label.set_markup(str(good))
     
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
