@@ -331,7 +331,7 @@ class SimPost_0(SimObject):
         self._draw_center()
 
 
-class HexPainter:
+class HexPainter(SimPoint):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
         self.terr_graph = TerrGraph(battlefield)
@@ -347,6 +347,32 @@ class HexPainter:
         self.selected_xy = xyo
     def draw_selection(self, context):
         if self.selected_vex is None: return
+        obj = self.battlefield["objects"].get(self.selected_vex)
+        if obj is None:
+            gex = (self.selected_vex, self.terr_graph.grid_radius)
+            self.terr_painter.draw_gex(context, (1, 0, 1, 0.3), gex)
+            context.fill(); context.stroke()
+            self.terr_painter.draw_gex(context, (0.3, 0, 0.3), gex)
+            context.stroke()
+            return
+
+        interval = self.library["objects"][obj["name"]]["interval"]
+        r = self.library["objects"][obj["name"]].get("range", 0.0)
+        rr = 2*r if obj["name"] in ["hit", "devel"] else r
+        color = self.library["players"][obj["own"]]["color"]
+        color = [c if i != 3 else 0.15 for i, c in enumerate(color)]
+        xloc, yloc = self._calc_render_xy(*self.selected_xy)
+        zoom = self.config["window-zoom"]
+        context.set_source_rgba(*color)
+        context.arc(xloc, yloc, r * zoom, 0, TWO_PI)
+        context.fill()
+        context.set_source_rgba(*color)
+        context.arc(xloc, yloc, rr * zoom, 0, TWO_PI)
+        context.fill()
+        context.set_source_rgba(0, 0, 0, 0.25)
+        context.arc(xloc, yloc, interval * zoom, 0, TWO_PI)
+        context.fill()
+        
         gex = (self.selected_vex, self.terr_graph.grid_radius)
         self.terr_painter.draw_gex(context, (1, 0, 1, 0.3), gex)
         context.fill(); context.stroke()

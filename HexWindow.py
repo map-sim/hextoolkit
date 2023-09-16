@@ -14,6 +14,14 @@ from HexPainter import HexPainter
 from TerrWindow import TerrWindow
 from TerrWindow import TerrGraph
 
+def status_print(msg):
+    def wrapper(func):
+        def inner(*args, **kwargs): 
+            ret = func(*args, **kwargs)
+            print(f"status of {msg}: {ret}")
+            return ret
+        return inner
+    return wrapper
 
 class HexWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
@@ -73,7 +81,22 @@ class HexWindow(TerrWindow):
         elif key == "terrains": self.control_panel.refresh_terr_label()
         elif key == "objects": self.control_panel.refresh_obj_label()
         else: raise KeyError(key)
+
+    @status_print("new-object")
+    def add_object(self):
+        vex = self.painter.selected_vex
+        if vex is None: return False
+        default_terr = self.graph_terr.default_vex_terr
+        terr = self.graph_terr.vex_dict.get(vex, default_terr)
+        if not self.library["terrains"][terr]["buildable"]: return False
+        if self.state["selected-player"] is None: return False
+        if self.state["selected-obj"] is None: return False
+        obj = self.battlefield["objects"].get(vex)
+        if obj is not None: return False
         
+        
+        return True
+
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
@@ -91,6 +114,7 @@ class HexWindow(TerrWindow):
         elif key_name == "T": self.set_terrain()
         elif key_name == "t": self.switch_terrain()
         elif key_name == "o": self.switch_object()
+        elif key_name == "n": self.add_object()
         elif key_name == "p": self.switch_player()
         elif key_name == "g": self.switch_good()
         elif key_name == "s": self.save_lib_and_map()

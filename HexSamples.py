@@ -38,7 +38,7 @@ library_0 = {
         "mine": {"shape": "mine-0", "modules": 2, "interval": 3, "range": 0},
         "mixer": {"shape": "mixer-0", "modules": 2, "interval": 3, "range": 0},
         "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 8},
-        "nuke": {"shape": "nuke-0", "modules": 8, "interval": 6, "range": 0},
+        "nuke": {"shape": "nuke-0", "modules": 8, "interval": 8, "range": 0},
         "post": {"shape": "post-0", "modules": 1, "interval": 2, "range": 0},
         "lab":  {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0, "substracts": ["AC", "BC"]},
         "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 8, "substracts": ["AB", "AB"]},

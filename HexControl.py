@@ -41,6 +41,7 @@ class HexControl(Gtk.Window):
         self.refresh_snapshot_label()
 
         self.make_key_button("Unselect", "grave", (0, 2, 1, 1))        
+        self.make_key_button("Obj-delete", "d")
         self.selection_label = Gtk.Label()
         self.selection_label.set_alignment(0.05, 0.5)
         self.grid.attach_next_to(self.selection_label, self.last_button, *nargs6)
@@ -59,7 +60,7 @@ class HexControl(Gtk.Window):
         self.refresh_player_label()
 
         self.make_key_button("Obj-toogle", "o", (0, 4, 1, 1))
-        self.make_key_button("Obj-set", "O")
+        self.make_key_button("Obj-set", "n")
         self.obj_label = Gtk.Label()
         self.obj_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.obj_label, self.last_button, *nargs)
@@ -69,9 +70,6 @@ class HexControl(Gtk.Window):
         self.good_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.good_label, self.last_button, *nargs)
         self.refresh_good_label()
-
-        self.make_key_button("Make-obj", "n", (0, 5, 1, 1))
-        self.make_key_button("Delete-obj", "d")
         self.show_all()
 
     def refresh_snapshot_label(self):
