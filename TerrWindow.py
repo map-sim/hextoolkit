@@ -181,7 +181,8 @@ class TerrGraph:
         # print(xnorm, ynorm, "--", xo, yo, "--", dx, dy)        
         return (xnorm, ynorm), (xo, yo)
 
-    def transform_to_oxy(self, xhex, yhex):
+    def transform_to_oxy(self, vex):
+        xhex, yhex = vex
         h = SQRT3 * self.grid_radius / 2 
         yo = yhex * 1.5 * self.grid_radius
         if yhex % 2 == 1:

@@ -1,5 +1,5 @@
 
-import gi, os, copy
+import gi, os, copy, math
 from pprint import pformat
 
 gi.require_version('Gtk', '3.0')
@@ -93,8 +93,32 @@ class HexWindow(TerrWindow):
         if self.state["selected-obj"] is None: return False
         obj = self.battlefield["objects"].get(vex)
         if obj is not None: return False
-        
-        
+        name = self.state["selected-obj"]
+        interval = self.library["objects"][name]["interval"]
+        xyo = self.graph_terr.transform_to_oxy(vex)
+        for vex2, obj in self.battlefield["objects"].items():
+            xy = self.graph_terr.transform_to_oxy(vex2)
+            d = math.sqrt((xyo[0]-xy[0])**2 + (xyo[1]-xy[1])**2)
+            r = self.library["objects"][obj["name"]]["interval"]
+            print(r, interval, "??", d)
+            if d < max([r, interval]): return False
+        self.battlefield["objects"][vex] = {}
+        owner = self.state["selected-player"]
+        self.battlefield["objects"][vex]["name"] = name
+        self.battlefield["objects"][vex]["own"] = owner
+        cnt = self.library["objects"][name]["modules"]
+        self.battlefield["objects"][vex]["cnt"] = cnt
+        if name == "mine" or name == "mixer":
+            self.battlefield["objects"][vex]["out"] = None
+        elif name == "nuke" or name == "post": pass
+        else: self.battlefield["objects"][vex]["work"] = False        
+        if name != "nuke" and name != "post":
+            self.battlefield["objects"][vex]["armor"] = False
+        elif name == "post":
+            self.battlefield["objects"][vex]["armor"] = True
+        if name == "store":
+            self.battlefield["objects"][vex]["goods"] = []
+        self.draw_content()
         return True
 
     def on_press(self, widget, event):
@@ -105,7 +129,11 @@ class HexWindow(TerrWindow):
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.set_selection(None, None)
-            self.control_panel.refresh_selection_label()
+            self.state["selected-player"] = None
+            self.state["selected-good"] = None
+            self.state["selected-terr"] = None
+            self.state["selected-obj"] = None
+            self.control_panel.refresh_all_labels()
             self.draw_content()
         elif key_name == "grave": 
             self.painter.set_selection(None, None)

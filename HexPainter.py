@@ -384,7 +384,7 @@ class HexPainter(SimPoint):
         self.draw_selection(context)
 
         for (xhex, yhex), obj in self.battlefield["objects"].items():
-            ox, oy = self.terr_graph.transform_to_oxy(xhex, yhex)
+            ox, oy = self.terr_graph.transform_to_oxy((xhex, yhex))
             shape = self.library["objects"][obj["name"]]["shape"]
             if shape == "nuke-0": SimNuke_0(self.config, self.library, context, (ox, oy), **obj).draw()
             elif shape == "lab-0": SimLab_0(self.config, self.library, context, (ox, oy), **obj).draw()

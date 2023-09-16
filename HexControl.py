@@ -101,6 +101,13 @@ class HexControl(Gtk.Window):
         good = self.main_window.state["selected-good"]
         if good is None: self.good_label.set_markup("--")
         else: self.good_label.set_markup(str(good))
+    def refresh_all_labels(self):
+    	self.refresh_snapshot_label()
+    	self.refresh_selection_label()
+    	self.refresh_terr_label()
+    	self.refresh_obj_label()
+    	self.refresh_player_label()
+    	self.refresh_good_label()
     
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
