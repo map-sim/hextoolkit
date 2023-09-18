@@ -58,12 +58,13 @@ library_0 = {
 battlefield_0 = {
     "iteration": 0,
     "difficulty": 2,
-    "links": {
-        ((4, 3), "A"): (3, 3),
-        ((4, 3), "B"): (3, 3),
-        ((4, 3), "AC"): (5, 5),
-        ((5, 5), "hit"): (9, 9)
-    },
+    "links": [
+        ((4, 3), "A", (3, 3)),
+        ((4, 3), "B", (3, 3)),
+        ((4, 3), "AC", (5, 5)),
+        ((4, 3), "AC", (7, 5)),
+        ((5, 5), "hit", (9, 9))
+    ],
     "objects": {
         (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
         (2, 2): {"name": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": None},

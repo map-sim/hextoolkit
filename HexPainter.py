@@ -377,10 +377,31 @@ class HexPainter(SimPoint):
         context.fill(); context.stroke()
         self.terr_painter.draw_gex(context, (0, 0, 0), gex)
         context.stroke()
-        
+
+    def _deduce_color(self, what):
+        if what == "devel": return 1, 1, 1, 1
+        elif what == "hit": return 0, 0, 0, 1
+        else: return self.library["resources"][what]["color"]
+    def _draw_envelope(self, context, ox, oy, ex, ey):
+        context.set_line_width(self.config["window-zoom"] * 2.2)
+        context.set_line_cap(cairo.LINE_CAP_ROUND)
+        context.set_source_rgba(1, 1, 1, 1)
+        context.move_to(ox, oy)
+        context.line_to(ex, ey) 
+        context.stroke()
+    def _draw_good_connection(self, context, connections, good, ox, oy, ex, ey):
+        context.set_line_width(self.config["window-zoom"] * 1)
+        color = self._deduce_color(good)
+        context.set_line_cap(cairo.LINE_CAP_ROUND)
+        context.set_source_rgba(*color)
+        context.move_to(ox, oy)
+        context.line_to(ex, ey) 
+        context.stroke()
+
     def draw_connections(self, context):
         if self.selected_xy: ox, oy = self._calc_render_xy(*self.selected_xy)
-        for (src, good), sink in self.battlefield["links"].items():
+        connections = dict()
+        for src, good, sink in self.battlefield["links"]:
             if src != self.selected_vex: continue
             print(src, "-->", good, "-->", sink)
 
@@ -388,17 +409,15 @@ class HexPainter(SimPoint):
             self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
             context.fill(); context.stroke()
 
-            ex, ey = self.terr_graph.transform_to_oxy(sink)
-            ex, ey = self._calc_render_xy(ex, ey)
-            context.set_line_width(self.config["window-zoom"] * 3)
-            context.set_line_cap(cairo.LINE_CAP_ROUND)
-            context.set_source_rgba(1, 1, 1, 1)
-            context.move_to(ox, oy)
-            context.line_to(ex, ey) 
-            context.stroke()
+            exx, eyy = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(exx, eyy)
+            self._draw_envelope(context, ox, oy, ex, ey)
+            self._draw_good_connection(context, connections, good, ox, oy, ex, ey)
             self.terr_painter.draw_gex(context, (0, 0, 0), gex)
             context.stroke()
-
+            
+            connections[*self.selected_xy, exx, eyy] = good
+            
         if self.selected_vex is None: return
         gex = (self.selected_vex, self.terr_graph.grid_radius)
         self.terr_painter.draw_gex(context, (0, 0, 0), gex)

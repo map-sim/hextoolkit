@@ -5,7 +5,7 @@ class TypeValidator:
             assert key in self.types, key
             if type(self.types[key]) in (tuple, list):
                 assert type(val) in self.types[key]
-            else: assert type(val) is self.types[key]
+            else: assert type(val) is self.types[key], key
         print(f"{prefix} validate_types... OK")
 
 class ConfigValidator(TypeValidator):
@@ -46,7 +46,7 @@ class MapValidator(TypeValidator):
         "terrains": list,
         "objects": dict,
         "players": dict,
-        "links": dict
+        "links": list
     }
     def __init__(self, library, battlefield):
         self.library = library
