@@ -353,8 +353,7 @@ class HexPainter(SimPoint):
             self.terr_painter.draw_gex(context, (1, 0, 1, 0.3), gex)
             context.fill(); context.stroke()
             self.terr_painter.draw_gex(context, (0.3, 0, 0.3), gex)
-            context.stroke()
-            return
+            context.stroke(); return
 
         interval = self.library["objects"][obj["name"]]["interval"]
         r = self.library["objects"][obj["name"]].get("range", 0.0)
@@ -374,14 +373,41 @@ class HexPainter(SimPoint):
         context.fill()
         
         gex = (self.selected_vex, self.terr_graph.grid_radius)
-        self.terr_painter.draw_gex(context, (1, 0, 1, 0.3), gex)
+        self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
         context.fill(); context.stroke()
-        self.terr_painter.draw_gex(context, (0.3, 0, 0.3), gex)
+        self.terr_painter.draw_gex(context, (0, 0, 0), gex)
+        context.stroke()
+        
+    def draw_connections(self, context):
+        if self.selected_xy: ox, oy = self._calc_render_xy(*self.selected_xy)
+        for (src, good), sink in self.battlefield["links"].items():
+            if src != self.selected_vex: continue
+            print(src, "-->", good, "-->", sink)
+
+            gex = (sink, self.terr_graph.grid_radius)
+            self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
+            context.fill(); context.stroke()
+
+            ex, ey = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(ex, ey)
+            context.set_line_width(self.config["window-zoom"] * 3)
+            context.set_line_cap(cairo.LINE_CAP_ROUND)
+            context.set_source_rgba(1, 1, 1, 1)
+            context.move_to(ox, oy)
+            context.line_to(ex, ey) 
+            context.stroke()
+            self.terr_painter.draw_gex(context, (0, 0, 0), gex)
+            context.stroke()
+
+        if self.selected_vex is None: return
+        gex = (self.selected_vex, self.terr_graph.grid_radius)
+        self.terr_painter.draw_gex(context, (0, 0, 0), gex)
         context.stroke()
 
     def draw(self, context):
         self.terr_painter.draw(context)
         self.draw_selection(context)
+        self.draw_connections(context)
 
         for (xhex, yhex), obj in self.battlefield["objects"].items():
             ox, oy = self.terr_graph.transform_to_oxy((xhex, yhex))
@@ -396,3 +422,4 @@ class HexPainter(SimPoint):
             elif shape == "send-0": SimSend_0(self.config, self.library, context, (ox, oy), **obj).draw()
             elif shape == "post-0": SimPost_0(self.config, self.library, context, (ox, oy), **obj).draw()
             else: raise ValueError(f"Not supported object: {obj['name']}")
+

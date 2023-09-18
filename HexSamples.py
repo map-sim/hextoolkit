@@ -59,6 +59,10 @@ battlefield_0 = {
     "iteration": 0,
     "difficulty": 2,
     "links": {
+        ((4, 3), "A"): (3, 3),
+        ((4, 3), "B"): (3, 3),
+        ((4, 3), "AC"): (5, 5),
+        ((5, 5), "hit"): (9, 9)
     },
     "objects": {
         (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
@@ -95,14 +99,14 @@ battlefield_0 = {
     },
     "terrains": [
         ("base", "desert-0"),
-        ("vex", "crater-crown-0", (0, 0), 2),
-        ("vex", "crater-crown-0", (1, 0), 2),
-        ("vex", "crater-crown-0", (1, 1), 2),
-        ("vex", "toxic-sea-0", (-3, 0), 2),
-        ("vex", "toxic-sea-0", (-4, 0), 2),
-        ("vex", "toxic-sea-0", (-4, -1), 2),
-        ("vex", "toxic-sea-0", (-5, -1), 2),
-        ("grid", (0.825, 0.825, 0.825), 2)
+        ("vex", "crater-crown-0", (0, 0), 2.2),
+        ("vex", "crater-crown-0", (1, 0), 2.2),
+        ("vex", "crater-crown-0", (1, 1), 2.2),
+        ("vex", "toxic-sea-0", (-3, 0), 2.2),
+        ("vex", "toxic-sea-0", (-4, 0), 2.2),
+        ("vex", "toxic-sea-0", (-4, -1), 2.2),
+        ("vex", "toxic-sea-0", (-5, -1), 2.2),
+        ("grid", (0.825, 0.825, 0.825), 2.2)
     ]
 }
 
