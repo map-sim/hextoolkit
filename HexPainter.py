@@ -13,9 +13,9 @@ class SimPoint:
         return xloc + xoffset, yloc + yoffset
 
 class SimObject(SimPoint):
-    black_color = 0.45, 0.45, 0.45, 1
-    black2_color = 0.5, 0.5, 0.5, 1
-    black3_color = 0.5, 0.5, 0.5, 0.75
+    black_color = 0.25, 0.25, 0.25, 1
+    black2_color = 0.3, 0.3, 0.3, 1
+    black3_color = 0.4, 0.4, 0.4, 1
     not_oper_color = 0.8, 0.8, 0.8, 1
     color_armor =  1, 1, 1, 1
 
@@ -88,17 +88,24 @@ class SimObject(SimPoint):
 
     def _draw_resource(self, xy, resource):
         xy = self.xy[0] + xy[0], self.xy[1] + xy[1]
-        r = 0.34 * self.config["window-zoom"]
+        r = 0.32 * self.config["window-zoom"]
         self.context.set_source_rgba(*self.black_color)
         self.context.arc(*xy, r, 0, TWO_PI)
         self.context.fill()
 
         if resource is True: color2 = 1, 1, 1, 1
         elif resource is None: color2 = self.black_color
-        elif resource is False: color2 = self.black_color     
+        elif resource is False: color2 = self.black_color
         else: color2 = self.library["resources"][resource]["color"]
-        self.context.set_source_rgba(*color2)
-        rr = 0.18 * self.config["window-zoom"]
+
+        rr = 0.22 * self.config["window-zoom"]
+        ralor = cairo.RadialGradient(*xy, rr, *xy, 0.5*rr)
+        ralor.add_color_stop_rgba(1, *color2[:3], 1)
+        if color2 != (1, 1, 1, 1):
+            ralor.add_color_stop_rgba(0, 1, 1, 1, 1)
+        else: ralor.add_color_stop_rgba(0, *self.black2_color)
+        self.context.set_source(ralor)
+        # self.context.set_source_rgba(*color2)
         self.context.arc(*xy, rr, 0, TWO_PI)
         self.context.fill()
 
@@ -318,8 +325,8 @@ class SimPost_0(SimObject):
         self.armor = armor
 
     def draw(self):
-        r = 0.5 * self.config["window-zoom"]
-        rr = 0.3 * self.config["window-zoom"]
+        r = 0.6 * self.config["window-zoom"]
+        rr = 0.4 * self.config["window-zoom"]
         self.context.set_source_rgba(*self.black_color)
         self.context.arc(*self.xy, r, 0, TWO_PI)
         self.context.fill()
@@ -357,7 +364,7 @@ class HexPainter(SimPoint):
 
         interval = self.library["objects"][obj["name"]]["interval"]
         r = self.library["objects"][obj["name"]].get("range", 0.0)
-        rr = 2*r if obj["name"] in ["hit", "devel"] else r
+        rr = 2*r if obj["name"] in ["hit", "dev"] else r
         color = self.library["players"][obj["own"]]["color"]
         color = [c if i != 3 else 0.15 for i, c in enumerate(color)]
         xloc, yloc = self._calc_render_xy(*self.selected_xy)
@@ -373,55 +380,39 @@ class HexPainter(SimPoint):
         context.fill()
         
         gex = (self.selected_vex, self.terr_graph.grid_radius)
-        self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
+        self.terr_painter.draw_gex(context, (1, 1, 1, 1), gex)
         context.fill(); context.stroke()
         self.terr_painter.draw_gex(context, (0, 0, 0), gex)
         context.stroke()
 
     def _deduce_color(self, what):
-        if what == "devel": return 1, 1, 1, 1
-        elif what == "hit": return 0, 0, 0, 1
+        if what == "dev": return 1, 1, 1
+        elif what == "hit": return 0.66, 0.66, 0.66
         else: return self.library["resources"][what]["color"]
-    def _draw_envelope(self, context, ox, oy, ex, ey):
-        context.set_line_width(self.config["window-zoom"] * 2.2)
-        context.set_line_cap(cairo.LINE_CAP_ROUND)
-        context.set_source_rgba(1, 1, 1, 1)
-        context.move_to(ox, oy)
-        context.line_to(ex, ey) 
-        context.stroke()
-    def _draw_good_connection(self, context, connections, good, ox, oy, ex, ey):
-        context.set_line_width(self.config["window-zoom"] * 1)
-        color = self._deduce_color(good)
-        context.set_line_cap(cairo.LINE_CAP_ROUND)
-        context.set_source_rgba(*color)
-        context.move_to(ox, oy)
-        context.line_to(ex, ey) 
-        context.stroke()
-
     def draw_connections(self, context):
-        if self.selected_xy: ox, oy = self._calc_render_xy(*self.selected_xy)
-        connections = dict()
-        for src, good, sink in self.battlefield["links"]:
-            if src != self.selected_vex: continue
-            print(src, "-->", good, "-->", sink)
-
-            gex = (sink, self.terr_graph.grid_radius)
-            self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
-            context.fill(); context.stroke()
-
-            exx, eyy = self.terr_graph.transform_to_oxy(sink)
-            ex, ey = self._calc_render_xy(exx, eyy)
-            self._draw_envelope(context, ox, oy, ex, ey)
-            self._draw_good_connection(context, connections, good, ox, oy, ex, ey)
-            self.terr_painter.draw_gex(context, (0, 0, 0), gex)
-            context.stroke()
-            
-            connections[*self.selected_xy, exx, eyy] = good
-            
         if self.selected_vex is None: return
+        ox, oy = self._calc_render_xy(*self.selected_xy)
         gex = (self.selected_vex, self.terr_graph.grid_radius)
         self.terr_painter.draw_gex(context, (0, 0, 0), gex)
         context.stroke()
+
+        zoom = self.config["window-zoom"]
+        for (src, sink), good in self.battlefield["links"].items():
+            if src != self.selected_vex: continue
+            exx, eyy = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(exx, eyy)
+            gex = (sink, self.terr_graph.grid_radius)
+            self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
+            ralor = cairo.RadialGradient(ex, ey, 1 * zoom, ex, ey, 1.8 * zoom)
+            color = self._deduce_color(good)
+            if color[:3] == (1, 1, 1):
+                ralor.add_color_stop_rgba(0, 0.66, 0.66, 0.66, 1)
+            else: ralor.add_color_stop_rgba(0, 1, 1, 1, 1)            
+            ralor.add_color_stop_rgba(1, *color[:3], 1)
+            context.set_source(ralor)
+            context.fill(); context.stroke()
+            self.terr_painter.draw_gex(context, (0, 0, 0), gex)
+            context.stroke()
 
     def draw(self, context):
         self.terr_painter.draw(context)

@@ -1,3 +1,6 @@
+import math
+from TerrWindow import TerrGraph
+
 class TypeValidator:
     types = {}
     def validate_types(self, prefix, data):
@@ -46,8 +49,25 @@ class MapValidator(TypeValidator):
         "terrains": list,
         "objects": dict,
         "players": dict,
-        "links": list
+        "links": dict
     }
     def __init__(self, library, battlefield):
+        self.terr_graph = TerrGraph(battlefield)
         self.library = library
+
         self.validate_types("map", battlefield)
+        self.validate_links(battlefield)
+
+    def validate_links(self, battlefield):
+        for (src, sink), good in battlefield["links"].items():
+            ox, oy = self.terr_graph.transform_to_oxy(src)
+            ex, ey = self.terr_graph.transform_to_oxy(sink)
+            d = math.sqrt((ox-ex)**2 + (oy-ey)**2)
+            obj = battlefield["objects"][src]
+            libobj = self.library["objects"][obj["name"]]
+            if "range" in libobj:
+                r = libobj["range"]
+                if good == "hit": r *= 2
+                elif good == "dev": r *= 2
+                assert d <= r, f"{src} -- {sink} >> {good}"
+        print(f"map validate_links... OK")

@@ -58,18 +58,20 @@ library_0 = {
 battlefield_0 = {
     "iteration": 0,
     "difficulty": 2,
-    "links": [
-        ((4, 3), "A", (3, 3)),
-        ((4, 3), "B", (3, 3)),
-        ((4, 3), "AC", (5, 5)),
-        ((4, 3), "AC", (7, 5)),
-        ((5, 5), "hit", (9, 9))
-    ],
+    "links": {
+        ((4, 3), (3, 3)): "A",
+        ((4, 3), (3, 3)): "B",
+        ((4, 3), (2, 3)): "C",
+        ((4, 3), (5, 5)): "AC",
+        ((5, 5), (9, 9)): "hit",
+        ((7, 5), (9, 5)): "dev"
+    },
     "objects": {
         (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
         (2, 2): {"name": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": None},
         (3, 3): {"name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "A", "A", "A"]},
         (4, 3): {"name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "B", "C", "AB", "AC", "BC"]},
+        (2, 3): {"name": "store", "own": "Bbb", "cnt": 1, "armor": False, "work": True, "goods": []},
         (4, 4): {"name": "mixer", "own": "Bbb", "cnt": 2, "armor": False, "out": "AC"},
         (5, 5): {"name": "hit", "own": "Bbb", "cnt": 3, "armor": True, "work": True},
         (7, 5): {"name": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
