@@ -50,6 +50,9 @@ class HexWindow(TerrWindow):
             terr = self.graph_terr.vex_dict.get(vex, default_terr)
             obj = self.battlefield["objects"].get(vex)
             self.control_panel.refresh_selection_label(terr, obj)
+            good = self.painter.check_resource(obj, ox, oy)
+            self.state["selected-good"] = good            
+            self.control_panel.refresh_good_label()
             self.draw_content()
 
     def set_terrain(self):
@@ -70,6 +73,7 @@ class HexWindow(TerrWindow):
 
     def switch_item(self, key, state):
         items = list(sorted(self.library[key].keys()))
+        if key == "resources": items += ["dev", "hit"]
         if self.state[state] is not None:
             i =  items.index(self.state[state])
             i += 1; i %= len(items)

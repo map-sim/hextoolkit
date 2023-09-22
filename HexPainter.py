@@ -433,3 +433,23 @@ class HexPainter(SimPoint):
             elif shape == "post-0": SimPost_0(self.config, self.library, context, (ox, oy), **obj).draw()
             else: raise ValueError(f"Not supported object: {obj['name']}")
 
+    def check_resource(self, obj, x, y):
+        if obj is None: return
+        dx = self.selected_xy[0] - x
+        dy = self.selected_xy[1] - y
+        if obj["name"] == "post": return "dev"
+        if dx < -0.6:
+            if obj["name"] == "devel": return "AB"
+            else: return "dev"
+        if "out" in obj: return obj["out"]
+        if obj["name"] == "devel": return "dev"
+        if obj["name"] == "hit": return "hit"
+        if obj["name"] == "store":
+            if len(obj["goods"]) == 0: return
+            if len(obj["goods"]) >= 1 and dx >= 0 and dx < 0.6 and dy > 0.25: return obj["goods"][0]
+            if len(obj["goods"]) >= 2 and dx < 0 and dx > -0.6 and dy > 0.25: return obj["goods"][1]
+            if len(obj["goods"]) >= 5 and dx >= 0 and dx < 0.6 and dy < -0.25: return obj["goods"][4]
+            if len(obj["goods"]) >= 6 and dx < 0 and dx > -0.6 and dy < -0.25: return obj["goods"][5]
+            if len(obj["goods"]) >= 3 and dx >= 0 and dx < 0.6 and dy <= 0.25 and dy >= -0.25: return obj["goods"][2]
+            if len(obj["goods"]) >= 4 and dx < 0 and dx > -0.6 and dy <= 0.25 and dy >= -0.25: return obj["goods"][3]
+        return
