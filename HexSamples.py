@@ -41,7 +41,7 @@ library_0 = {
         "nuke": {"shape": "nuke-0", "modules": 8, "interval": 8, "range": 0},
         "post": {"shape": "post-0", "modules": 1, "interval": 3, "range": 0},
         "lab":  {"shape": "lab-0", "modules": 2, "interval": 3, "range": 0, "substracts": ["AC", "BC"]},
-        "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 8, "substracts": ["AB", "AB"]},
+        "devel": {"shape": "devel-0", "modules": 3, "interval": 3, "range": 12, "substracts": ["AB", "AB"]},
         "send": {"shape": "send-0", "modules": 2, "interval": 4, "range": 0, "substracts": ["BC"]},
         "hit": {"shape": "hit-0", "modules": 3, "interval": 4, "range": 30, "substracts": ["AC"]},
     },
@@ -64,7 +64,8 @@ battlefield_0 = {
         ((4, 3), (2, 3)): "C",
         ((4, 3), (5, 5)): "AC",
         ((5, 5), (9, 9)): "hit",
-        ((7, 5), (9, 5)): "dev"
+        ((7, 5), (9, 5)): "dev",
+        ((-4, -4), (-2, -2)): "dev"
     },
     "objects": {
         (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
@@ -77,6 +78,7 @@ battlefield_0 = {
         (7, 5): {"name": "devel", "own": "Aaa", "cnt": 3, "armor": False, "work": False},
         (7, 9): {"name": "send", "own": "Aaa", "cnt": 2, "armor": False, "work": False},
         (9, 9): {"name": "lab", "own": "Aaa", "cnt": 2, "armor": False, "work": True},
+        (-4, -4): {"name": "devel", "own": "Bbb", "cnt": 2, "armor": True, "work": True},
         (9, 5): {"name": "post", "own": "Aaa", "cnt": 1, "armor": True},
     },
     "players": {

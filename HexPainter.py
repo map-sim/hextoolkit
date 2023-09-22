@@ -88,24 +88,29 @@ class SimObject(SimPoint):
 
     def _draw_resource(self, xy, resource):
         xy = self.xy[0] + xy[0], self.xy[1] + xy[1]
-        r = 0.32 * self.config["window-zoom"]
-        self.context.set_source_rgba(*self.black_color)
-        self.context.arc(*xy, r, 0, TWO_PI)
-        self.context.fill()
-
         if resource is True: color2 = 1, 1, 1, 1
         elif resource is None: color2 = self.black_color
         elif resource is False: color2 = self.black_color
         else: color2 = self.library["resources"][resource]["color"]
 
-        rr = 0.22 * self.config["window-zoom"]
+        r = 0.32 * self.config["window-zoom"]
+        self.context.set_source_rgba(*self.black_color)
+        if color2 != (1, 1, 1, 1):
+            ralor = cairo.RadialGradient(*xy, 0.7*r, *xy, 0.65*r)
+            ralor.add_color_stop_rgba(0, *self.black_color)
+            ralor.add_color_stop_rgba(1, 1, 1, 1, 1)
+            self.context.set_source(ralor)
+
+        self.context.arc(*xy, r, 0, TWO_PI)
+        self.context.fill()
+
+        rr = 0.2 * self.config["window-zoom"]
         ralor = cairo.RadialGradient(*xy, rr, *xy, 0.5*rr)
         ralor.add_color_stop_rgba(1, *color2[:3], 1)
         if color2 != (1, 1, 1, 1):
             ralor.add_color_stop_rgba(0, 1, 1, 1, 1)
         else: ralor.add_color_stop_rgba(0, *self.black2_color)
         self.context.set_source(ralor)
-        # self.context.set_source_rgba(*color2)
         self.context.arc(*xy, rr, 0, TWO_PI)
         self.context.fill()
 
@@ -115,13 +120,13 @@ class SimNuke_0(SimObject):
         self.armor = False
 
     def draw(self):
-        r = 1.5 * self.config["window-zoom"]
-        rr = 0.65 * self.config["window-zoom"]
+        r = 1.3 * self.config["window-zoom"]
+        rr = 0.55 * self.config["window-zoom"]
         self.context.set_source_rgba(*self.black_color)
         self.context.arc(*self.xy, r, 0, TWO_PI)
         self.context.fill()
         self.context.set_source_rgba(*self.color)
-        self.context.arc(*self.xy, 4*r/5, 0, TWO_PI)
+        self.context.arc(*self.xy, 0.85*r, 0, TWO_PI)
         self.context.fill()
 
         x0, y0 = self.xy[0] - 0.88*rr, self.xy[1] - 0.88*rr
@@ -403,7 +408,7 @@ class HexPainter(SimPoint):
             ex, ey = self._calc_render_xy(exx, eyy)
             gex = (sink, self.terr_graph.grid_radius)
             self.terr_painter.draw_gex(context, (0.66, 0.66, 0.66, 1), gex)
-            ralor = cairo.RadialGradient(ex, ey, 1 * zoom, ex, ey, 1.8 * zoom)
+            ralor = cairo.RadialGradient(ex, ey, 1.4 * zoom, ex, ey, 1.7 * zoom)
             color = self._deduce_color(good)
             if color[:3] == (1, 1, 1):
                 ralor.add_color_stop_rgba(0, 0.66, 0.66, 0.66, 1)

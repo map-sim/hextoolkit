@@ -44,6 +44,7 @@ class HexWindow(TerrWindow):
         TerrWindow.on_click(self, widget, event)
         ox, oy = self.get_click_location(event)
         vex, xyo = self.graph_terr.transform_to_vex(ox, oy)
+        terr = self.graph_terr.get_hex_terr((vex, xyo))
         if event.button == 1:
             self.painter.set_selection(vex, xyo)
             default_terr = self.graph_terr.default_vex_terr
@@ -53,6 +54,12 @@ class HexWindow(TerrWindow):
             good = self.painter.check_resource(obj, ox, oy)
             self.state["selected-good"] = good            
             self.control_panel.refresh_good_label()
+            if obj: self.state["selected-obj"] = obj["name"]
+            self.control_panel.refresh_obj_label()
+            if obj: self.state["selected-player"] = obj["own"]
+            self.control_panel.refresh_player_label()
+            self.state["selected-terr"] = terr
+            self.control_panel.refresh_terr_label()
             self.draw_content()
 
     def set_terrain(self):

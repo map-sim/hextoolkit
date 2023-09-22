@@ -47,8 +47,8 @@ class HexControl(Gtk.Window):
         self.grid.attach_next_to(self.selection_label, self.last_button, *nargs6)
         self.refresh_selection_label()
         
-        self.make_key_button("Terr-toogle", "t", (0, 3, 1, 1))
-        self.make_key_button("Terr-set", "T")
+        self.make_key_button("Terr-set", "T", (0, 3, 1, 1))
+        self.make_key_button("Terr-toogle", "t")
         self.terr_label = Gtk.Label()
         self.terr_label.set_alignment(0.05, 0.5)
         self.grid.attach_next_to(self.terr_label, self.last_button, *nargs2)
@@ -59,8 +59,8 @@ class HexControl(Gtk.Window):
         self.grid.attach_next_to(self.player_label, self.last_button, *nargs)
         self.refresh_player_label()
 
-        self.make_key_button("Obj-toogle", "o", (0, 4, 1, 1))
-        self.make_key_button("Obj-set", "n")
+        self.make_key_button("Obj-set", "n", (0, 4, 1, 1))
+        self.make_key_button("Obj-toogle", "o")
         self.obj_label = Gtk.Label()
         self.obj_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.obj_label, self.last_button, *nargs)
