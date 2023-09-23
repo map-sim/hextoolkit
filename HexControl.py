@@ -58,6 +58,7 @@ class HexControl(Gtk.Window):
         self.player_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.player_label, self.last_button, *nargs)
         self.refresh_player_label()
+        self.make_key_button("Player-set", "x", (7, 3, 2, 1))
 
         self.make_key_button("Obj-set", "n", (0, 4, 1, 1))
         self.make_key_button("Obj-toogle", "o")

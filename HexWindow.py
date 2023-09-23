@@ -28,11 +28,11 @@ class HexWindow(TerrWindow):
         TerrWindow.__init__(self, config, library, battlefield)
         self.validate(); self.show_all(); self.state = {}
         self.state["game-index"] = None
-        self.state["saved-games"] = []
         self.state["selected-player"] = None
         self.state["selected-good"] = None
         self.state["selected-terr"] = None
         self.state["selected-obj"] = None
+        self.state["saved-games"] = []
         self.control_panel = None
 
         self.graph_terr = TerrGraph(battlefield)
@@ -92,6 +92,16 @@ class HexWindow(TerrWindow):
         elif key == "terrains": self.control_panel.refresh_terr_label()
         elif key == "objects": self.control_panel.refresh_obj_label()
         else: raise KeyError(key)
+
+    def change_player(self):
+        vex = self.painter.selected_vex
+        if self.state["selected-player"] is None: return
+        if vex not in self.battlefield["objects"]: return
+        obj = self.battlefield["objects"][vex]
+        print(obj)
+        obj["own"] = self.state["selected-player"]
+        print(obj)
+        self.draw_content()
 
     @status_print("new-object")
     def add_object(self):
@@ -153,12 +163,14 @@ class HexWindow(TerrWindow):
         elif key_name == "T": self.set_terrain()
         elif key_name == "t": self.switch_terrain()
         elif key_name == "o": self.switch_object()
+        elif key_name == "g": self.switch_good()
         elif key_name == "n": self.add_object()
         elif key_name == "p": self.switch_player()
-        elif key_name == "g": self.switch_good()
+        elif key_name == "x": self.change_player()
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
         elif key_name == "v": self.validate()
+        
         elif key_name in ("comma", "less"):
             length = len(self.state["saved-games"])
             if self.state["game-index"] is None:
