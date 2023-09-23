@@ -98,9 +98,23 @@ class HexWindow(TerrWindow):
         if self.state["selected-player"] is None: return
         if vex not in self.battlefield["objects"]: return
         obj = self.battlefield["objects"][vex]
-        print(obj)
         obj["own"] = self.state["selected-player"]
-        print(obj)
+        self.draw_content()
+    def change_armor(self):
+        vex = self.painter.selected_vex
+        if vex not in self.battlefield["objects"]: return
+        obj = self.battlefield["objects"][vex]
+        if obj["name"] == "nuke": return
+        obj["armor"] = not obj.get("armor", False)
+        self.draw_content()
+    def change_hp(self):
+        vex = self.painter.selected_vex
+        if vex not in self.battlefield["objects"]: return
+        obj = self.battlefield["objects"][vex]
+        objlib = self.library["objects"][obj["name"]]
+        length = objlib["modules"]; obj["cnt"] += 1
+        if obj["cnt"] > length:
+            obj["cnt"] = -length
         self.draw_content()
 
     @status_print("new-object")
@@ -167,6 +181,8 @@ class HexWindow(TerrWindow):
         elif key_name == "n": self.add_object()
         elif key_name == "p": self.switch_player()
         elif key_name == "x": self.change_player()
+        elif key_name == "a": self.change_armor()
+        elif key_name == "m": self.change_hp()
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
         elif key_name == "v": self.validate()

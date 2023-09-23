@@ -39,6 +39,7 @@ class HexControl(Gtk.Window):
         self.snapshot_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.snapshot_label, self.last_button, *nargs)
         self.refresh_snapshot_label()
+        self.make_key_button("On / Off", "y", (7, 1, 2, 1))
 
         self.make_key_button("Unselect", "grave", (0, 2, 1, 1))        
         self.make_key_button("Obj-delete", "d")
@@ -46,6 +47,7 @@ class HexControl(Gtk.Window):
         self.selection_label.set_alignment(0.05, 0.5)
         self.grid.attach_next_to(self.selection_label, self.last_button, *nargs6)
         self.refresh_selection_label()
+        self.make_key_button("Armor-change", "a", (7, 2, 2, 1))
         
         self.make_key_button("Terr-set", "T", (0, 3, 1, 1))
         self.make_key_button("Terr-toogle", "t")
@@ -58,7 +60,7 @@ class HexControl(Gtk.Window):
         self.player_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.player_label, self.last_button, *nargs)
         self.refresh_player_label()
-        self.make_key_button("Player-set", "x", (7, 3, 2, 1))
+        self.make_key_button("Player-change", "x", (7, 3, 2, 1))
 
         self.make_key_button("Obj-set", "n", (0, 4, 1, 1))
         self.make_key_button("Obj-toogle", "o")
@@ -71,6 +73,7 @@ class HexControl(Gtk.Window):
         self.good_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.good_label, self.last_button, *nargs)
         self.refresh_good_label()
+        self.make_key_button("HP-change", "m", (7, 4, 2, 1))
         self.show_all()
 
     def refresh_snapshot_label(self):

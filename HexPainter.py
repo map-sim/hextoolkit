@@ -394,6 +394,19 @@ class HexPainter(SimPoint):
         if what == "dev": return 1, 1, 1
         elif what == "hit": return 0.66, 0.66, 0.66
         else: return self.library["resources"][what]["color"]
+    def _draw_link(self, context, ox, oy, ex, ey):
+        context.set_line_cap(cairo.LINE_CAP_ROUND)
+        context.set_line_width(self.config["window-zoom"] * 0.5)
+        context.set_source_rgba(1, 1, 1, 1)
+        context.move_to(ox, oy)
+        context.line_to(ex, ey) 
+        context.stroke()
+        context.set_line_width(self.config["window-zoom"] * 0.2)
+        context.set_source_rgba(0, 0, 0, 1)
+        context.move_to(ox, oy)
+        context.line_to(ex, ey) 
+        context.stroke()
+
     def draw_connections(self, context):
         if self.selected_vex is None: return
         ox, oy = self._calc_render_xy(*self.selected_xy)
@@ -418,6 +431,7 @@ class HexPainter(SimPoint):
             context.fill(); context.stroke()
             self.terr_painter.draw_gex(context, (0, 0, 0), gex)
             context.stroke()
+            self._draw_link(context, ox, oy, ex, ey)
 
     def draw(self, context):
         self.terr_painter.draw(context)

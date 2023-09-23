@@ -69,7 +69,7 @@ battlefield_0 = {
     },
     "objects": {
         (-2, -2): {"name": "nuke", "own": "Bbb", "cnt": 8},
-        (2, 2): {"name": "mine", "own": "Aaa", "cnt": 2, "armor": False, "out": None},
+        (2, 2): {"name": "mine", "own": "Aaa", "cnt": -1, "armor": False, "out": None},
         (3, 3): {"name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "A", "A", "A"]},
         (4, 3): {"name": "store", "own": "Bbb", "cnt": 2, "armor": False, "work": True, "goods": ["A", "B", "C", "AB", "AC", "BC"]},
         (2, 3): {"name": "store", "own": "Bbb", "cnt": 1, "armor": False, "work": True, "goods": []},
