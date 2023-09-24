@@ -177,8 +177,6 @@ class TerrGraph:
         else:
             xnorm = int(round(xloc / (2 * h)))
             xo = xnorm * 2 * h
-        # dx = xloc - xo; dy = yloc - yo
-        # print(xnorm, ynorm, "--", xo, yo, "--", dx, dy)        
         return (xnorm, ynorm), (xo, yo)
 
     def transform_to_oxy(self, vex):

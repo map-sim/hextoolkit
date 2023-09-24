@@ -55,7 +55,7 @@ library_0 = {
     },
 }
 
-battlefield_0 = {
+battlefield_1 = {
     "iteration": 0,
     "difficulty": 2,
     "links": {
@@ -116,3 +116,34 @@ battlefield_0 = {
     ]
 }
 
+battlefield_0 = {
+    "iteration": 0,
+    "difficulty": 2,
+    "links": {},
+    "objects": {},
+    "players": {
+        "Aaa": {
+            "send": 0,
+            "losses": 0,
+            "trophy": 0,
+            "research": 0,
+            "technologies": ["build-recycling"],
+            "power-share": {},
+            "view-share": []
+        },
+        "Bbb": {
+            "send": 0,
+            "losses": 0,
+            "trophy": 0,
+            "research": 0,
+            "technologies": ["intergrid-transformation",
+                             "passive-armor"],
+            "power-share": {},
+            "view-share": []
+        }
+    },
+    "terrains": [
+        ("base", "desert-0"),
+        ("grid", (0.825, 0.825, 0.825), 2.2)
+    ]
+}

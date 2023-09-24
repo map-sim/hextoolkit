@@ -44,22 +44,14 @@ class HexWindow(TerrWindow):
         TerrWindow.on_click(self, widget, event)
         ox, oy = self.get_click_location(event)
         vex, xyo = self.graph_terr.transform_to_vex(ox, oy)
-        terr = self.graph_terr.get_hex_terr((vex, xyo))
+        terr = self.graph_terr.get_hex_terr(vex)
         if event.button == 1:
             self.painter.set_selection(vex, xyo)
-            default_terr = self.graph_terr.default_vex_terr
-            terr = self.graph_terr.vex_dict.get(vex, default_terr)
             obj = self.battlefield["objects"].get(vex)
-            self.control_panel.refresh_selection_label(terr, obj)
             good = self.painter.check_resource(obj, ox, oy)
             self.state["selected-good"] = good
             self.control_panel.refresh_good_label()
-            if obj: self.state["selected-obj"] = obj["name"]
-            self.control_panel.refresh_obj_label()
-            if obj: self.state["selected-player"] = obj["own"]
-            self.control_panel.refresh_player_label()
-            self.state["selected-terr"] = terr
-            self.control_panel.refresh_terr_label()
+            self.control_panel.refresh_selection_label(terr, obj)
             self.draw_content()
         elif event.button == 3 and self.painter.selected_vex is not None:
             obj = self.battlefield["objects"].get(vex)
@@ -70,20 +62,27 @@ class HexWindow(TerrWindow):
                 self.set_link(*lkey, self.state["selected-good"])
             else: del self.battlefield["links"][lkey]
             self.draw_content()
-        else: print("no-active-function")
+        else:
+            self.state["selected-terr"] = terr
+            self.control_panel.refresh_terr_label()
+            obj = self.battlefield["objects"].get(vex)
+            if obj: self.state["selected-obj"] = obj["name"]
+            self.control_panel.refresh_obj_label()
+            if obj: self.state["selected-player"] = obj["own"]
+            self.control_panel.refresh_player_label()    
 
     def set_link(self, ivex, ovex, good):
         if ivex == ovex: return
         ox, oy = self.graph_terr.transform_to_oxy(ivex)
         ex, ey = self.graph_terr.transform_to_oxy(ovex)
-        d = math.sqrt((ox-ex)**2 + (oy-ey)**2)
+        dist = math.sqrt((ox-ex)**2 + (oy-ey)**2)
         obj = self.battlefield["objects"][ivex]
         libobj = self.library["objects"][obj["name"]]
         if "range" not in libobj : return
-        r = libobj["range"]
-        if good == "hit": r *= 2
-        elif good == "dev": r *= 2
-        if d > r: return
+        obj_range = libobj["range"]
+        if good == "hit": obj_range *= 2
+        elif good == "dev": obj_range *= 2
+        if dist > obj_range: return
         self.battlefield["links"][ivex, ovex] = good
 
     def set_terrain(self):
@@ -92,8 +91,9 @@ class HexWindow(TerrWindow):
         terr = self.state["selected-terr"]
         vex = self.painter.selected_vex
         self.graph_terr.vex_dict[vex] = terr
+        self.painter.terr_graph.vex_dict[vex] = terr
         row = "vex", terr, vex, self.graph_terr.grid_radius
-        self.battlefield["terrains"].insert(-2, row)
+        self.battlefield["terrains"].insert(-1, row)
         print("Insert:", row)
         self.draw_content()
 
@@ -305,6 +305,7 @@ def run_example():
     from HexControl import HexControl
     from HexSamples import library_0
     from HexSamples import battlefield_0
+    # from HexSamples import battlefield_1
     example_config = {
         "window-title": "MainMap",
         "window-size": (1800, 780),
