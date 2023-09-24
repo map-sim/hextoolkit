@@ -347,6 +347,7 @@ class HexPainter(SimPoint):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
         self.terr_graph = TerrGraph(battlefield)
+        self.network_flag = False
         self.selected_vex = None
         self.selected_xy = None
 
@@ -444,11 +445,29 @@ class HexPainter(SimPoint):
             ex, ey = self._calc_render_xy(exx, eyy)
             self._draw_link(context, ox, oy, ex, ey)
 
+    def switch_network(self):
+        self.network_flag = not self.network_flag
+    def draw_network(self, context):
+        if not self.network_flag: return
+        for (src, sink), good in self.battlefield["links"].items():
+            oxx, oyy = self.terr_graph.transform_to_oxy(src)
+            ox, oy = self._calc_render_xy(oxx, oyy)
+            exx, eyy = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(exx, eyy)
+            self._draw_envelope(context, ox, oy, ex, ey)
+        for (src, sink), good in self.battlefield["links"].items():
+            oxx, oyy = self.terr_graph.transform_to_oxy(src)
+            ox, oy = self._calc_render_xy(oxx, oyy)
+            exx, eyy = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(exx, eyy)
+            self._draw_link(context, ox, oy, ex, ey)
+
     def draw(self, context):
         self.terr_painter.draw(context)
         self.draw_selection(context)
         self.draw_connections(context)
-
+        self.draw_network(context)
+        
         for (xhex, yhex), obj in self.battlefield["objects"].items():
             ox, oy = self.terr_graph.transform_to_oxy((xhex, yhex))
             shape = self.library["objects"][obj["name"]]["shape"]

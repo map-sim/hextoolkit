@@ -35,8 +35,8 @@ library_0 = {
         "BC": {"color": [0.1, 0.9, 0.9], "process": {"C": 1, "B": 1}}
     },
     "objects": {
-        "mine": {"shape": "mine-0", "modules": 2, "interval": 3, "range": 0},
-        "mixer": {"shape": "mixer-0", "modules": 2, "interval": 3, "range": 0},
+        "mine": {"shape": "mine-0", "modules": 2, "interval": 3, "range": 8},
+        "mixer": {"shape": "mixer-0", "modules": 2, "interval": 3, "range": 8},
         "store": {"shape": "store-0", "modules": 2, "interval": 3, "range": 8},
         "nuke": {"shape": "nuke-0", "modules": 8, "interval": 8, "range": 0},
         "post": {"shape": "post-0", "modules": 1, "interval": 3, "range": 0},

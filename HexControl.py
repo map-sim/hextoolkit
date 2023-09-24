@@ -26,6 +26,7 @@ class HexControl(Gtk.Window):
         self.make_key_button("Up", "Up")
         self.make_key_button("Down", "Down")
         self.make_key_button("Right", "Right")
+        self.make_key_button("Network-toogle", "f")
         
         self.make_key_button("Verify", "v", (0, 1, 1, 1))
         self.make_key_button("<", "less")

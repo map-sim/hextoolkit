@@ -79,11 +79,12 @@ class HexWindow(TerrWindow):
         d = math.sqrt((ox-ex)**2 + (oy-ey)**2)
         obj = self.battlefield["objects"][ivex]
         libobj = self.library["objects"][obj["name"]]
-        if "range" not in libobj: return
+        if "range" not in libobj : return
         r = libobj["range"]
         if good == "hit": r *= 2
         elif good == "dev": r *= 2
-        if d <= r: self.battlefield["links"][ivex, ovex] = good
+        if d > r: return
+        self.battlefield["links"][ivex, ovex] = good
 
     def set_terrain(self):
         if self.state["selected-terr"] is None: return
@@ -100,7 +101,6 @@ class HexWindow(TerrWindow):
     def switch_player(self): self.switch_item("players", "selected-player")
     def switch_object(self): self.switch_item("objects", "selected-obj")        
     def switch_good(self): self.switch_item("resources", "selected-good")
-
     def switch_item(self, key, state):
         items = list(sorted(self.library[key].keys()))
         if key == "resources": items += ["dev", "hit"]
@@ -244,7 +244,9 @@ class HexWindow(TerrWindow):
         elif key_name == "s": self.save_lib_and_map()
         elif key_name == "l": self.load_lib_and_map()
         elif key_name == "v": self.validate()
-        
+        elif key_name == "f":
+            self.painter.switch_network()
+            self.draw_content()
         elif key_name in ("comma", "less"):
             length = len(self.state["saved-games"])
             if self.state["game-index"] is None:
