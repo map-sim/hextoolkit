@@ -61,6 +61,29 @@ class HexWindow(TerrWindow):
             self.state["selected-terr"] = terr
             self.control_panel.refresh_terr_label()
             self.draw_content()
+        elif event.button == 3 and self.painter.selected_vex is not None:
+            obj = self.battlefield["objects"].get(vex)
+            if obj is None: return
+            lkey = (self.painter.selected_vex, vex)
+            if lkey not in self.battlefield["links"]:
+                if self.state["selected-good"] is None: return
+                self.set_link(*lkey, self.state["selected-good"])
+            else: del self.battlefield["links"][lkey]
+            self.draw_content()
+        else: print("no-active-function")
+
+    def set_link(self, ivex, ovex, good):
+        if ivex == ovex: return
+        ox, oy = self.graph_terr.transform_to_oxy(ivex)
+        ex, ey = self.graph_terr.transform_to_oxy(ovex)
+        d = math.sqrt((ox-ex)**2 + (oy-ey)**2)
+        obj = self.battlefield["objects"][ivex]
+        libobj = self.library["objects"][obj["name"]]
+        if "range" not in libobj: return
+        r = libobj["range"]
+        if good == "hit": r *= 2
+        elif good == "dev": r *= 2
+        if d <= r: self.battlefield["links"][ivex, ovex] = good
 
     def set_terrain(self):
         if self.state["selected-terr"] is None: return
@@ -124,7 +147,8 @@ class HexWindow(TerrWindow):
             conf = self.library["resources"][rname]
             if not advance and "process" not in conf: tab.append(rname)
             elif advance and "process" in conf: tab.append(rname)
-        if obj["out"] == tab[-1]: obj["out"] = None
+        if obj["out"] == tab[-1]:
+            self.state["selected-good"] = obj["out"] = None
         elif obj["out"] is not None:
             i = (tab.index(obj["out"]) + 1) % len(tab)
             self.state["selected-good"] = obj["out"] = tab[i]

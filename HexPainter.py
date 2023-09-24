@@ -343,7 +343,6 @@ class SimPost_0(SimObject):
         self._draw_modules("post", (r, 0.5 * r))
         self._draw_center()
 
-
 class HexPainter(SimPoint):
     def __init__(self, config, library, battlefield):
         self.terr_painter = TerrPainter(config, library, battlefield)
@@ -395,13 +394,15 @@ class HexPainter(SimPoint):
         if what == "dev": return 1, 1, 1
         elif what == "hit": return 0.66, 0.66, 0.66
         else: return self.library["resources"][what]["color"]
-    def _draw_link(self, context, ox, oy, ex, ey):
+    def _draw_envelope(self, context, ox, oy, ex, ey):
         context.set_line_cap(cairo.LINE_CAP_ROUND)
         context.set_line_width(self.config["window-zoom"] * 0.5)
         context.set_source_rgba(1, 1, 1, 1)
         context.move_to(ox, oy)
         context.line_to(ex, ey) 
         context.stroke()
+    def _draw_link(self, context, ox, oy, ex, ey):
+        context.set_line_cap(cairo.LINE_CAP_ROUND)
         context.set_line_width(self.config["window-zoom"] * 0.2)
         context.set_source_rgba(0, 0, 0, 1)
         context.move_to(ox, oy)
@@ -432,6 +433,15 @@ class HexPainter(SimPoint):
             context.fill(); context.stroke()
             self.terr_painter.draw_gex(context, (0, 0, 0), gex)
             context.stroke()
+        for (src, sink), good in self.battlefield["links"].items():
+            if src != self.selected_vex: continue
+            exx, eyy = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(exx, eyy)
+            self._draw_envelope(context, ox, oy, ex, ey)
+        for (src, sink), good in self.battlefield["links"].items():
+            if src != self.selected_vex: continue
+            exx, eyy = self.terr_graph.transform_to_oxy(sink)
+            ex, ey = self._calc_render_xy(exx, eyy)
             self._draw_link(context, ox, oy, ex, ey)
 
     def draw(self, context):
