@@ -95,22 +95,23 @@ class SimObject(SimPoint):
 
         r = 0.32 * self.config["window-zoom"]
         self.context.set_source_rgba(*self.black_color)
-        if color2 != (1, 1, 1, 1):
+        if color2 == self.black_color: pass
+        elif color2 != (1, 1, 1, 1):
             ralor = cairo.RadialGradient(*xy, 0.7*r, *xy, 0.65*r)
             ralor.add_color_stop_rgba(0, *self.black_color)
             ralor.add_color_stop_rgba(1, 1, 1, 1, 1)
             self.context.set_source(ralor)
-
         self.context.arc(*xy, r, 0, TWO_PI)
         self.context.fill()
 
         rr = 0.2 * self.config["window-zoom"]
         ralor = cairo.RadialGradient(*xy, rr, *xy, 0.5*rr)
         ralor.add_color_stop_rgba(1, *color2[:3], 1)
-        if color2 != (1, 1, 1, 1):
-            ralor.add_color_stop_rgba(0, 1, 1, 1, 1)
-        else: ralor.add_color_stop_rgba(0, *self.black2_color)
-        self.context.set_source(ralor)
+        if color2 != self.black_color:
+            if color2 != (1, 1, 1, 1):
+                ralor.add_color_stop_rgba(0, 1, 1, 1, 1)
+            else: ralor.add_color_stop_rgba(0, *self.black2_color)
+            self.context.set_source(ralor)
         self.context.arc(*xy, rr, 0, TWO_PI)
         self.context.fill()
 
@@ -369,9 +370,9 @@ class HexPainter(SimPoint):
 
         interval = self.library["objects"][obj["name"]]["interval"]
         r = self.library["objects"][obj["name"]].get("range", 0.0)
-        rr = 2*r if obj["name"] in ["hit", "dev"] else r
+        rr = 2*r if obj["name"] in ["hit", "devel"] else r
         color = self.library["players"][obj["own"]]["color"]
-        color = [c if i != 3 else 0.15 for i, c in enumerate(color)]
+        color = [c if i != 3 else 0.333 for i, c in enumerate(color)]
         xloc, yloc = self._calc_render_xy(*self.selected_xy)
         zoom = self.config["window-zoom"]
         context.set_source_rgba(*color)

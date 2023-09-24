@@ -52,7 +52,7 @@ class HexWindow(TerrWindow):
             obj = self.battlefield["objects"].get(vex)
             self.control_panel.refresh_selection_label(terr, obj)
             good = self.painter.check_resource(obj, ox, oy)
-            self.state["selected-good"] = good            
+            self.state["selected-good"] = good
             self.control_panel.refresh_good_label()
             if obj: self.state["selected-obj"] = obj["name"]
             self.control_panel.refresh_obj_label()
@@ -117,6 +117,30 @@ class HexWindow(TerrWindow):
             obj["cnt"] = -length
         self.draw_content()
 
+    def change_good(self, obj, advance):
+        if obj["cnt"] <= 0: obj["out"] = None; return
+        rnames, tab = sorted(self.library["resources"].keys()), []
+        for rname in rnames:
+            conf = self.library["resources"][rname]
+            if not advance and "process" not in conf: tab.append(rname)
+            elif advance and "process" in conf: tab.append(rname)
+        if obj["out"] == tab[-1]: obj["out"] = None
+        elif obj["out"] is not None:
+            i = (tab.index(obj["out"]) + 1) % len(tab)
+            self.state["selected-good"] = obj["out"] = tab[i]
+        else: self.state["selected-good"] = obj["out"] = tab[0]
+        self.control_panel.refresh_good_label()
+        
+    def change_object(self):        
+        if self.painter.selected_vex is None: return
+        obj = self.battlefield["objects"][self.painter.selected_vex]
+        if "work" in obj and obj["cnt"] > 0: obj["work"] = not obj["work"]        
+        elif "work" in obj and obj["cnt"] <= 0: obj["work"] = False
+        elif "out" in obj and obj["cnt"] <= 0: obj["out"] = None
+        elif obj["name"] == "mixer": self.change_good(obj, advance=True)
+        elif obj["name"] == "mine": self.change_good(obj, advance=False)
+        self.draw_content()
+
     @status_print("new-object")
     def add_object(self):
         vex = self.painter.selected_vex
@@ -178,8 +202,9 @@ class HexWindow(TerrWindow):
         elif key_name == "t": self.switch_terrain()
         elif key_name == "o": self.switch_object()
         elif key_name == "g": self.switch_good()
-        elif key_name == "n": self.add_object()
         elif key_name == "p": self.switch_player()
+        elif key_name == "n": self.add_object()
+        elif key_name == "y": self.change_object()
         elif key_name == "x": self.change_player()
         elif key_name == "a": self.change_armor()
         elif key_name == "m": self.change_hp()

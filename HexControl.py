@@ -39,7 +39,7 @@ class HexControl(Gtk.Window):
         self.snapshot_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.snapshot_label, self.last_button, *nargs)
         self.refresh_snapshot_label()
-        self.make_key_button("On / Off", "y", (7, 1, 2, 1))
+        self.make_key_button("On / Off / Change", "y", (7, 1, 2, 1))
 
         self.make_key_button("Unselect", "grave", (0, 2, 1, 1))        
         self.make_key_button("Obj-delete", "d")
