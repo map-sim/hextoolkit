@@ -204,6 +204,14 @@ class HexWindow(TerrWindow):
         self.draw_content()
         return True
 
+    def del_object(self):
+        vex = self.painter.selected_vex
+        if vex is None: return
+        for i, o in list(self.battlefield["links"].keys()):
+            if vex in (i, o): del self.battlefield["links"][i, o]
+        del self.battlefield["objects"][vex]
+        self.draw_content()
+
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
@@ -228,6 +236,7 @@ class HexWindow(TerrWindow):
         elif key_name == "g": self.switch_good()
         elif key_name == "p": self.switch_player()
         elif key_name == "n": self.add_object()
+        elif key_name == "d": self.del_object()
         elif key_name == "y": self.change_object()
         elif key_name == "x": self.change_player()
         elif key_name == "a": self.change_armor()
