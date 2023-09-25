@@ -56,9 +56,10 @@ class MapValidator(TypeValidator):
         self.library = library
 
         self.validate_types("map", battlefield)
-        self.validate_links(battlefield)
+        self.validate_range_links(battlefield)
+        self.validate_src_sink_links(battlefield)
 
-    def validate_links(self, battlefield):
+    def validate_range_links(self, battlefield):
         for (src, sink), good in battlefield["links"].items():
             ox, oy = self.terr_graph.transform_to_oxy(src)
             ex, ey = self.terr_graph.transform_to_oxy(sink)
@@ -70,4 +71,20 @@ class MapValidator(TypeValidator):
                 if good == "hit": r *= 2
                 elif good == "dev": r *= 2
                 assert d <= r, f"{src} -- {sink} >> {good}"
-        print(f"map validate_links... OK")
+        print(f"map validate_range_links... OK")
+
+    def validate_src_sink_links(self, battlefield):
+        for (src, sink), good in battlefield["links"].items():
+            obj_sink = battlefield["objects"][sink]
+            obj_src = battlefield["objects"][src]
+            if good == "hit" or good == "dev": pass
+            elif obj_src["name"] == "mine" and obj_sink["name"] == "store": pass
+            elif obj_src["name"] == "store" and obj_sink["name"] == "store": pass
+            elif obj_src["name"] == "mixer" and obj_sink["name"] == "store": pass
+            elif obj_src["name"] == "store" and obj_sink["name"] == "mixer": pass
+            elif obj_src["name"] == "store" and obj_sink["name"] == "lab": pass
+            elif obj_src["name"] == "store" and obj_sink["name"] == "send": pass
+            elif obj_src["name"] == "store" and obj_sink["name"] == "devel": pass
+            elif obj_src["name"] == "store" and obj_sink["name"] == "hit": pass
+            else: raise ValueError("src-sink")
+        print(f"map validate_src_sink_links... OK")

@@ -368,19 +368,14 @@ class HexPainter(SimPoint):
             self.terr_painter.draw_gex(context, (0.3, 0, 0.3), gex)
             context.stroke(); return
 
+        color = 1, 1, 1, 0.5
         interval = self.library["objects"][obj["name"]]["interval"]
         r = self.library["objects"][obj["name"]].get("range", 0.0)
-        rr = 2*r if obj["name"] in ["hit", "devel"] else r
-        # color = self.library["players"][obj["own"]]["color"]
-        # color = [c if i != 3 else 0.333 for i, c in enumerate(color)]
-        color = 1, 1, 1, 0.5
+        if obj["name"] in ["hit", "devel"]: r *= 2
         xloc, yloc = self._calc_render_xy(*self.selected_xy)
         zoom = self.config["window-zoom"]
         context.set_source_rgba(*color)
         context.arc(xloc, yloc, r * zoom, 0, TWO_PI)
-        context.fill()
-        context.set_source_rgba(*color)
-        context.arc(xloc, yloc, rr * zoom, 0, TWO_PI)
         context.fill()
         context.set_source_rgba(0, 0, 0, 0.25)
         context.arc(xloc, yloc, interval * zoom, 0, TWO_PI)
