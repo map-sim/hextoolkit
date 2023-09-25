@@ -371,8 +371,9 @@ class HexPainter(SimPoint):
         interval = self.library["objects"][obj["name"]]["interval"]
         r = self.library["objects"][obj["name"]].get("range", 0.0)
         rr = 2*r if obj["name"] in ["hit", "devel"] else r
-        color = self.library["players"][obj["own"]]["color"]
-        color = [c if i != 3 else 0.333 for i, c in enumerate(color)]
+        # color = self.library["players"][obj["own"]]["color"]
+        # color = [c if i != 3 else 0.333 for i, c in enumerate(color)]
+        color = 1, 1, 1, 0.5
         xloc, yloc = self._calc_render_xy(*self.selected_xy)
         zoom = self.config["window-zoom"]
         context.set_source_rgba(*color)
