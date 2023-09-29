@@ -23,6 +23,14 @@ def status_print(msg):
         return inner
     return wrapper
 
+class HexRunner:
+    def __init__(self, library, battlefield):
+        self.battlefield =  battlefield
+        self.library = library
+        
+    def run(self):
+        self.battlefield["iteration"] += 1
+
 class HexWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
         TerrWindow.__init__(self, config, library, battlefield)
@@ -215,8 +223,12 @@ class HexWindow(TerrWindow):
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
-        if key_name == "Escape":
-            print("##> mode: navi & zoom reset")
+        if key_name == "Return":
+            print("##> Run")
+            HexRunner(self.library, self.battlefield).run()
+
+        elif key_name == "Escape":
+            print("##> Esc / reset")
             self.config["window-offset"] = self.config_backup["window-offset"]
             self.config["window-zoom"] = self.config_backup["window-zoom"]
             self.painter.set_selection(None, None)

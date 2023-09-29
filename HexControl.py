@@ -18,6 +18,10 @@ class HexControl(Gtk.Window):
         self.button_key_mapping = {}
         self.grid = Gtk.Grid()
         self.add(self.grid)
+
+        nargs = Gtk.PositionType.RIGHT, 1, 1
+        nargs2 = Gtk.PositionType.RIGHT, 2, 1
+        nargs6 = Gtk.PositionType.RIGHT, 6, 1
         
         self.make_key_button("ESC", "Escape")
         self.make_key_button("Zoom-in", "plus")
@@ -27,15 +31,17 @@ class HexControl(Gtk.Window):
         self.make_key_button("Down", "Down")
         self.make_key_button("Right", "Right")
         self.make_key_button("Network-toogle", "f")
-        
+        self.make_key_button("Run", "Return")
+        self.run_label = Gtk.Label()
+        self.run_label.set_alignment(0.05, 0.5)
+        self.grid.attach_next_to(self.run_label, self.last_button, *nargs2)
+        self.refresh_run_label()
+
         self.make_key_button("Verify", "v", (0, 1, 1, 1))
         self.make_key_button("<", "less")
         self.make_key_button(">", "greater")
         self.make_key_button("Save", "s")
         self.make_key_button("Load", "l")
-        nargs = Gtk.PositionType.RIGHT, 1, 1
-        nargs2 = Gtk.PositionType.RIGHT, 2, 1
-        nargs6 = Gtk.PositionType.RIGHT, 6, 1
         self.snapshot_label = Gtk.Label()
         self.snapshot_label.set_alignment(0.1, 0.5)
         self.grid.attach_next_to(self.snapshot_label, self.last_button, *nargs)
@@ -106,14 +112,17 @@ class HexControl(Gtk.Window):
         good = self.main_window.state["selected-good"]
         if good is None: self.good_label.set_markup("--")
         else: self.good_label.set_markup(str(good))
+    def refresh_run_label(self):
+        i = self.main_window.battlefield["iteration"] 
+        self.run_label.set_markup(str(i))
     def refresh_all_labels(self):
-    	self.refresh_snapshot_label()
-    	self.refresh_selection_label()
-    	self.refresh_terr_label()
-    	self.refresh_obj_label()
-    	self.refresh_player_label()
-    	self.refresh_good_label()
-    
+        self.refresh_snapshot_label()
+        self.refresh_selection_label()
+        self.refresh_terr_label()
+        self.refresh_obj_label()
+        self.refresh_player_label(); self.refresh_good_label()
+        self.refresh_run_label()
+        
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
     def on_scroll(self, widget, event):
