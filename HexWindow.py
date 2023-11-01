@@ -1,5 +1,5 @@
 
-import gi, os, copy, math
+import gi, os, copy, math, random
 from pprint import pformat
 
 gi.require_version('Gtk', '3.0')
@@ -25,11 +25,72 @@ def status_print(msg):
 
 class HexRunner:
     def __init__(self, library, battlefield):
-        self.battlefield =  battlefield
+        self.graph_terr = TerrGraph(battlefield)
+        self.battlefield = battlefield
         self.library = library
-        
+        self.links_from = {}
+        self.links_to = {}
+    
+        for f, t in battlefield["links"].keys():
+            try: self.links_to[t].append(f)
+            except KeyError: self.links_to[t] = [f]
+            try: self.links_from[f].append(t)
+            except KeyError: self.links_from[f] = [t]
+
     def run(self):
         self.battlefield["iteration"] += 1
+        self.run_mines()
+
+    def get_available_capacity(self, obj):
+        flag_rcompress = self.check_technology(obj, "resource-compresion")
+        capacity = 6 if flag_rcompress else 4
+        return capacity - len(obj["goods"])
+
+    def run_mines(self):
+        for vex, obj in self.battlefield["objects"].items():
+            if obj["name"] != "mine": continue
+            if obj["out"] is None: continue
+            if vex not in self.links_from: continue
+            
+            terr = self.graph_terr.get_hex_terr(vex)
+            resources = self.library["terrains"][terr]["resources"]
+            base_chance = resources.get(obj["out"], 0.0)            
+            chances = [base_chance] 
+            if self.check_technology(obj, "advanced-mining"):
+                chances += [0.5 * base_chance]
+            no = self.rand_to_count(chances)
+
+            destinations = []
+            for vex2 in self.links_from[vex]:
+                good = self.battlefield["links"][vex, vex2]
+                if good != obj["out"]: continue
+                obj2 = self.battlefield["objects"][vex2]
+                if obj2["name"] != "store": continue
+                if self.get_available_capacity(obj2):
+                    destinations.append(obj2)
+            if not destinations: continue
+            # destix = list(range(len(destinations)))
+            for _ in range(no):
+                obj2i = random.randint(0, len(destinations)-1) #     random.shuffle(destix)
+                obj2 = destinations[obj2i]
+                obj2["goods"].append(obj["out"])
+                if not self.get_available_capacity(obj2):
+                    destinations.pop(obj2i)
+                    if not destinations: break
+
+    def rand_to_count(self, chances):
+        count = 0
+        for chance in chances:
+            if random.uniform(0, 1) < chance:
+                count += 1
+        return count
+
+    def check_technology(self, obj_or_own, tech):
+        assert tech in self.library["technologies"], f"{tech} not tech"
+        if isinstance(obj_or_own, str): own = obj_or_own
+        else: own = obj_or_own["own"]
+        pconf = self.battlefield["players"][own]
+        return tech in pconf["technologies"]
 
 class HexWindow(TerrWindow):
     def __init__(self, config, library, battlefield):
@@ -107,8 +168,8 @@ class HexWindow(TerrWindow):
 
     def switch_terrain(self): self.switch_item("terrains", "selected-terr")
     def switch_player(self): self.switch_item("players", "selected-player")
-    def switch_object(self): self.switch_item("objects", "selected-obj")        
     def switch_good(self): self.switch_item("resources", "selected-good")
+    def switch_object(self): self.switch_item("objects", "selected-obj")        
     def switch_item(self, key, state):
         items = list(sorted(self.library[key].keys()))
         if key == "resources": items += ["dev", "hit"]
@@ -165,6 +226,7 @@ class HexWindow(TerrWindow):
         
     def change_object(self):        
         if self.painter.selected_vex is None: return
+        if self.painter.selected_vex not in self.battlefield["objects"]: return
         obj = self.battlefield["objects"][self.painter.selected_vex]
         if "work" in obj and obj["cnt"] > 0: obj["work"] = not obj["work"]        
         elif "work" in obj and obj["cnt"] <= 0: obj["work"] = False
@@ -226,7 +288,9 @@ class HexWindow(TerrWindow):
         if key_name == "Return":
             print("##> Run")
             HexRunner(self.library, self.battlefield).run()
-
+            self.control_panel.refresh_run_label()
+            self.draw_content()
+            
         elif key_name == "Escape":
             print("##> Esc / reset")
             self.config["window-offset"] = self.config_backup["window-offset"]
