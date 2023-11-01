@@ -44,6 +44,7 @@ class HexRunner:
     def get_available_capacity(self, obj):
         flag_rcompress = self.check_technology(obj, "resource-compresion")
         capacity = 6 if flag_rcompress else 4
+        if "goods" not in obj: return 0
         return capacity - len(obj["goods"])
 
     def run_mines(self):
@@ -66,10 +67,10 @@ class HexRunner:
                 if good != obj["out"]: continue
                 obj2 = self.battlefield["objects"][vex2]
                 if obj2["name"] != "store": continue
+                if not obj2["work"]: continue
                 if self.get_available_capacity(obj2):
                     destinations.append(obj2)
             if not destinations: continue
-            # destix = list(range(len(destinations)))
             for _ in range(no):
                 obj2i = random.randint(0, len(destinations)-1) #     random.shuffle(destix)
                 obj2 = destinations[obj2i]
