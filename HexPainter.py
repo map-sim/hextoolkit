@@ -368,19 +368,32 @@ class HexPainter(SimPoint):
             self.terr_painter.draw_gex(context, (0.3, 0, 0.3), gex)
             context.stroke(); return
 
-        color = 1, 1, 1, 0.5
         interval = self.library["objects"][obj["name"]]["interval"]
         r = self.library["objects"][obj["name"]].get("range", 0.0)
-        if obj["name"] in ["hit", "devel"]: r *= 2
         xloc, yloc = self._calc_render_xy(*self.selected_xy)
         zoom = self.config["window-zoom"]
-        context.set_source_rgba(*color)
+
+        color = self.library["players"][obj["own"]]["color"]
+        color = [0.75 * c for c in color[:3]]
+        ralor = cairo.RadialGradient(xloc, yloc, (r-3)*zoom, xloc, yloc, (r-1)*zoom)
+        ralor.add_color_stop_rgba(0, 1, 1, 1, 0)
+        ralor.add_color_stop_rgba(1, *color, 1)
+        context.set_source(ralor)
         context.arc(xloc, yloc, r * zoom, 0, TWO_PI)
         context.fill()
+
+        if obj["name"] in ["hit", "devel"]:
+            ralor = cairo.RadialGradient(xloc, yloc, (2*r-3)*zoom, xloc, yloc, (2*r-1)*zoom)
+            ralor.add_color_stop_rgba(0, 1, 1, 1, 0)
+            ralor.add_color_stop_rgba(1, *color, 1)
+            context.set_source(ralor)
+            context.arc(xloc, yloc, 2*r*zoom, 0, TWO_PI)
+            context.fill()
+
         context.set_source_rgba(0, 0, 0, 0.25)
         context.arc(xloc, yloc, interval * zoom, 0, TWO_PI)
         context.fill()
-        
+
         gex = (self.selected_vex, self.terr_graph.grid_radius)
         self.terr_painter.draw_gex(context, (1, 1, 1, 1), gex)
         context.fill(); context.stroke()
