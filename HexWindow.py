@@ -40,13 +40,40 @@ class HexRunner:
     def run(self):
         self.battlefield["iteration"] += 1
         self.run_mines()
-
+        self.run_store_store()
+        
     def get_available_capacity(self, obj):
         flag_rcompress = self.check_technology(obj, "resource-compresion")
         capacity = 6 if flag_rcompress else 4
         if "goods" not in obj: return 0
         return capacity - len(obj["goods"])
 
+    def run_store_store(self):
+        if not self.battlefield["links"]: return
+        done_f = set(); count_t = {}; record_ft = {}
+        from_to_list = list(self.battlefield["links"].keys())
+        random.shuffle(from_to_list)
+        for f, t in from_to_list:
+            if f in done_f: continue
+            fobj = self.battlefield["objects"][f]
+            tobj = self.battlefield["objects"][t]
+            if fobj["name"] != "store" or tobj["name"] != "store": continue
+            if self.get_available_capacity(tobj) <= count_t.get(t, 0): continue
+            if not (fobj["work"] and tobj["work"]): continue
+            good = self.battlefield["links"][f, t]
+            if good not in fobj["goods"]: continue
+            record_ft[f, t] = good
+            try: count_t[t] += 1
+            except KeyError:
+                count_t[t] = 1
+            done_f.add(f)
+        for (f, t), good in record_ft.items():
+            fobj = self.battlefield["objects"][f]
+            tobj = self.battlefield["objects"][t]
+            if good not in fobj["goods"]: continue
+            fobj["goods"].remove(good)
+            tobj["goods"].append(good)
+    
     def run_mines(self):
         for vex, obj in self.battlefield["objects"].items():
             if obj["name"] != "mine": continue
@@ -72,7 +99,7 @@ class HexRunner:
                     destinations.append(obj2)
             if not destinations: continue
             for _ in range(no):
-                obj2i = random.randint(0, len(destinations)-1) #     random.shuffle(destix)
+                obj2i = random.randint(0, len(destinations)-1)
                 obj2 = destinations[obj2i]
                 obj2["goods"].append(obj["out"])
                 if not self.get_available_capacity(obj2):
