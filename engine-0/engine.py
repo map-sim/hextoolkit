@@ -1,24 +1,10 @@
-from diagram import Diagram
+from forum import example_config as example_controls
+from diagram import example_config as example_diagram
 
+from diagram import Diagram
+from forum import Forum
 
 class Engine:
-    constants = {
-        "<science>-factor": 1.0,
-        "<industrial>-factor": 1.0,
-        "<consumption>-factor": 1.0,
-        "<development>-factor": 1.0,
-        "base-build-capacity": 10.0,
-        "base-node-capacity": 1000.0
-    }
-    technologies = [
-        ("production", "A"),
-        ("production", "B"),
-        ("production", "C"),
-        ("mixing", "ABC"),
-        ("mixing", "AB"),
-        ("mixing", "BC"),
-        ("mixing", "AC")
-    ]
     processes = {
         "A": None,
         "B": None,
@@ -33,6 +19,20 @@ class Engine:
         "<science>": "ABC"
     }
 
-    def __init__(self):
-        self.controls = []
+    def __init__(self, diagram_config, controls_config):
         self.diagram = Diagram()
+        self.forum = Forum()
+        self.diagram.load_from_json(diagram_config)
+        self.forum.load_from_json(controls_config)
+        self.step = 0
+
+    def run(self):
+        print(f"============\nrun {self.step}...")
+        for node in self.diagram.values():
+            node.run()
+        self.step += 1
+
+if __name__ == "__main__":
+    engine = Engine(example_diagram, example_controls)
+    engine.run()
+    engine.run()
