@@ -56,8 +56,8 @@ class Diagram(dict):
     buildings = [
         "product A", "product B", "product C",
         "mixer AB", "mixer BC", "mixer AC", "mixer ABC",
-        "military", "transport", "science", "residence",
-        "emporium", "glory", "management", "development"
+        "management", "development", "science", "residence", "port",
+        "emporium", "glory", "military", "shipyard", "transport"
     ]
 
     def __init__(self):

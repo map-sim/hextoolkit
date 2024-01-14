@@ -11,7 +11,7 @@ gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
 SQRT3 = math.sqrt(3)
-class TerrPainter:    
+-class TerrPainter:    
     def __init__(self, config, library, battlefield):
         self.battlefield =  battlefield
         self.library = library

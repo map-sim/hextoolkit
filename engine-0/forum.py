@@ -2,7 +2,7 @@ class Control:
     __names = set()
     __obligatory = {
         "name", "capital", "staff",
-        "technologies", "units"
+        "technologies", "units", "navy"
     }
 
     def __eq__(self, other):
@@ -37,7 +37,8 @@ class Forum(dict):
     technologies = [
         "production A", "production B", "production C",
         "mixing ABC", "mixing AB", "mixing BC", "mixing AC",
-        "army unit-size", "army offensive", "army defence"
+        "ground offensive", "ground defence",
+        "army unit-size", "navy unit-size"
     ]
 
     def __init__(self):
