@@ -3,7 +3,8 @@
 import gi, copy
 from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
-from TerrPainter import TerrPainter
+from TerrToolbox import TerrPainter
+from TerrToolbox import TerrGraph
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -15,6 +16,7 @@ class HexWindow(NaviWindow):
     def __init__(self, saver):
         self.settings = copy.deepcopy(saver.settings)
         self.terr_painter = TerrPainter(saver)
+        self.terr_graph = TerrGraph(saver)
         self.config = saver.settings
         self.saver = saver
 
@@ -27,6 +29,28 @@ class HexWindow(NaviWindow):
         self.terr_painter.draw(context)
         context.stroke()
 
+    def get_click_location(self, event):
+        xoffset, yoffset = self.config["window-offset"]
+        zoom = self.config["window-zoom"]
+        ox = (int(event.x) - xoffset) / zoom
+        oy = (int(event.y) - yoffset) / zoom
+        return ox, oy
+    def on_click(self, widget, event):
+        ox, oy = self.get_click_location(event)
+        rox, roy = round(ox, 2), round(oy, 2)
+        print("----")
+        if event.button == 1:
+            print(f"oriented-location: ({rox}, {roy})")
+        elif event.button == 3:
+            terr, terr_obj = self.terr_graph.check_terrain(ox, oy)
+            hex_xyi, hex_xyo = self.terr_graph.transform_to_vex(ox, oy)
+            hex_terr = self.terr_graph.get_hex_terr(hex_xyi)            
+            print(f"landform-terrain: {terr}")
+            print(f"landform-object: {terr_obj}")
+            print(f"hex-location: {hex_xyi}")
+            print(f"hex-terrain: {hex_terr}")
+        return True
+        
 def run_example():
     from SaveHandler import SaveHandler
     saver = SaveHandler()

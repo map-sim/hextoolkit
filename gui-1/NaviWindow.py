@@ -131,7 +131,8 @@ class NaviWindow(BaseWindow):
         ox = (int(event.x) - xoffset) / zoom
         oy = (int(event.y) - yoffset) / zoom
 
-        print(f"({round(ox, 2)}, {round(oy, 2)}),")
+        # cnts = event.get_click_count()
+        print(f"({round(ox, 2)}, {round(oy, 2)})")
         return True
 
 def run_example():

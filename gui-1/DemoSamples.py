@@ -17,11 +17,23 @@ settings_0 = {
 
 landform_0 = [
     ('base', 'water-0'),
+    ('rect', 'void-0', -40, -10, 80, 40),
     ('vex', 'desert-0', (0, 3)),
     ('vex', 'desert-0', (1, 3)),
     ('vex', 'desert-0', (1, 2)),
     ('vex', 'steppe-0', (2, 2)),
     ('vex', 'steppe-0', (2, 3)),
+    ('vex', 'shallows-0', (3, 3)),
+    ('vex', 'shallows-0', (3, 2)),
+    ('vex', 'shallows-0', (1, 4)),
+    ('vex', 'shallows-0', (2, 4)),
+    ('vex', 'shallows-0', (3, 4)),
+    ('vex', 'shallows-0', (1, 1)),
+    ('vex', 'shallows-0', (2, 1)),
+    ('vex', 'shallows-0', (2, 5)),
+    ('vex', 'shallows-0', (3, 5)),
+    ('vex', 'shallows-0', (4, 4)),
+    ('vex', 'mountains-0', (0, 2)),
     ('grid', (0.8, 0.8, 0.8), 0.16),
     ('grid', (0.4, 0.4, 0.4), 0.08)
 ]
@@ -31,51 +43,51 @@ landform_0 = [
 ###
 
 terrains_0 = {
+    'void-0': {
+        'buildable': False,
+        'color': [0.0, 0.0, 0.0],
+        'desc': 'void',
+        'resources': {}
+    },
     'desert-0': {
         'buildable': True,
         'color': [1.0, 0.96, 0.75],
         'desc': 'desert',
-        'resources': {}
+        'resources': {
+            'wind': 0.4,
+            'sun': 0.5
+        }
+    },
+    'shallows-0': {
+        'buildable': None,
+        'color': [0.7, 0.85, 1.0],
+        'desc': 'shallows',
+        'resources': {
+            'wind': 0.65
+        }
     },
     'water-0': {
         'buildable': False,
-        'color': [0.6, 0.8, 1.0],
+        'color': [0.54, 0.7, 1.0],
         'desc': 'water',
+        'resources': {}
+    },
+    'mountains-0': {
+        'buildable': True,
+        'color': [0.9, 0.7, 0.7],
+        'desc': 'mountains',
         'resources': {
-            'food': 0.2
+            'wind': 0.55,
+            'sun': 0.3
         }
-    },
-    'mointain-0': {
-        'buildable': True,
-        'color': [0.33, 0.66, 0.99],
-        'desc': 'water',
-        'resources': {
-            'metal': 0.5
-        },
-    },
-    'forest-0': {
-        'buildable': True,
-        'color': [0.5, 0.88, 0.75],
-        'desc': 'forest',
-        'resources': {
-            'food': 0.1,
-            'wood': 0.5
-        },
     },
     'steppe-0': {
         'buildable': True,
         'color': [0.66, 0.99, 0.88],
         'desc': 'warm steppe',
         'resources': {
-            'food': 0.2
-        },
-    },
-    'steppe-1': {
-        'buildable': True,
-        'color': [0.77, 0.99, 0.92],
-        'desc': 'cold step',
-        'resources': {
-            'food': 0.02
-        },
-    },
+            'wind': 0.4,
+            'sun': 0.5
+        }
+    }
 }

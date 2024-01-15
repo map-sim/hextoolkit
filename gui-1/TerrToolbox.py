@@ -75,8 +75,7 @@ class TerrPainter:
         self._draw_closed_lines(context, color, points)
         context.fill()
         context.stroke()
-
-    def draw_hex(self, context, terrain, xy, r=1.0):
+    def _draw_hex(self, context, terrain, xy, r=1.0):
         x, y = xy; h = 0.5 * r * SQRT3    
         points = [(x, y+r), (x+h, y+r/2), (x+h, y-r/2),
                   (x, y-r), (x-h, y-r/2), (x-h, y+r/2)]
@@ -98,7 +97,7 @@ class TerrPainter:
     def draw_vex(self, context, terrain, xy):
         r = self.saver.settings.get("hex-radius", 1.0)
         xc, yc = TerrPainter._vex_to_loc(xy, r)
-        self.draw_hex(context, terrain, (xc, yc), r)
+        self._draw_hex(context, terrain, (xc, yc), r)
     def draw_gex(self, context, color, thickness, xy):
         r = self.saver.settings.get("hex-radius", 1.0)
         xc, yc = TerrPainter._vex_to_loc(xy, r)
@@ -126,9 +125,95 @@ class TerrPainter:
     def draw(self, context):
         for shape, *params in self.saver.landform:
             if shape == "base": self.draw_base(context, *params)
-            elif shape == "hex": self.draw_hex(context, *params)
             elif shape == "vex": self.draw_vex(context, *params)
             elif shape == "grid": self.draw_grid(context, *params)
             elif shape == "rect": self.draw_rect(context, *params)
             elif shape == "polygon": self.draw_polygon(context, *params)
             else: raise ValueError(f"Not supported shape: {shape}")
+
+class TerrGraph:
+    # def __init__(self, battlefield):
+    def __init__(self, saver):
+        self.saver = saver
+        self.default_vex_terr = None        
+        self.grid_radius = self.saver.settings.get("hex-radius", 1.0)
+        self.vex_dict = {}
+
+        base_counter = 0
+        for shape, *params in self.saver.landform:
+            terr = params[0]
+            if shape == "base":
+                self.default_vex_terr = terr
+                base_counter += 1
+        assert base_counter <= 1, "base"
+        for shape, *params in self.saver.landform:
+            if shape != "vex": continue
+            terr, xy = params[0], params[1]
+            self.vex_dict[xy] = terr
+
+    def get_hex_terr(self, xy):
+        return self.vex_dict.get(xy, self.default_vex_terr)
+
+    def transform_to_vex(self, xloc, yloc):
+        h = SQRT3 * self.grid_radius / 2 
+        ynorm = int(round(yloc / (1.5 * self.grid_radius)))
+        yo = ynorm * 1.5 * self.grid_radius
+        if ynorm % 2 == 1:
+            xnorm = int(round((xloc - h) / (2 * h)))
+            xo = xnorm * 2 * h + h
+        else:
+            xnorm = int(round(xloc / (2 * h)))
+            xo = xnorm * 2 * h
+        return (xnorm, ynorm), (xo, yo)
+
+    def transform_to_oxy(self, vex):
+        xhex, yhex = vex
+        h = SQRT3 * self.grid_radius / 2 
+        yo = yhex * 1.5 * self.grid_radius
+        if yhex % 2 == 1: xo = xhex * 2 * h + h
+        else: xo = xhex * 2 * h
+        return xo, yo
+
+    def check_in_polygon(self, xyloc, xypoints):
+        (x, y), pos, neg = xyloc, 0, 0
+        for index in range(len(xypoints)):
+            x1, y1 = xypoints[index]
+            if x == x1 and y == y1: return True
+            index2 = (index + 1) % len(xypoints)
+            x2, y2 = xypoints[index2]
+            d = (x-x1)*(y2-y1) - (y-y1)*(x2-x1)
+            if d > 0: pos += 1
+            if d < 0: neg += 1
+            if pos > 0 and neg > 0:
+                return False
+        return True
+        
+    def check_terrain(self, xloc, yloc):
+        output_terr, output_row = None, None
+        for shape, terr, *params in self.saver.landform:
+            if shape == "base":
+                output_terr = terr
+                output_row = shape, terr
+            elif shape == "rect":
+                xo, yo = params[0], params[1]
+                polygon = [(xo, yo), (xo+params[2], yo),
+                           (xo+params[2], yo+params[3]), (xo, yo+params[3])]
+                if self.check_in_polygon((xloc, yloc), polygon):
+                    output_row = shape, terr, params
+                    output_terr = terr
+            elif shape == "polygon":
+                if self.check_in_polygon((xloc, yloc), params):
+                    output_row = shape, terr, params
+                    output_terr = terr
+            elif shape == "vex":
+                r = self.grid_radius
+                h = 0.5 * r * SQRT3
+                x, y = TerrPainter._vex_to_loc(params[0], r)
+                points = [(x, y+r), (x+h, y+r/2), (x+h, y-r/2),
+                          (x, y-r), (x-h, y-r/2), (x-h, y+r/2)]                
+                if self.check_in_polygon((xloc, yloc), points):
+                    output_row = shape, terr, params
+                    output_terr = terr
+            elif shape == "grid": continue
+            else: raise ValueError(f"not supported: {shape}")
+        return output_terr, output_row
