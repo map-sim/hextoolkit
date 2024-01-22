@@ -5,6 +5,7 @@ from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
+from TerrToolbox import ObjPainter
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -14,9 +15,10 @@ from gi.repository import Gdk
 
 class HexWindow(NaviWindow):
     def __init__(self, saver):
-        self.settings = copy.deepcopy(saver.settings)
-        self.terr_painter = TerrPainter(saver)
         self.terr_graph = TerrGraph(saver)
+        self.obj_painter = ObjPainter(saver)
+        self.terr_painter = TerrPainter(saver)
+        self.settings = copy.deepcopy(saver.settings)
         self.config = saver.settings
         self.saver = saver
 
@@ -27,6 +29,7 @@ class HexWindow(NaviWindow):
     @BaseWindow.double_buffering
     def draw_content(self, context):
         self.terr_painter.draw(context)
+        self.obj_painter.draw(context)
         context.stroke()
 
     def get_click_location(self, event):
