@@ -9,7 +9,8 @@ settings_0 = {
     'window-zoom': 15.0,
     'move-sensitive': 50,
     'hex-radius': 2.2,
-    'base-thickness': 0.08
+    'base-thickness': 0.08,
+    'marker-color': (0.0, 0.0, 0.0)
 }
 
 ###
@@ -67,7 +68,8 @@ markers_0 = [
     ("vector", "Aaa", (3, 3), (3, 4)),
     ("vector", "Aaa", (3, 4), (4, 4)),
     ("vector", "Aaa", (3, 8), (8, 8)),
-    ("link", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9))
+    ("link", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
+    ("vex", None, (-1, -1))
 ]
 
 ###

@@ -19,9 +19,10 @@ class HexWindow(NaviWindow):
         self.obj_painter = ObjPainter(saver)
         self.terr_painter = TerrPainter(saver)
         self.settings = copy.deepcopy(saver.settings)
+        self.selected_vex = saver.get_selected_vex()
         self.config = saver.settings
         self.saver = saver
-
+        
         size = self.settings["window-size"]
         title = self.settings["window-title"]
         BaseWindow.__init__(self, title, *size)
@@ -52,6 +53,11 @@ class HexWindow(NaviWindow):
             print(f"landform-object: {terr_obj}")
             print(f"hex-location: {hex_xyi}")
             print(f"hex-terrain: {hex_terr}")
+
+            ## hex selection
+            self.selected_vex = hex_xyi
+            self.saver.select_only_one_vex(hex_xyi)
+            self.draw_content()
         return True
         
 def run_example():

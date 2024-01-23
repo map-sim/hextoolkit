@@ -211,7 +211,8 @@ class ObjPainter(AbstractPainter):
         inner(rh*zoom/9, rh*zoom/9.5, color)
         
     def draw_vex(self, context, control, xy):
-        color = self.saver.controls[control]["marker-color"]
+        try: color = self.saver.controls[control]["marker-color"]
+        except KeyError: color = self.saver.settings["marker-color"]
         color2 = tuple([*color, 0.2])
         r = self.saver.settings.get("hex-radius", 1.0)
         xc, yc = AbstractPainter.vex_to_loc(xy, r)
@@ -227,6 +228,7 @@ class ObjPainter(AbstractPainter):
     def draw(self, context):
         for shape, *params in self.saver.markers:
             if shape == "vex": self.draw_vex(context, *params)
+            elif shape == "cursor": self.draw_cursor(context, *params)
             elif shape == "link": self.draw_link(context, *params, link=True)
             elif shape == "vector": self.draw_link(context, *params, link=False)
             else: raise ValueError(f"Not supported shape: {shape}")

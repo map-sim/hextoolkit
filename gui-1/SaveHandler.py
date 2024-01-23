@@ -14,6 +14,21 @@ class SaveHandler:
         self.controls = demo.controls_0
         self.landform = demo.landform_0
         self.markers = demo.markers_0
+
+    def get_selected_vex(self):
+        for n, marker in enumerate(self.markers):
+            if marker[0] == "vex" and marker[1] is None:
+                return marker[2]
+        return None
+
+    def select_only_one_vex(self, vex):
+        torm = set()
+        for n, marker in enumerate(self.markers):
+            if marker[0] == "vex": torm.add(n)
+        for n in reversed(sorted(torm)):
+            del self.markers[n]
+        self.markers.append(("vex", None, vex))
+        
         
 if __name__ == "__main__":
     saver = Saver()
