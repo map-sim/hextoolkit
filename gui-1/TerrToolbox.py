@@ -182,21 +182,34 @@ class ObjPainter(AbstractPainter):
         xoffset, yoffset = self.saver.settings["window-offset"]
         return x*zoom + xoffset, y*zoom + yoffset
         
-    def draw_link(self, context, control, from_vex, to_vex, link=False):
-        def inner(r1, r2, c):
-            context.set_source_rgba(*c); context.set_line_width(r1)
-            context.move_to(xo, yo); context.line_to(xe, ye); context.stroke()
-            if link: context.arc(xe, ye, r2, 0, TWO_PI); context.fill()
-            context.arc(xo, yo, r2, 0, TWO_PI); context.fill()
-        zoom = self.saver.settings["window-zoom"]
-        r = self.saver.settings.get("hex-radius", 1.0)
-        color = self.saver.controls[control]["marker-color"]
-        xo, yo = self.translate_xy(*TerrPainter.vex_to_loc(from_vex, r))
-        xe, ye = self.translate_xy(*TerrPainter.vex_to_loc(to_vex, r))
-        inner(r*zoom/5, r*zoom/6.5, (1.0, 1.0, 1.0))
-        inner(r*zoom/6, r*zoom/7.3, (0.0, 0.0, 0.0))
-        inner(r*zoom/7, r*zoom/8, color)
+    def draw_link(self, context, control, *vexes, link=False):
+        def inner_point(x, y, r, c):
+            context.set_source_rgba(*c)
+            context.arc(x, y, r, 0, TWO_PI)
+            context.fill()
+        def inner_line(xo, yo, xe, ye, w, c):        
+            context.set_source_rgba(*c)
+            context.set_line_width(w)
+            context.move_to(xo, yo)
+            context.line_to(xe, ye)
+            context.stroke()
+        def inner(w, r, c):
+            xe, ye = None, None
+            for n, vex in enumerate(vexes):
+                xo, yo = self.translate_xy(*TerrPainter.vex_to_loc(vex, rh))
+                if n == 0: xe, ye = xo, yo; continue
+                inner_line(xo, yo, xe, ye, w, c)
+                inner_point(xe, ye, r, c)
+                xe, ye = xo, yo
+            if link: inner_point(xe, ye, r, c)
 
+        zoom = self.saver.settings["window-zoom"]
+        rh = self.saver.settings.get("hex-radius", 1.0)
+        color = self.saver.controls[control]["marker-color"]    
+        inner(rh*zoom/5, rh*zoom/6.5, (1.0, 1.0, 1.0))
+        inner(rh*zoom/7, rh*zoom/8, (0.0, 0.0, 0.0))
+        inner(rh*zoom/9, rh*zoom/9.5, color)
+        
     def draw_vex(self, context, control, xy):
         color = self.saver.controls[control]["marker-color"]
         color2 = tuple([*color, 0.2])
@@ -213,7 +226,7 @@ class ObjPainter(AbstractPainter):
 
     def draw(self, context):
         for shape, *params in self.saver.markers:
-            if shape == "link": self.draw_link(context, *params, link=True)
+            if shape == "vex": self.draw_vex(context, *params)
+            elif shape == "link": self.draw_link(context, *params, link=True)
             elif shape == "vector": self.draw_link(context, *params, link=False)
-            elif shape == "vex": self.draw_vex(context, *params)
             else: raise ValueError(f"Not supported shape: {shape}")
