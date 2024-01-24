@@ -59,13 +59,27 @@ class HexWindow(NaviWindow):
             self.saver.select_only_one_vex(hex_xyi)
             self.draw_content()
         return True
-        
+
+    def on_press(self, widget, event):
+        if isinstance(event, str): key_name = event
+        else: key_name = Gdk.keyval_name(event.keyval)
+        if key_name == "q":
+            print("##> unselect vexes & redraw")
+            self.saver.unselect_all_vexes()
+            self.selected_vex = None
+            self.draw_content()
+        else: NaviWindow.on_press(self, widget, event)
+        return True
+
 def run_example():
     from SaveHandler import SaveHandler
+    from HexControl import HexControl
+
     saver = SaveHandler()
     saver.load_demo_0()
-    
-    HexWindow(saver)    
+    win = HexWindow(saver)
+    win.control_panel = HexControl(win)
+
     try: Gtk.main()
     except KeyboardInterrupt:
         print("KeyboardInterrupt")

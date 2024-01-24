@@ -20,13 +20,14 @@ class SaveHandler:
             if marker[0] == "vex" and marker[1] is None:
                 return marker[2]
         return None
-
-    def select_only_one_vex(self, vex):
+    def unselect_all_vexes(self):
         torm = set()
         for n, marker in enumerate(self.markers):
             if marker[0] == "vex": torm.add(n)
         for n in reversed(sorted(torm)):
-            del self.markers[n]
+            del self.markers[n]        
+    def select_only_one_vex(self, vex):
+        self.unselect_all_vexes()
         self.markers.append(("vex", None, vex))
         
         
