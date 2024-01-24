@@ -18,9 +18,9 @@ class HexWindow(NaviWindow):
         self.terr_graph = TerrGraph(saver)
         self.obj_painter = ObjPainter(saver)
         self.terr_painter = TerrPainter(saver)
-        self.settings = copy.deepcopy(saver.settings)
+        self.settings_backup = copy.deepcopy(saver.settings)
         self.selected_vex = saver.get_selected_vex()
-        self.config = saver.settings
+        self.settings = saver.settings
         self.saver = saver
         
         size = self.settings["window-size"]
@@ -34,8 +34,8 @@ class HexWindow(NaviWindow):
         context.stroke()
 
     def get_click_location(self, event):
-        xoffset, yoffset = self.config["window-offset"]
-        zoom = self.config["window-zoom"]
+        xoffset, yoffset = self.settings["window-offset"]
+        zoom = self.settings["window-zoom"]
         ox = (int(event.x) - xoffset) / zoom
         oy = (int(event.y) - yoffset) / zoom
         return ox, oy
