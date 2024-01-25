@@ -18,8 +18,6 @@ class HexControl(Gtk.Window):
         button.connect("clicked", self.on_clicked)
         self.button_mapping[button.get_label()] = value
         vbox.pack_start(button, False, True, 0)
-
-    
         
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="Control")
@@ -51,14 +49,19 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Un-Select (q)", "q")
         self.make_button(vbox, "Save (s)", "s")
 
+        self.box.pack_start(Gtk.VSeparator(), False, True, 0)
+        
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
-        self.info = Gtk.Label(label="???")
+        if main_window.selected_vex is None: init_info = " "*40
+        else: init_info = f"selected hex: {main_window.selected_vex}"        
+        self.info = Gtk.Label(label=init_info)
+        self.info.set_max_width_chars(40)
         self.info.set_line_wrap(True)
-        self.info.set_max_width_chars(32)
+        self.info.set_yalign(0.0)
         self.info.set_selectable(True)
-        vbox.pack_start(self.info, True, True, 0)
+        vbox.pack_start(self.info, True, True, 3)
         
         self.show_all()
 

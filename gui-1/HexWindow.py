@@ -57,6 +57,9 @@ class HexWindow(NaviWindow):
             ## hex selection
             self.selected_vex = hex_xyi
             self.saver.select_only_one_vex(hex_xyi)
+            if hex_xyi is not None:
+                info = f"selected hex: {hex_xyi}"
+                self.control_panel.info.set_text(info)
             self.draw_content()
         return True
 
@@ -66,6 +69,7 @@ class HexWindow(NaviWindow):
         if key_name == "q":
             print("##> unselect vexes & redraw")
             self.saver.unselect_all_vexes()
+            self.control_panel.info.set_text("")
             self.selected_vex = None
             self.draw_content()
         elif key_name == "s":
