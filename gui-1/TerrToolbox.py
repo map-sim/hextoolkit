@@ -18,7 +18,7 @@ class TerrGraph:
         assert base_counter <= 1, "base"
         for shape, *params in self.saver.landform:
             if shape != "vex": continue
-            terr, xy = params[0], params[1]
+            terr, xy = params[0], tuple(params[1])
             self.vex_dict[xy] = terr
 
     def get_hex_terr(self, xy):

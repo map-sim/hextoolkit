@@ -68,15 +68,20 @@ class HexWindow(NaviWindow):
             self.saver.unselect_all_vexes()
             self.selected_vex = None
             self.draw_content()
+        elif key_name == "s":
+            print("##> save on drive ... ", end="")
+            print(self.saver.save_on_drive())
         else: NaviWindow.on_press(self, widget, event)
         return True
 
 def run_example():
+    import sys
     from SaveHandler import SaveHandler
     from HexControl import HexControl
 
     saver = SaveHandler()
-    saver.load_demo_0()
+    if len(sys.argv) == 1: saver.load_demo_0()
+    else: saver.load_from_drive(sys.argv[1])
     win = HexWindow(saver)
     win.control_panel = HexControl(win)
 

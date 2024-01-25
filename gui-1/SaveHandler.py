@@ -1,4 +1,5 @@
 import DemoSamples as demo
+import os, json
 
 class SaveHandler:
     def __init__(self):
@@ -14,6 +15,31 @@ class SaveHandler:
         self.controls = demo.controls_0
         self.landform = demo.landform_0
         self.markers = demo.markers_0
+
+    def save_on_drive(self, prefix="save."):
+        fname = lambda c: f"{prefix}{c}"; counter = 0
+        while os.path.exists(fname(counter)): counter += 1
+        dir_name = fname(counter); os.mkdir(dir_name)
+        def inner(fname, data):
+            ffname = os.path.join(dir_name, fname)
+            with open(ffname, "w") as fd:
+                json.dump(data, fd, indent=4)
+        inner("settings.json", self.settings)
+        inner("terrains.json", self.terrains)
+        inner("controls.json", self.controls)
+        inner("landform.json", self.landform)
+        inner("markers.json", self.markers)
+        return dir_name
+    def load_from_drive(self, save_name):
+        def inner(fname):
+            ffname = os.path.join(save_name, fname)
+            with open(ffname, "r") as fd:
+                return json.load(fd)
+        self.settings = inner("settings.json")
+        self.terrains = inner("terrains.json")
+        self.controls = inner("controls.json")
+        self.landform = inner("landform.json")
+        self.markers = inner("markers.json")
 
     def get_selected_vex(self):
         for n, marker in enumerate(self.markers):

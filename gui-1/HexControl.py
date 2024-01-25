@@ -19,6 +19,8 @@ class HexControl(Gtk.Window):
         self.button_mapping[button.get_label()] = value
         vbox.pack_start(button, False, True, 0)
 
+    
+        
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="Control")
         self.add_events(Gdk.EventMask.SCROLL_MASK)
@@ -34,7 +36,7 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
         
-        self.make_button(vbox, "ESC", "Escape")
+        self.make_button(vbox, "Reset (ESC)", "Escape")
         self.make_button(vbox, "ZOOM in", "plus")
         self.make_button(vbox, "ZOOM out", "minus")
         self.make_button(vbox, "Move Up", "Up")
@@ -47,6 +49,16 @@ class HexControl(Gtk.Window):
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
         self.make_button(vbox, "Un-Select (q)", "q")
+        self.make_button(vbox, "Save (s)", "s")
 
+        vbox = Gtk.VBox(spacing=3)
+        self.box.pack_start(vbox, False, True, 0)
+        vbox.pack_start(Gtk.Separator(), False, True, 0)
+        self.info = Gtk.Label(label="???")
+        self.info.set_line_wrap(True)
+        self.info.set_max_width_chars(32)
+        self.info.set_selectable(True)
+        vbox.pack_start(self.info, True, True, 0)
+        
         self.show_all()
 
