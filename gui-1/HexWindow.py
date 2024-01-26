@@ -58,7 +58,7 @@ class HexWindow(NaviWindow):
             self.selected_vex = hex_xyi
             self.saver.select_only_one_vex(hex_xyi)
             if hex_xyi is not None:
-                info = f"selected hex: {hex_xyi[0]}, {hex_xyi[1]}"
+                info = f"selected hex: {hex_xyi[0]} {hex_xyi[1]}"
                 self.control_panel.info.set_text(info)
             self.draw_content()
         return True
