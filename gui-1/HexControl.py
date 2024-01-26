@@ -54,8 +54,10 @@ class HexControl(Gtk.Window):
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
-        if main_window.selected_vex is None: init_info = " "*40
-        else: init_info = f"selected hex: {main_window.selected_vex}"        
+        if main_window.selected_vex is not None:
+            x, y = main_window.selected_vex
+            init_info = f"selected hex: {x}, {y}"
+        else:  init_info = " "*40
         self.info = Gtk.Label(label=init_info)
         self.info.set_max_width_chars(40)
         self.info.set_line_wrap(True)
