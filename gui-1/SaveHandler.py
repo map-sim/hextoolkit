@@ -3,6 +3,7 @@ import os, json
 
 class SaveHandler:
     def __init__(self):
+        self.stats = {}
         self.controls = {}
         self.settings = {}
         self.terrains = {}
@@ -15,6 +16,7 @@ class SaveHandler:
         self.controls = demo.controls_0
         self.landform = demo.landform_0
         self.markers = demo.markers_0
+        self.stats = demo.stats_0
 
     def save_on_drive(self, prefix="save."):
         fname = lambda c: f"{prefix}{c}"; counter = 0
@@ -29,6 +31,7 @@ class SaveHandler:
         inner("controls.json", self.controls)
         inner("landform.json", self.landform)
         inner("markers.json", self.markers)
+        inner("stats.json", self.stats)
         return dir_name
     def load_from_drive(self, save_name):
         def inner(fname):
@@ -40,6 +43,16 @@ class SaveHandler:
         self.controls = inner("controls.json")
         self.landform = inner("landform.json")
         self.markers = inner("markers.json")
+        self.stats = inner("stats.json")
+
+    def remove_links(self, vex):
+        for n, marker in reversed(list(enumerate(self.markers))):
+            if marker[0] == "link" and vex in marker:
+                del self.markers[n]
+    def remove_vectors(self, vex):
+        for n, marker in reversed(list(enumerate(self.markers))):
+            if marker[0] == "vector" and vex in marker:
+                del self.markers[n]
 
     def get_selected_vex(self):
         for n, marker in enumerate(self.markers):
@@ -47,11 +60,8 @@ class SaveHandler:
                 return marker[2]
         return None
     def unselect_all_vexes(self):
-        torm = set()
-        for n, marker in enumerate(self.markers):
-            if marker[0] == "vex": torm.add(n)
-        for n in reversed(sorted(torm)):
-            del self.markers[n]        
+        for n, marker in reversed(list(enumerate(self.markers))):
+            if marker[0] == "vex": del self.markers[n]        
     def select_only_one_vex(self, vex):
         self.unselect_all_vexes()
         self.markers.append(("vex", None, vex))

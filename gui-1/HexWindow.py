@@ -6,6 +6,7 @@ from NaviWindow import NaviWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
 from TerrToolbox import ObjPainter
+from HexPlotter import HexPlotter
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -19,10 +20,12 @@ class HexWindow(NaviWindow):
         self.obj_painter = ObjPainter(saver)
         self.terr_painter = TerrPainter(saver)
         self.settings_backup = copy.deepcopy(saver.settings)
-        self.selected_vex = saver.get_selected_vex()
-        self.settings = saver.settings
+
         self.saver = saver
-        
+        self.settings = saver.settings        
+        self.selected_vex = saver.get_selected_vex()
+        self.plotter = HexPlotter(self)
+
         size = self.settings["window-size"]
         title = self.settings["window-title"]
         BaseWindow.__init__(self, title, *size)
@@ -59,6 +62,7 @@ class HexWindow(NaviWindow):
             self.saver.select_only_one_vex(hex_xyi)
             if hex_xyi is not None:
                 info = f"selected hex: {hex_xyi[0]} {hex_xyi[1]}"
+                info += f"\nterrain: {terr}"
                 self.control_panel.info.set_text(info)
             self.draw_content()
         return True
@@ -72,9 +76,31 @@ class HexWindow(NaviWindow):
             self.control_panel.info.set_text("")
             self.selected_vex = None
             self.draw_content()
+        elif key_name == "l":
+            print("##> show / hide links")
+            stat = not self.saver.settings["show-links"]
+            self.saver.settings["show-links"] = stat
+            self.draw_content()
+        elif key_name == "v":
+            print("##> show / hide vectors")
+            stat = not self.saver.settings["show-vectors"]
+            self.saver.settings["show-vectors"] = stat
+            self.draw_content()
+        elif key_name == "d":
+            print("##> delete links/vectors (try to)")
+            if self.selected_vex is not None:
+                self.saver.remove_links(self.selected_vex)
+                self.saver.remove_vectors(self.selected_vex)
+                self.draw_content()
         elif key_name == "s":
             print("##> save on drive ... ", end="")
-            print(self.saver.save_on_drive())
+            dir_name = self.saver.save_on_drive()
+            info = f"save on drive in {dir_name}"
+            self.control_panel.info.set_text(info)
+            print(dir_name)
+        elif key_name == "p":
+            print("##> plot ... ", end="")
+            self.plotter.plot(self.control_panel)
         else: NaviWindow.on_press(self, widget, event)
         return True
 

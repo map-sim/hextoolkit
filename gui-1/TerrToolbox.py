@@ -229,6 +229,10 @@ class ObjPainter(AbstractPainter):
         for shape, *params in self.saver.markers:
             if shape == "vex": self.draw_vex(context, *params)
             elif shape == "cursor": self.draw_cursor(context, *params)
-            elif shape == "link": self.draw_link(context, *params, link=True)
-            elif shape == "vector": self.draw_link(context, *params, link=False)
+            elif shape == "link":
+                if self.saver.settings["show-links"]:
+                    self.draw_link(context, *params, link=True)
+            elif shape == "vector":
+                if self.saver.settings["show-vectors"]:
+                    self.draw_link(context, *params, link=False)
             else: raise ValueError(f"Not supported shape: {shape}")

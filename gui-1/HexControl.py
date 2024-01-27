@@ -41,13 +41,17 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Move Down", "Down")
         self.make_button(vbox, "Move --->", "Right")
         self.make_button(vbox, "Move <---", "Left")
+        self.make_button(vbox, "Save (s)", "s")
         
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
         self.make_button(vbox, "Un-Select (q)", "q")
-        self.make_button(vbox, "Save (s)", "s")
+        self.make_button(vbox, "S/H Links (l)", "l")
+        self.make_button(vbox, "S/H Vectors (v)", "v")
+        self.make_button(vbox, "Delete L/V (d)", "d")
+        self.make_button(vbox, "Plot stats (p)", "p")
 
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
@@ -57,7 +61,10 @@ class HexControl(Gtk.Window):
         if main_window.selected_vex is not None:
             x, y = main_window.selected_vex
             init_info = f"selected hex: {x} {y}"
-        else:  init_info = " "*40
+            init_info += " " * (40 - len(init_info))
+            terr = self.main_window.terr_graph.get_hex_terr((x, y))
+            init_info += f"\nterrain: {terr}"
+        else:  init_info = " " * 40
         self.info = Gtk.Label(label=init_info)
         self.info.set_max_width_chars(40)
         self.info.set_line_wrap(True)

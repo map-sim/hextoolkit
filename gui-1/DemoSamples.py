@@ -10,7 +10,9 @@ settings_0 = {
     'move-sensitive': 50,
     'hex-radius': 2.2,
     'base-thickness': 0.08,
-    'marker-color': (0.0, 0.0, 0.0)
+    'marker-color': (0.0, 0.0, 0.0),
+    'show-vectors': True,
+    'show-links': True
 }
 
 ###
@@ -57,6 +59,17 @@ controls_0 = {
     "Bbb": {
         "base-color": [0.9, 0.2, 0.2],
         "marker-color": [1.0, 0.3, 0.3]
+    }
+}
+
+stats_0 = {
+    "group-0": {
+        "qwerty": [1.4, 2.1, 9.2, 8.8],
+        "abc": [2.2, 3.1, 12.2, 13.2]
+    },
+    "group-1": {
+        "Aaa": [0.0, 1.4, 2.1, 9.2, 8.8],
+        "Bbb": [0.0, 2.2, 3.1, 12.2, 13.2]
     }
 }
 
