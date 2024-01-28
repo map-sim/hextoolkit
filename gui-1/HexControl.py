@@ -18,6 +18,7 @@ class HexControl(Gtk.Window):
         button.connect("clicked", self.on_clicked)
         self.button_mapping[button.get_label()] = value
         vbox.pack_start(button, False, True, 0)
+        return button
         
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="Control")
@@ -41,8 +42,18 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Move Down", "Down")
         self.make_button(vbox, "Move --->", "Right")
         self.make_button(vbox, "Move <---", "Left")
-        self.make_button(vbox, "Save (s)", "s")
         
+        vbox = Gtk.VBox(spacing=3)
+        self.box.pack_start(vbox, False, True, 0)
+        vbox.pack_start(Gtk.Separator(), False, True, 0)
+
+        for group in main_window.saver.stats.keys():
+            self.button_mapping[f"Plot {group} (p)"] = "p"
+        group = main_window.plotter.get_next_title()
+        but = self.make_button(vbox, f"Plot {group} (p)", "p")
+        self.make_button(vbox, "Save (s)", "s")
+        self.plot_button = but
+
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
@@ -51,7 +62,6 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "S/H Links (l)", "l")
         self.make_button(vbox, "S/H Vectors (v)", "v")
         self.make_button(vbox, "Delete L/V (d)", "d")
-        self.make_button(vbox, "Plot stats (p)", "p")
 
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         

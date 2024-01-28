@@ -78,13 +78,13 @@ class HexWindow(NaviWindow):
             self.draw_content()
         elif key_name == "l":
             print("##> show / hide links")
-            stat = not self.saver.settings["show-links"]
-            self.saver.settings["show-links"] = stat
+            statw = not self.saver.settings["show-links"]
+            self.saver.settings["show-links"] = statw
             self.draw_content()
         elif key_name == "v":
             print("##> show / hide vectors")
-            stat = not self.saver.settings["show-vectors"]
-            self.saver.settings["show-vectors"] = stat
+            state = not self.saver.settings["show-vectors"]
+            self.saver.settings["show-vectors"] = state
             self.draw_content()
         elif key_name == "d":
             print("##> delete links/vectors (try to)")

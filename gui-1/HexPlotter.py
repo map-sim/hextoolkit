@@ -28,6 +28,10 @@ class HexPlotter:
                 fd.write(f"{dataline}\n")
             return dline
 
+    def get_next_title(self):
+        labels = list(sorted(self.saver.stats.keys()))
+        return labels[self.next_plot_id]
+
     def plot(self, control):
         labels = list(sorted(self.saver.stats.keys()))
         label = labels[self.next_plot_id]
@@ -45,3 +49,7 @@ class HexPlotter:
         proc.communicate(script.encode('utf-8'))        
         self.next_plot_id += 1
         self.next_plot_id %= len(labels)
+        group = self.get_next_title()
+        label = f"Plot {group} (p)"
+        control.plot_button.set_label(label)
+ 
