@@ -53,6 +53,7 @@ class HexControl(Gtk.Window):
         but = self.make_button(vbox, f"Plot {group} (p)", "p")
         self.make_button(vbox, "Save (s)", "s")
         self.plot_button = but
+        self.make_button(vbox, "Tech-Tree (t)", "t")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)

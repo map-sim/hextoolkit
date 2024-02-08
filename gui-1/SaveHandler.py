@@ -4,13 +4,15 @@ import os, json
 class SaveHandler:
     def __init__(self):
         self.stats = {}
+        self.tech_tree = {}
         self.controls = {}
         self.settings = {}
         self.terrains = {}
         self.landform = []
         self.markers = []
-        
+
     def load_demo_0(self):
+        self.tech_tree = demo.tech_tree_0
         self.settings = demo.settings_0
         self.terrains = demo.terrains_0
         self.controls = demo.controls_0
@@ -26,6 +28,7 @@ class SaveHandler:
             ffname = os.path.join(dir_name, fname)
             with open(ffname, "w") as fd:
                 json.dump(data, fd, indent=4)
+        inner("tech_tree.json", self.tech_tree)
         inner("settings.json", self.settings)
         inner("terrains.json", self.terrains)
         inner("controls.json", self.controls)
@@ -38,6 +41,7 @@ class SaveHandler:
             ffname = os.path.join(save_name, fname)
             with open(ffname, "r") as fd:
                 return json.load(fd)
+        self.tech_tree = inner("tech_tree.json")
         self.settings = inner("settings.json")
         self.terrains = inner("terrains.json")
         self.controls = inner("controls.json")

@@ -91,6 +91,19 @@ markers_0 = [
 ]
 
 ###
+### tech tree
+###
+
+tech_tree_0 = {
+    "tech_A": {"cost": 16.0},
+    "tech_B": {"cost": 16.0},
+    "tech_C": {"cost": 36.6},
+    "tech_AB": {"cost": 56.0, "need": ["tech_A", "tech_B"]},
+    "tech_BC": {"cost": 56.0, "need": ["tech_B", "tech_C"]},
+    "tech_ABBC": {"cost": 66.6, "need": ["tech_AB", "tech_BC"]}
+}
+
+###
 ### terrains
 ###
 

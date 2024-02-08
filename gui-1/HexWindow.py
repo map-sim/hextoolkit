@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import gi, copy
+import gi, copy, json
 from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
 from TerrToolbox import TerrPainter
@@ -86,6 +86,10 @@ class HexWindow(NaviWindow):
             state = not self.saver.settings["show-vectors"]
             self.saver.settings["show-vectors"] = state
             self.draw_content()
+        elif key_name == "t":
+            print("##> show tech tree")
+            ttree = json.dumps(self.saver.tech_tree, indent=2)
+            print(ttree)
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
             if self.selected_vex is not None:
