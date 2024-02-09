@@ -19,7 +19,7 @@ class HexControl(Gtk.Window):
         self.button_mapping[button.get_label()] = value
         vbox.pack_start(button, False, True, 0)
         return button
-        
+
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="Control")
         self.add_events(Gdk.EventMask.SCROLL_MASK)
@@ -27,10 +27,12 @@ class HexControl(Gtk.Window):
         self.connect("key-press-event",self.on_press)
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         self.main_window = main_window
-        self.button_mapping = {}        
+        self.button_mapping = {}
+        self.__tech_counter = 0
+
         self.box = Gtk.Box(spacing=3)
         self.add(self.box)
-
+        
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
@@ -78,10 +80,26 @@ class HexControl(Gtk.Window):
         else:  init_info = " " * 40
         self.info = Gtk.Label(label=init_info)
         self.info.set_max_width_chars(40)
-        self.info.set_line_wrap(True)
+        #self.info.set_line_wrap(True)
         self.info.set_yalign(0.0)
         self.info.set_selectable(True)
         vbox.pack_start(self.info, True, True, 3)
-        
         self.show_all()
 
+    def tech_tree_view(self):
+        tech_tree = self.main_window.saver.tech_tree; techstr = ""
+        w = self.main_window.saver.settings["tech-items-printed"]
+        offset = w * self.__tech_counter
+        for n, (k, v) in enumerate(tech_tree.items()):
+            if n >= offset + w: continue
+            if n < offset: continue
+            techstr += f"{k}:\n"
+            techstr += f"\tcost: {v['cost']}\n"
+            if "need" in v:
+                techneed = " | ".join(v["need"])
+                techstr += f"\tneed: {techneed}\n"
+        self.__tech_counter += 1
+        if self.__tech_counter > len(tech_tree) / w:
+            self.__tech_counter = 0
+        techstr = str(techstr[:-1])
+        self.info.set_text(techstr)

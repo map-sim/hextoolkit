@@ -88,6 +88,7 @@ class HexWindow(NaviWindow):
             self.draw_content()
         elif key_name == "t":
             print("##> show tech tree")
+            self.control_panel.tech_tree_view()
             ttree = json.dumps(self.saver.tech_tree, indent=2)
             print(ttree)
         elif key_name == "d":
