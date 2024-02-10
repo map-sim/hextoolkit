@@ -3,10 +3,9 @@ from subprocess import PIPE
 
 class HexPlotter:
     datafile = "data.txt"
-    def __init__(self, main_window):
-        self.main_window = main_window
-        self.saver = main_window.saver
-        self.next_plot_id = 0
+    def __init__(self, saver):
+        self.__next_plot_id = 0
+        self.saver = saver
 
     def data_preparation(self, label):
         length, keys = None, []
@@ -28,13 +27,17 @@ class HexPlotter:
                 fd.write(f"{dataline}\n")
             return dline
 
-    def get_next_title(self):
-        labels = list(sorted(self.saver.stats.keys()))
-        return labels[self.next_plot_id]
+    def set_plot_button(self, button):
+        self.plot_button = button
 
-    def plot(self, control):
+    def get_next_label(self):
+        groups = list(sorted(self.saver.stats.keys()))
+        group = groups[self.__next_plot_id]
+        return f"Plot {group} (p)"
+
+    def plot(self):
         labels = list(sorted(self.saver.stats.keys()))
-        label = labels[self.next_plot_id]
+        label = labels[self.__next_plot_id]
         dline = self.data_preparation(label)
         script = f"""
         set terminal x11
@@ -47,9 +50,7 @@ class HexPlotter:
         cmd = ['gnuplot','-p']
         proc = subprocess.Popen(cmd, stdin=PIPE, shell=True)
         proc.communicate(script.encode('utf-8'))        
-        self.next_plot_id += 1
-        self.next_plot_id %= len(labels)
-        group = self.get_next_title()
-        label = f"Plot {group} (p)"
-        control.plot_button.set_label(label)
- 
+        self.__next_plot_id += 1
+        self.__next_plot_id %= len(labels)
+        label = self.get_next_label()
+        self.plot_button.set_label(label)

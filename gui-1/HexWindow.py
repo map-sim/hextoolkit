@@ -1,18 +1,19 @@
 #!/usr/bin/python3
 
-import gi, copy, json
-from BaseWindow import BaseWindow
-from NaviWindow import NaviWindow
-from TerrToolbox import TerrPainter
-from TerrToolbox import TerrGraph
-from TerrToolbox import ObjPainter
-from HexPlotter import HexPlotter
+import gi, copy
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
+
+from BaseWindow import BaseWindow
+from NaviWindow import NaviWindow
+from TerrToolbox import TerrPainter
+from TerrToolbox import TerrGraph
+from TerrToolbox import ObjPainter
+
 
 class HexWindow(NaviWindow):
     def __init__(self, saver):
@@ -24,7 +25,6 @@ class HexWindow(NaviWindow):
         self.saver = saver
         self.settings = saver.settings        
         self.selected_vex = saver.get_selected_vex()
-        self.plotter = HexPlotter(self)
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -86,11 +86,6 @@ class HexWindow(NaviWindow):
             state = not self.saver.settings["show-vectors"]
             self.saver.settings["show-vectors"] = state
             self.draw_content()
-        elif key_name == "t":
-            print("##> show tech tree")
-            self.control_panel.tech_tree_view()
-            ttree = json.dumps(self.saver.tech_tree, indent=2)
-            print(ttree)
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
             if self.selected_vex is not None:
@@ -103,9 +98,15 @@ class HexWindow(NaviWindow):
             info = f"save on drive in {dir_name}"
             self.control_panel.info.set_text(info)
             print(dir_name)
+        elif key_name == "t":
+            print("##> show tech tree")
+            self.control_panel.tech_tree_view()
+        elif key_name == "c":
+            print("##> show control")
+            self.control_panel.control_view()
         elif key_name == "p":
-            print("##> plot ... ", end="")
-            self.plotter.plot(self.control_panel)
+            print("##> show stat plot")
+            self.control_panel.plotter.plot()
         else: NaviWindow.on_press(self, widget, event)
         return True
 

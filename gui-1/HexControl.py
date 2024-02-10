@@ -1,9 +1,11 @@
-import gi
+import gi, json
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
+
+from HexPlotter import HexPlotter
 
 class HexControl(Gtk.Window):
     def on_press(self, widget, event):
@@ -28,6 +30,9 @@ class HexControl(Gtk.Window):
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
         self.main_window = main_window
         self.button_mapping = {}
+
+        self.plotter = HexPlotter(main_window.saver)
+        self.__control_counter = 0
         self.__tech_counter = 0
 
         self.box = Gtk.Box(spacing=3)
@@ -51,11 +56,13 @@ class HexControl(Gtk.Window):
 
         for group in main_window.saver.stats.keys():
             self.button_mapping[f"Plot {group} (p)"] = "p"
-        group = main_window.plotter.get_next_title()
-        but = self.make_button(vbox, f"Plot {group} (p)", "p")
+        plabel = self.plotter.get_next_label()
+        but = self.make_button(vbox, plabel, "p")
+        self.plotter.set_plot_button(but)
+
         self.make_button(vbox, "Save (s)", "s")
-        self.plot_button = but
         self.make_button(vbox, "Tech-Tree (t)", "t")
+        self.make_button(vbox, "Control (c)", "c")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
@@ -86,6 +93,20 @@ class HexControl(Gtk.Window):
         vbox.pack_start(self.info, True, True, 3)
         self.show_all()
 
+    def control_view(self):
+        keys = list(self.main_window.saver.controls.keys())
+        name = keys[self.__control_counter]
+        cc = self.main_window.saver.controls[name]
+        #cstr = json.dumps(cc, indent=2)
+        bcolor = cc["base-color"]
+        mcolor = cc["marker-color"]
+        cstr = f"{name}:\nb-color: {bcolor}"
+        cstr = f"{cstr}\nm-color: {mcolor}"
+        ## TODO: more about control
+        self.info.set_text(cstr)
+        self.__control_counter += 1
+        if self.__control_counter >= len(keys):
+            self.__control_counter = 0
     def tech_tree_view(self):
         tech_tree = self.main_window.saver.tech_tree; techstr = ""
         w = self.main_window.saver.settings["tech-items-printed"]
