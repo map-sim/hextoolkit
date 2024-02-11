@@ -97,9 +97,10 @@ class HexControl(Gtk.Window):
         name = keys[self.__control_counter]
         cc = self.main_window.saver.controls[name]
         #cstr = json.dumps(cc, indent=2)
-        bcolor = cc["base-color"]
-        mcolor = cc["marker-color"]
-        cstr = f"{name}:\nb-color: {bcolor}"
+        bcolor = ", ".join(map(str, cc["base-color"]))
+        mcolor = ", ".join(map(str, cc["marker-color"]))
+        cnt = f"{self.__control_counter+1}/{len(keys)}"
+        cstr = f"{cnt}. {name}:\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
         ## TODO: more about control
         self.info.set_text(cstr)
