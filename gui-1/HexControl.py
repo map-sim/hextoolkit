@@ -60,22 +60,20 @@ class HexControl(Gtk.Window):
         for group in main_window.saver.stats.keys():
             self.button_mapping[f"Plot {group} (p)"] = "p"
         plabel = self.plotter.get_next_label()
-        but = self.make_button(vbox, plabel, "p")
-        self.plotter.set_plot_button(but)
-
+        plot_but = self.make_button(vbox, plabel, "p")
+        
         self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Save (s)", "s")
         self.make_button(vbox, "Tech-Tree (t)", "t")
         self.make_button(vbox, "Control (c)", "c")
+        self.make_button(vbox, "Un-Select (q)", "q")
+        self.make_button(vbox, "S/H Markers (m)", "m")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "Un-Select (q)", "q")
-        self.make_button(vbox, "S/H Markers (m)", "m")
         self.make_button(vbox, "Del Markers (d)", "d")
-
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
         vbox = Gtk.VBox(spacing=3)
@@ -94,6 +92,7 @@ class HexControl(Gtk.Window):
         self.info.set_yalign(0.0)
         self.info.set_selectable(True)
         vbox.pack_start(self.info, True, True, 3)
+        self.plotter.set_controls(plot_but, self.info)
         self.show_all()
 
     def control_view(self):
@@ -108,9 +107,10 @@ class HexControl(Gtk.Window):
         cstr = f"{cstr}\nm-color: {mcolor}"
         ## TODO: more about control
         self.info.set_text(cstr)
-        self.__control_counter += 1
-        if self.__control_counter >= len(keys):
-            self.__control_counter = 0
+        if self.main_window.window_mode == "edit": 
+            self.__control_counter += 1
+            if self.__control_counter >= len(keys):
+                self.__control_counter = 0
     def tech_tree_view(self):
         tech_tree = self.main_window.saver.tech_tree; techstr = ""
         w = self.main_window.saver.settings["tech-batchsize"]

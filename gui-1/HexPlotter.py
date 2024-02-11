@@ -1,5 +1,8 @@
-import subprocess
+import subprocess, gi
 from subprocess import PIPE
+
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
 class HexPlotter:
     datafile = "data.txt"
@@ -27,8 +30,9 @@ class HexPlotter:
                 fd.write(f"{dataline}\n")
             return dline
 
-    def set_plot_button(self, button):
+    def set_controls(self, button, info):
         self.plot_button = button
+        self.control_info = info
 
     def get_next_label(self):
         groups = list(sorted(self.saver.stats.keys()))
@@ -39,6 +43,9 @@ class HexPlotter:
         labels = list(sorted(self.saver.stats.keys()))
         label = labels[self.__next_plot_id]
         dline = self.data_preparation(label)
+        self.control_info.set_text(f"plot: {label}")
+        while Gtk.events_pending():
+            Gtk.main_iteration()
         script = f"""
         set terminal x11
         set grid

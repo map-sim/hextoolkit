@@ -16,7 +16,7 @@ from TerrToolbox import ObjPainter
 
 
 class HexWindow(NaviWindow):
-    window_modes = ["inspect", "edit"]
+    window_modes = ["view", "edit"]
     def __init__(self, saver):
         self.terr_graph = TerrGraph(saver)
         self.obj_painter = ObjPainter(saver)
@@ -98,11 +98,13 @@ class HexWindow(NaviWindow):
             self.draw_content()
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
-            if self.selected_vex is not None:
-                self.saver.remove_links(self.selected_vex)
-                self.saver.remove_vectors(self.selected_vex)
-                self.saver.remove_dashes(self.selected_vex)
-                self.draw_content()
+            if self.window_mode == "edit":
+                if self.selected_vex is not None:
+                    self.saver.remove_links(self.selected_vex)
+                    self.saver.remove_vectors(self.selected_vex)
+                    self.saver.remove_dashes(self.selected_vex)
+                    self.draw_content()
+            else: print("not active in current mode...")
         elif key_name == "s":
             print("##> save on drive ... ", end="")
             dir_name = self.saver.save_on_drive()
