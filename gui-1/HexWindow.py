@@ -16,6 +16,7 @@ from TerrToolbox import ObjPainter
 
 
 class HexWindow(NaviWindow):
+    window_modes = ["inspect", "edit"]
     def __init__(self, saver):
         self.terr_graph = TerrGraph(saver)
         self.obj_painter = ObjPainter(saver)
@@ -29,6 +30,8 @@ class HexWindow(NaviWindow):
         size = self.settings["window-size"]
         title = self.settings["window-title"]
         BaseWindow.__init__(self, title, *size)
+        self.window_mode = self.window_modes[0]
+        self.set_title(f"main-window ({self.window_mode})")
 
     @BaseWindow.double_buffering
     def draw_content(self, context):
@@ -70,7 +73,15 @@ class HexWindow(NaviWindow):
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
-        if key_name == "q":
+        if key_name == "Tab":
+            print("##> change mode from", self.window_mode, end="")
+            m = self.window_modes.index(self.window_mode)
+            m = m + 1 if m < len(self.window_modes) - 1 else 0
+            self.window_mode = self.window_modes[m]
+            self.set_title(f"main-window ({self.window_mode})")
+            self.control_panel.set_title(f"control ({self.window_mode})")
+            print("to", self.window_mode)
+        elif key_name == "q":
             print("##> unselect vexes & redraw")
             self.saver.unselect_all_vexes()
             self.control_panel.info.set_text("")

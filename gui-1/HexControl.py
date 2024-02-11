@@ -31,6 +31,9 @@ class HexControl(Gtk.Window):
         self.main_window = main_window
         self.button_mapping = {}
 
+        mode = self.main_window.window_mode
+        self.set_title(f"control ({mode})")
+        
         self.plotter = HexPlotter(main_window.saver)
         self.__control_counter = 0
         self.__tech_counter = 0
@@ -60,6 +63,7 @@ class HexControl(Gtk.Window):
         but = self.make_button(vbox, plabel, "p")
         self.plotter.set_plot_button(but)
 
+        self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Save (s)", "s")
         self.make_button(vbox, "Tech-Tree (t)", "t")
         self.make_button(vbox, "Control (c)", "c")

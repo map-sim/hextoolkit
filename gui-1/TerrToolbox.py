@@ -187,20 +187,20 @@ class ObjPainter(AbstractPainter):
             context.set_source_rgba(*c)
             context.arc(x, y, r, 0, TWO_PI)
             context.fill()
-        def inner_bi(xo, yo, xe, ye, r, c):        
+        def inner_bi(xo, yo, xe, ye, r, c, r2):
             x2 = xo + float(xe - xo) / 2
             y2 = yo + float(ye - yo) / 2
             inner_point(x2, y2, r, c)
             d2 = (xo - xe) ** 2 + (yo - ye) ** 2
-            if d2 > 70 * r**2:
-                inner_bi(xo, yo, x2, y2, r, c)
-                inner_bi(x2, y2, xe, ye, r, c)
-        def inner(w, r, c):
+            if d2 > 30 * r2**2:
+                inner_bi(xo, yo, x2, y2, r, c, r2)
+                inner_bi(x2, y2, xe, ye, r, c, r2)
+        def inner(w, r, c, r2):
             xe, ye = None, None
             for n, vex in enumerate(vexes):
                 xo, yo = self.translate_xy(*TerrPainter.vex_to_loc(vex, rh))
                 if n == 0: xe, ye = xo, yo; continue
-                inner_bi(xo, yo, xe, ye, r, c)
+                inner_bi(xo, yo, xe, ye, r, c, r2)
                 inner_point(xe, ye, r, c)
                 xe, ye = xo, yo
             inner_point(xe, ye, r, c)
@@ -209,9 +209,9 @@ class ObjPainter(AbstractPainter):
         rh = self.saver.settings.get("hex-radius", 1.0)
         color = self.saver.controls[control]["marker-color"]    
             
-        inner(rh*zoom/5, rh*zoom/6.5, (1.0, 1.0, 1.0))
-        inner(rh*zoom/7, rh*zoom/8, (0.0, 0.0, 0.0))
-        inner(rh*zoom/9, rh*zoom/9.5, color)
+        inner(rh*zoom/5, rh*zoom/6.5, (1.0, 1.0, 1.0), rh*zoom/5)
+        inner(rh*zoom/7, rh*zoom/8, (0.0, 0.0, 0.0), rh*zoom/5)
+        inner(rh*zoom/9, rh*zoom/9.5, color, rh*zoom/5)
 
     def draw_link(self, context, control, *vexes, link=False):
         def inner_point(x, y, r, c):
