@@ -76,21 +76,21 @@ class HexWindow(NaviWindow):
             self.control_panel.info.set_text("")
             self.selected_vex = None
             self.draw_content()
-        elif key_name == "l":
-            print("##> show / hide links")
-            statw = not self.saver.settings["show-links"]
-            self.saver.settings["show-links"] = statw
-            self.draw_content()
-        elif key_name == "v":
-            print("##> show / hide vectors")
-            state = not self.saver.settings["show-vectors"]
-            self.saver.settings["show-vectors"] = state
+        elif key_name == "m":
+            print("##> show / hide markers")
+            state_l = not self.saver.settings["show-links"]
+            state_a = not self.saver.settings["show-arrows"]
+            state_d = not self.saver.settings["show-dashes"]
+            self.saver.settings["show-links"] = state_l
+            self.saver.settings["show-arrows"] = state_a
+            self.saver.settings["show-dashes"] = state_d
             self.draw_content()
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
             if self.selected_vex is not None:
                 self.saver.remove_links(self.selected_vex)
                 self.saver.remove_vectors(self.selected_vex)
+                self.saver.remove_dashes(self.selected_vex)
                 self.draw_content()
         elif key_name == "s":
             print("##> save on drive ... ", end="")

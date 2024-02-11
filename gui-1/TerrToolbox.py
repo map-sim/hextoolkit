@@ -182,6 +182,37 @@ class ObjPainter(AbstractPainter):
         xoffset, yoffset = self.saver.settings["window-offset"]
         return x*zoom + xoffset, y*zoom + yoffset
         
+    def draw_dash(self, context, control, *vexes):
+        def inner_point(x, y, r, c):
+            context.set_source_rgba(*c)
+            context.arc(x, y, r, 0, TWO_PI)
+            context.fill()
+        def inner_bi(xo, yo, xe, ye, r, c):        
+            x2 = xo + float(xe - xo) / 2
+            y2 = yo + float(ye - yo) / 2
+            inner_point(x2, y2, r, c)
+            d2 = (xo - xe) ** 2 + (yo - ye) ** 2
+            if d2 > 70 * r**2:
+                inner_bi(xo, yo, x2, y2, r, c)
+                inner_bi(x2, y2, xe, ye, r, c)
+        def inner(w, r, c):
+            xe, ye = None, None
+            for n, vex in enumerate(vexes):
+                xo, yo = self.translate_xy(*TerrPainter.vex_to_loc(vex, rh))
+                if n == 0: xe, ye = xo, yo; continue
+                inner_bi(xo, yo, xe, ye, r, c)
+                inner_point(xe, ye, r, c)
+                xe, ye = xo, yo
+            inner_point(xe, ye, r, c)
+
+        zoom = self.saver.settings["window-zoom"]
+        rh = self.saver.settings.get("hex-radius", 1.0)
+        color = self.saver.controls[control]["marker-color"]    
+            
+        inner(rh*zoom/5, rh*zoom/6.5, (1.0, 1.0, 1.0))
+        inner(rh*zoom/7, rh*zoom/8, (0.0, 0.0, 0.0))
+        inner(rh*zoom/9, rh*zoom/9.5, color)
+
     def draw_link(self, context, control, *vexes, link=False):
         def inner_point(x, y, r, c):
             context.set_source_rgba(*c)
@@ -232,7 +263,10 @@ class ObjPainter(AbstractPainter):
             elif shape == "link":
                 if self.saver.settings["show-links"]:
                     self.draw_link(context, *params, link=True)
-            elif shape == "vector":
-                if self.saver.settings["show-vectors"]:
+            elif shape == "arr":
+                if self.saver.settings["show-arrows"]:
                     self.draw_link(context, *params, link=False)
+            elif shape == "dash":
+                if self.saver.settings["show-dashes"]:
+                    self.draw_dash(context, *params)
             else: raise ValueError(f"Not supported shape: {shape}")

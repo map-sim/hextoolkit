@@ -11,9 +11,10 @@ settings_0 = {
     'hex-radius': 2.2,
     'base-thickness': 0.08,
     'marker-color': (0.0, 0.0, 0.0),
-    'show-vectors': True,
+    'show-dashes': True,
+    'show-arrows': True,
     'show-links': True,
-    'tech-items-printed': 5
+    'tech-batchsize': 5
 }
 
 ###
@@ -31,6 +32,7 @@ landform_0 = [
     ('vex', 'desert-0', (-1, 1)),
     ('vex', 'desert-0', (0, 1)),
     ('vex', 'desert-0', (0, 4)),
+    ('vex', 'steppe-0', (1, 1)),
     ('vex', 'steppe-0', (2, 2)),
     ('vex', 'steppe-0', (2, 3)),
     ('vex', 'shallows-0', (3, 3)),
@@ -38,7 +40,8 @@ landform_0 = [
     ('vex', 'shallows-0', (1, 4)),
     ('vex', 'shallows-0', (2, 4)),
     ('vex', 'shallows-0', (3, 4)),
-    ('vex', 'shallows-0', (1, 1)),
+    ('vex', 'shallows-0', (1, 0)),
+    ('vex', 'shallows-0', (2, 0)),
     ('vex', 'shallows-0', (2, 1)),
     ('vex', 'shallows-0', (2, 5)),
     ('vex', 'shallows-0', (3, 5)),
@@ -83,11 +86,12 @@ markers_0 = [
     ("vex", "Bbb", (1, 3)),
     ("vex", "Aaa", (3, 4)),
     ("vex", "Aaa", (2, 4)),
-    ("vector", "Bbb", (0, 3), (1, 3)),
-    ("vector", "Aaa", (3, 3), (3, 4)),
-    ("vector", "Aaa", (3, 4), (4, 4)),
-    ("vector", "Aaa", (3, 8), (8, 8)),
+    ("arr", "Bbb", (0, 3), (1, 3)),
+    ("arr", "Aaa", (3, 3), (3, 4)),
+    ("arr", "Aaa", (3, 4), (4, 4)),
+    ("arr", "Aaa", (3, 8), (8, 8)),
     ("link", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
+    ("dash", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11)),
     ("vex", None, (-1, -1))
 ]
 
@@ -150,7 +154,7 @@ terrains_0 = {
     },
     'steppe-0': {
         'buildable': True,
-        'color': [0.66, 0.99, 0.88],
+        'color': [0.55, 0.92, 0.7],
         'desc': 'warm steppe',
         'resources': {
             'wind': 0.4,

@@ -69,9 +69,8 @@ class HexControl(Gtk.Window):
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
         self.make_button(vbox, "Un-Select (q)", "q")
-        self.make_button(vbox, "S/H Links (l)", "l")
-        self.make_button(vbox, "S/H Vectors (v)", "v")
-        self.make_button(vbox, "Delete L/V (d)", "d")
+        self.make_button(vbox, "S/H Markers (m)", "m")
+        self.make_button(vbox, "Del Markers (d)", "d")
 
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
@@ -109,7 +108,7 @@ class HexControl(Gtk.Window):
             self.__control_counter = 0
     def tech_tree_view(self):
         tech_tree = self.main_window.saver.tech_tree; techstr = ""
-        w = self.main_window.saver.settings["tech-items-printed"]
+        w = self.main_window.saver.settings["tech-batchsize"]
         offset = w * self.__tech_counter
         for n, (k, v) in enumerate(tech_tree.items()):
             if n >= offset + w: continue

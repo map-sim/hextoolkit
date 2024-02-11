@@ -55,7 +55,11 @@ class SaveHandler:
                 del self.markers[n]
     def remove_vectors(self, vex):
         for n, marker in reversed(list(enumerate(self.markers))):
-            if marker[0] == "vector" and vex in marker:
+            if marker[0] == "arr" and vex in marker:
+                del self.markers[n]
+    def remove_dashes(self, vex):
+        for n, marker in reversed(list(enumerate(self.markers))):
+            if marker[0] == "dash" and vex in marker:
                 del self.markers[n]
 
     def get_selected_vex(self):
