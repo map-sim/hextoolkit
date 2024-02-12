@@ -35,6 +35,7 @@ class HexControl(Gtk.Window):
         self.set_title(f"control ({mode})")
         
         self.plotter = HexPlotter(main_window.saver)
+        self.__control_tech_offset = 0
         self.__control_counter = 0
         self.__tech_counter = 0
 
@@ -99,18 +100,38 @@ class HexControl(Gtk.Window):
         keys = list(self.main_window.saver.controls.keys())
         name = keys[self.__control_counter]
         cc = self.main_window.saver.controls[name]
-        #cstr = json.dumps(cc, indent=2)
         bcolor = ", ".join(map(str, cc["base-color"]))
         mcolor = ", ".join(map(str, cc["marker-color"]))
         cnt = f"{self.__control_counter+1}/{len(keys)}"
-        cstr = f"{cnt}. {name}:\nb-color: {bcolor}"
+        cstr = f"{cnt}. {name}:\n---\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
+        flen = lambda k: len(k); tc_list = []
+        for k in sorted(cc["technologies"], key=flen):
+            v = round(cc["technologies"][k], 1)
+            tc_list.append(f"{k}: {v}")
         ## TODO: more about control
-        self.info.set_text(cstr)
+        # print(tc_list, self.__control_tech_offset)
+        
+        w = self.main_window.saver.settings["ctech-batchsize"]        
+        tc_len = int(len(tc_list) / w)
+        tco = self.__control_tech_offset * w
+        tce = (self.__control_tech_offset + 1) * w
+        if tce > len(tc_list): tce = None
+        tc_str = "\n".join(tc_list[tco:tce])
+
+        if len(tc_list) > w:
+            ctc = f"{self.__control_tech_offset+1}/{tc_len+1}"
+            self.__control_tech_offset += 1
+            if self.__control_tech_offset > tc_len:
+                self.__control_tech_offset = 0
+        else: ctc = "1/1"
         if self.main_window.window_mode == "edit": 
-            self.__control_counter += 1
+            if self.__control_tech_offset == 0:
+                self.__control_counter += 1
             if self.__control_counter >= len(keys):
                 self.__control_counter = 0
+        self.info.set_text(f"{cstr}\n--- {ctc}\n{tc_str}")
+        
     def tech_tree_view(self):
         tech_tree = self.main_window.saver.tech_tree; techstr = ""
         w = self.main_window.saver.settings["tech-batchsize"]

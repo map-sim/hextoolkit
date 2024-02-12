@@ -14,7 +14,8 @@ settings_0 = {
     'show-dashes': True,
     'show-arrows': True,
     'show-links': True,
-    'tech-batchsize': 5
+    'tech-batchsize': 5,
+    'ctech-batchsize': 3
 }
 
 ###
@@ -58,11 +59,22 @@ landform_0 = [
 controls_0 = {
     "Aaa": {
         "base-color": [0.1, 0.8, 0.1],
-        "marker-color": [0.2, 0.7, 0.2]
+        "marker-color": [0.2, 0.7, 0.2],
+        "technologies": {
+            "tech_A": 16.0,
+            "tech_B": 16.0,
+            "tech_C": 12.5,
+            "tech_AB": 7.2,
+            "tech_BC": 5.2
+        }
     },
     "Bbb": {
         "base-color": [0.9, 0.2, 0.2],
-        "marker-color": [1.0, 0.3, 0.3]
+        "marker-color": [1.0, 0.3, 0.3],
+        "technologies": {
+            "tech_A": 16.0,
+            "tech_B": 6.66
+        }
     }
 }
 
