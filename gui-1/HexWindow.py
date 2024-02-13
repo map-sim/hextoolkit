@@ -25,7 +25,7 @@ class HexWindow(NaviWindow):
 
         self.saver = saver
         self.settings = saver.settings        
-        self.selected_vex = saver.get_selected_vex()
+        self.selected_vex = tuple(saver.get_selected_vex())
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -61,7 +61,7 @@ class HexWindow(NaviWindow):
             print(f"hex-terrain: {hex_terr}")
 
             ## hex selection
-            self.selected_vex = hex_xyi
+            self.selected_vex = tuple(hex_xyi)
             self.saver.select_only_one_vex(hex_xyi)
             if hex_xyi is not None:
                 info = f"selected hex: {hex_xyi[0]} {hex_xyi[1]}"
@@ -96,6 +96,29 @@ class HexWindow(NaviWindow):
             self.saver.settings["show-arrows"] = state_a
             self.saver.settings["show-dashes"] = state_d
             self.draw_content()
+        elif key_name == "T":
+            print("##> change terrain (try to)")
+            if self.window_mode == "edit" and self.selected_vex is not None:
+                terr = self.terr_graph.get_hex_terr(self.selected_vex)
+                terr_list = list(sorted(self.saver.terrains.keys()))
+                it = terr_list.index(terr) + 1
+                if it >= len(terr_list): it = 0
+                new_terr = terr_list[it]
+                print(new_terr)
+
+                if self.selected_vex in self.terr_graph.vex_dict:
+                    for i, item in enumerate(self.saver.landform):
+                        if item[0] != "vex": continue 
+                        if tuple(item[2]) == self.selected_vex:
+                            self.terr_graph.vex_dict[tuple(item[2])] = new_terr
+                            self.saver.landform[i] = item[0], new_terr, self.selected_vex
+                else:
+                    self.terr_graph.vex_dict[self.selected_vex] = new_terr
+                    for i, item in enumerate(self.saver.landform):
+                        if item[0] == "grid": break
+                    row = "vex", new_terr, self.selected_vex
+                    self.saver.landform.insert(i, row)
+                self.draw_content()
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
             if self.window_mode == "edit":

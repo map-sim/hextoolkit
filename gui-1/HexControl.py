@@ -75,6 +75,7 @@ class HexControl(Gtk.Window):
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
         self.make_button(vbox, "Del Markers (d)", "d")
+        self.make_button(vbox, "Change Terrain (T)", "T")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
         vbox = Gtk.VBox(spacing=3)
@@ -120,8 +121,8 @@ class HexControl(Gtk.Window):
         tc_str = "\n".join(tc_list[tco:tce])
 
         if len(tc_list) > w:
-            ctc = f"{self.__control_tech_offset+1}/{tc_len+1}"
             self.__control_tech_offset += 1
+            ctc = f"{self.__control_tech_offset}/{tc_len+1}"
             if self.__control_tech_offset > tc_len:
                 self.__control_tech_offset = 0
         else: ctc = "1/1"
