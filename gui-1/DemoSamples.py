@@ -14,8 +14,7 @@ settings_0 = {
     'show-dashes': True,
     'show-arrows': True,
     'show-links': True,
-    'tech-batchsize': 5,
-    'ctech-batchsize': 3
+    'display_length': 14
 }
 
 ###

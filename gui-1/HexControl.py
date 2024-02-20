@@ -28,17 +28,16 @@ class HexControl(Gtk.Window):
         self.connect("scroll-event", self.on_scroll)
         self.connect("key-press-event",self.on_press)
         self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
-        self.main_window = main_window
         self.button_mapping = {}
 
+        self.main_window = main_window
         mode = self.main_window.window_mode
         self.set_title(f"control ({mode})")
         
         self.plotter = HexPlotter(main_window.saver)
-        self.__control_tech_offset = 0
         self.__control_counter = 0
-        self.__tech_counter = 0
-
+        self.__display_offset = 0
+        
         self.box = Gtk.Box(spacing=3)
         self.add(self.box)
         
@@ -77,76 +76,94 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Del Markers (d)", "d")
         self.make_button(vbox, "Change Terrain (T)", "T")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
+
+        vbox = Gtk.VBox(spacing=3)
+        self.box.pack_start(vbox, False, True, 0)
+        vbox.pack_start(Gtk.Separator(), False, True, 0)
+
+        self.make_button(vbox, "<", "<")
+        self.make_button(vbox, ">", ">")
+        self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
-        if main_window.selected_vex is not None:
-            x, y = main_window.selected_vex
-            init_info = f"selected hex: {x} {y}"
-            init_info += " " * (40 - len(init_info))
-            terr = self.main_window.terr_graph.get_hex_terr((x, y))
-            init_info += f"\nterrain: {terr}"
-        else:  init_info = " " * 40
-        self.info = Gtk.Label(label=init_info)
+
+        self.display_content = self.get_init_info()
+        display_data = self.get_display_data()        
+        self.info = Gtk.Label(label=display_data)
         self.info.set_max_width_chars(40)
-        #self.info.set_line_wrap(True)
         self.info.set_yalign(0.0)
         self.info.set_selectable(True)
         vbox.pack_start(self.info, True, True, 3)
         self.plotter.set_controls(plot_but, self.info)
+
+
         self.show_all()
+
+    def forward_display(self):
+        w = self.main_window.saver.settings["display_length"]
+        n = self.display_content.count("\n")
+        if self.__display_offset + w < n: 
+            self.__display_offset += 1
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+        
+    def backward_display(self):
+        if self.__display_offset > 0: 
+            self.__display_offset -= 1
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+
+    def get_display_data(self):
+        w = self.main_window.saver.settings["display_length"]
+        lines = self.display_content.split("\n")
+        o = self.__display_offset
+        e = self.__display_offset + w
+        if e > len(lines): e = len(lines)        
+        return "\n".join(lines[o:e])
+
+    def get_init_info(self):
+        if self.main_window.selected_vex is not None:
+            x, y = self.main_window.selected_vex
+            init_info = f"selected hex: {x} {y}"
+            init_info += " " * (40 - len(init_info))
+            terr = self.main_window.terr_graph.get_hex_terr((x, y))
+            return init_info + f"\nterrain: {terr}"
+        else: return " " * 40
 
     def control_view(self):
         keys = list(self.main_window.saver.controls.keys())
         name = keys[self.__control_counter]
+        self.__control_counter += 1
+        n = len(self.main_window.saver.controls)
+        if self.__control_counter >= n:
+            self.__control_counter = 0
+
         cc = self.main_window.saver.controls[name]
         bcolor = ", ".join(map(str, cc["base-color"]))
         mcolor = ", ".join(map(str, cc["marker-color"]))
-        cnt = f"{self.__control_counter+1}/{len(keys)}"
-        cstr = f"{cnt}. {name}:\n---\nb-color: {bcolor}"
+        name = name + ":" + " " * (40 - len(name))
+        cstr = f"{name}\n{'-' * 40}\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
         flen = lambda k: len(k); tc_list = []
         for k in sorted(cc["technologies"], key=flen):
             v = round(cc["technologies"][k], 1)
             tc_list.append(f"{k}: {v}")
-        ## TODO: more about control
-        # print(tc_list, self.__control_tech_offset)
-        
-        w = self.main_window.saver.settings["ctech-batchsize"]        
-        tc_len = int(len(tc_list) / w)
-        tco = self.__control_tech_offset * w
-        tce = (self.__control_tech_offset + 1) * w
-        if tce > len(tc_list): tce = None
-        tc_str = "\n".join(tc_list[tco:tce])
-
-        if len(tc_list) > w:
-            self.__control_tech_offset += 1
-            ctc = f"{self.__control_tech_offset}/{tc_len+1}"
-            if self.__control_tech_offset > tc_len:
-                self.__control_tech_offset = 0
-        else: ctc = "1/1"
-        if self.main_window.window_mode == "edit": 
-            if self.__control_tech_offset == 0:
-                self.__control_counter += 1
-            if self.__control_counter >= len(keys):
-                self.__control_counter = 0
-        self.info.set_text(f"{cstr}\n--- {ctc}\n{tc_str}")
+        self.display_content = cstr + "\n---\n"
+        self.display_content += "\n".join(tc_list)
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
         
     def tech_tree_view(self):
-        tech_tree = self.main_window.saver.tech_tree; techstr = ""
-        w = self.main_window.saver.settings["tech-batchsize"]
-        offset = w * self.__tech_counter
+        tech_tree = self.main_window.saver.tech_tree
+        techstr = "tech-tree:\n" + "-" * 40 + "\n"
         for n, (k, v) in enumerate(tech_tree.items()):
-            if n >= offset + w: continue
-            if n < offset: continue
             techstr += f"{k}:\n"
             techstr += f"\tcost: {v['cost']}\n"
             if "need" in v:
                 techneed = " | ".join(v["need"])
                 techstr += f"\tneed: {techneed}\n"
-        self.__tech_counter += 1
-        if self.__tech_counter > len(tech_tree) / w:
-            self.__tech_counter = 0
-        techstr = str(techstr[:-1])
-        self.info.set_text(techstr)
+        self.display_content = techstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)

@@ -134,6 +134,10 @@ class HexWindow(NaviWindow):
             info = f"save on drive in {dir_name}"
             self.control_panel.info.set_text(info)
             print(dir_name)
+        elif key_name == ">":
+            self.control_panel.forward_display()
+        elif key_name == "<":
+            self.control_panel.backward_display()
         elif key_name == "t":
             print("##> show tech tree")
             self.control_panel.tech_tree_view()
