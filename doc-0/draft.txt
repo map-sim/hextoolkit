@@ -1,6 +1,33 @@
-Supply
-Unit
-Tech
-Fort
-Harbor
-Airport
+1. Technologies
+
+   Infantry
+   Armoured warfare
+   Artillery warfare
+   Logistic
+   Air Force
+   Navy
+   
+   Harbor (limit 6)
+   Airport (limit 4)
+   Fortress (limit 1)
+   Recruitment (limit 0.25)
+   Transport (limit 0.5)
+   
+2. Infrastructure
+
+   Supply (cross)
+   Unit (triangle)
+   Tech (wheel)
+   Fort (square)
+   Harbor (H letter)
+   Airport (diamond)
+   Routes (link)
+   
+3. Units
+
+   Company  Battalion  Regiment  Brigate  Division
+   I	    V	       VV        X        XV
+   II	    VI	       VVI	 XI	  XVI 
+   III      VII	                 XII      XX
+                                          XXI
+   
