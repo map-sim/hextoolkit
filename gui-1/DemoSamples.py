@@ -59,19 +59,10 @@ controls_0 = {
     "Aaa": {
         "base-color": [0.1, 0.8, 0.1],
         "marker-color": [0.2, 0.7, 0.2],
-        "technologies": {
-            "tech_A": 16.0,
-            "tech_B": 16.0,
-            "tech_C": 12.5
-        }
     },
     "Bbb": {
         "base-color": [0.9, 0.2, 0.2],
         "marker-color": [1.0, 0.3, 0.3],
-        "technologies": {
-            "tech_A": 16.0,
-            "tech_B": 6.66
-        }
     }
 }
 
@@ -84,6 +75,23 @@ stats_0 = {
         "Aaa": [0.0, 1.4, 2.1, 9.2, 8.8],
         "Bbb": [0.0, 2.2, 3.1, 12.2, 13.2]
     }
+}
+
+###
+### infrastructure
+###
+
+
+infra_list_0 = ["link", "unit", "tech", "fort", "airport", "seahub"]
+
+infra_0 = {
+    (2, 3): [
+        {"type": "unit", "next": None, "own": "Aaa", "done": 1.0},
+        {"type": "tech", "next": None, "own": "Aaa", "done": 1.0, "tech": "infantry"},
+        {"type": "tech", "next": "unit", "own": "Aaa", "done": 1.0, "tech": "infantry"},
+        {"type": "seahub", "next": None, "own": "Aaa", "done": 1.0},
+        {"type": "link", "target": (3, 4), "done": 1.0}
+    ]
 }
 
 ###
@@ -108,23 +116,25 @@ markers_0 = [
 ### tech tree
 ###
 
-tech_list_0 = [
-    "tech_A",
-    "tech_B",
-    "tech_C",
-    "tech_D",
-    "tech_E",
-    "tech_F",
-    "tech_G",
-    "tech_H",
-    "tech_I",
-    "tech_J",
-    "tech_K",
-    "tech_L",
-    "tech_M",
-    "tech_N",
-    "tech_O"
-]
+tech_list_0 = {
+    "armored": "combat-strike performance",
+    "infantry": "combat-defence performance",
+    "artillery": "close range-strike performance",
+    "counter-battery": "counter-battery fire",
+    "air-force": "far range-strike performance",
+    "anti-access": "range-strike defence performance",
+    "naval-force": "navy-navy combat performance",
+    "landing": "marine and airborne performance",
+    "logistic": "transportation performance",
+    "supply": "common but poor supply",
+
+    "recruitment": "military training support",
+    "development": "techique construction supply",
+    "seahub": "port & shipyard construction supply",
+    "airport": "airport construction supply",
+    "fortress": "fort construction supply",
+    "transport": "routes construction supply",
+}
 
 ###
 ### terrains
@@ -132,39 +142,51 @@ tech_list_0 = [
 
 terrains_0 = {
     'void-0': {
-        'buildable': False,
-        'color': [0.0, 0.0, 0.0],
         'desc': 'void',
+        'color': [0.0, 0.0, 0.0],
+        'navigable': False,
+        'buildable': False,
+        'conductance': 0.0,
         'slots': 0
     },
     'desert-0': {
-        'buildable': True,
-        'color': [1.0, 0.96, 0.75],
         'desc': 'desert',
-        'slots': 2        
+        'color': [1.0, 0.96, 0.75],
+        'navigable': False,
+        'buildable': True,        
+        'conductance': 1.0,
+        'slots': 2
     },
     'shallows-0': {
-        'buildable': None,
-        'color': [0.7, 0.85, 1.0],
         'desc': 'shallows',
+        'color': [0.7, 0.85, 1.0],
+        'navigable': True,
+        'buildable': False,        
+        'conductance': 10.0,
         'slots': 0
     },
     'water-0': {
-        'buildable': False,
-        'color': [0.54, 0.7, 1.0],
         'desc': 'water',
+        'color': [0.54, 0.7, 1.0],
+        'navigable': True,
+        'buildable': False,        
+        'conductance': 100.0,
         'slots': 0
     },
     'mountains-0': {
-        'buildable': True,
-        'color': [0.9, 0.7, 0.7],
         'desc': 'mountains',
+        'color': [0.9, 0.7, 0.7],
+        'navigable': False,
+        'buildable': True,        
+        'conductance': 0.1,
         'slots': 3
     },
     'steppe-0': {
-        'buildable': True,
-        'color': [0.55, 0.92, 0.7],
         'desc': 'warm steppe',
+        'color': [0.55, 0.92, 0.7],
+        'navigable': False,
+        'buildable': True,        
+        'conductance': 3.0,
         'slots': 6
     }
 }

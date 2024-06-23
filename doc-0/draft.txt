@@ -15,11 +15,11 @@
    
 2. Infrastructure
 
-   Supply (cross)
+   Supply (cross) ??
    Unit (triangle)
-   Tech (wheel)
-   Fort (square)
-   Harbor (H letter)
+   Technology (wheel)
+   Fortress (square)
+   Seahub (H letter)
    Airport (diamond)
    Routes (link)
    

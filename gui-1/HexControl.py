@@ -64,15 +64,16 @@ class HexControl(Gtk.Window):
         
         self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Save (s)", "s")
+        self.make_button(vbox, "Terr-List (r)", "r")
         self.make_button(vbox, "Tech-List (t)", "t")
         self.make_button(vbox, "Control (c)", "c")
-        self.make_button(vbox, "Un-Select (q)", "q")
-        self.make_button(vbox, "S/H Markers (m)", "m")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
+        self.make_button(vbox, "Un-Select (q)", "q")
+        self.make_button(vbox, "S/H Markers (m)", "m")
         self.make_button(vbox, "Del Markers (d)", "d")
         self.make_button(vbox, "Change Terrain (T)", "T")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
@@ -120,9 +121,12 @@ class HexControl(Gtk.Window):
         lines = self.display_content.split("\n")
         o = self.__display_offset
         e = self.__display_offset + w
-        if e > len(lines): e = len(lines)        
-        return "\n".join(lines[o:e])
+        if e + 1 >= len(lines):
+            e = len(lines)
+            return "\n".join(lines[o:e])
+        else: return "\n".join(lines[o:e]) + "\n..."
 
+            
     def get_init_info(self):
         if self.main_window.selected_vex is not None:
             x, y = self.main_window.selected_vex
@@ -131,8 +135,24 @@ class HexControl(Gtk.Window):
             terr = self.main_window.terr_graph.get_hex_terr((x, y))
             return init_info + f"\nterrain: {terr}"
         else: return " " * 40
+        
+    def terrains_view(self):
+        self.__display_offset = 0
+        terrstr = "terr-list:\n" + "-" * 40 + "\n"
+        terr_list = self.main_window.saver.terrains
+        for n, (k, v) in enumerate(terr_list.items()):
+            info = "\n\tSlots " + str(v["slots"])
+            if v["navigable"]: info += "\n\t+Navigable"
+            if v["buildable"]: info += "\n\t+Buildable"
+            info += "\n\tConduct " + str(v["conductance"])            
+            terrstr += f"{n+1}. {k} {info} \n"
+        self.display_content = terrstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
 
+        
     def control_view(self):
+        self.__display_offset = 0
         keys = list(self.main_window.saver.controls.keys())
         name = keys[self.__control_counter]
         self.__control_counter += 1
@@ -146,20 +166,16 @@ class HexControl(Gtk.Window):
         name = name + ":" + " " * (40 - len(name))
         cstr = f"{name}\n{'-' * 40}\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
-        flen = lambda k: len(k); tc_list = []
-        for k in sorted(cc["technologies"], key=flen):
-            v = round(cc["technologies"][k], 1)
-            tc_list.append(f"{k}: {v}")
-        self.display_content = cstr + "\n---\n"
-        self.display_content += "\n".join(tc_list)
+        self.display_content = cstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
         
     def tech_list_view(self):
+        self.__display_offset = 0
         tech_list = self.main_window.saver.tech_list
         techstr = "tech-list:\n" + "-" * 40 + "\n"
-        for n, k in enumerate(tech_list):
-            techstr += f"{n+1}. {k}\n"
+        for n, (k, v) in enumerate(tech_list.items()):
+            techstr += f"{n+1}. {k} - {v}\n"
         self.display_content = techstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
