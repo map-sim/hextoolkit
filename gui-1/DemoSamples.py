@@ -62,9 +62,7 @@ controls_0 = {
         "technologies": {
             "tech_A": 16.0,
             "tech_B": 16.0,
-            "tech_C": 12.5,
-            "tech_AB": 7.2,
-            "tech_BC": 5.2
+            "tech_C": 12.5
         }
     },
     "Bbb": {
@@ -110,15 +108,23 @@ markers_0 = [
 ### tech tree
 ###
 
-tech_tree_0 = {
-    "tech_A": {"cost": 16.0},
-    "tech_B": {"cost": 16.0},
-    "tech_C": {"cost": 36.6},
-    "tech_D": {"cost": 48.0},
-    "tech_AB": {"cost": 56.0, "need": ["tech_A", "tech_B"]},
-    "tech_BC": {"cost": 56.0, "need": ["tech_B", "tech_C"]},
-    "tech_ABBC": {"cost": 66.6, "need": ["tech_AB", "tech_BC"]}
-}
+tech_list_0 = [
+    "tech_A",
+    "tech_B",
+    "tech_C",
+    "tech_D",
+    "tech_E",
+    "tech_F",
+    "tech_G",
+    "tech_H",
+    "tech_I",
+    "tech_J",
+    "tech_K",
+    "tech_L",
+    "tech_M",
+    "tech_N",
+    "tech_O"
+]
 
 ###
 ### terrains
@@ -129,47 +135,36 @@ terrains_0 = {
         'buildable': False,
         'color': [0.0, 0.0, 0.0],
         'desc': 'void',
-        'resources': {}
+        'slots': 0
     },
     'desert-0': {
         'buildable': True,
         'color': [1.0, 0.96, 0.75],
         'desc': 'desert',
-        'resources': {
-            'wind': 0.4,
-            'sun': 0.5
-        }
+        'slots': 2        
     },
     'shallows-0': {
         'buildable': None,
         'color': [0.7, 0.85, 1.0],
         'desc': 'shallows',
-        'resources': {
-            'wind': 0.65
-        }
+        'slots': 0
     },
     'water-0': {
         'buildable': False,
         'color': [0.54, 0.7, 1.0],
         'desc': 'water',
-        'resources': {}
+        'slots': 0
     },
     'mountains-0': {
         'buildable': True,
         'color': [0.9, 0.7, 0.7],
         'desc': 'mountains',
-        'resources': {
-            'wind': 0.55,
-            'sun': 0.3
-        }
+        'slots': 3
     },
     'steppe-0': {
         'buildable': True,
         'color': [0.55, 0.92, 0.7],
         'desc': 'warm steppe',
-        'resources': {
-            'wind': 0.4,
-            'sun': 0.5
-        }
+        'slots': 6
     }
 }

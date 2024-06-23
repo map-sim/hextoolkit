@@ -64,7 +64,7 @@ class HexControl(Gtk.Window):
         
         self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Save (s)", "s")
-        self.make_button(vbox, "Tech-Tree (t)", "t")
+        self.make_button(vbox, "Tech-List (t)", "t")
         self.make_button(vbox, "Control (c)", "c")
         self.make_button(vbox, "Un-Select (q)", "q")
         self.make_button(vbox, "S/H Markers (m)", "m")
@@ -155,15 +155,11 @@ class HexControl(Gtk.Window):
         display_data = self.get_display_data()
         self.info.set_text(display_data)
         
-    def tech_tree_view(self):
-        tech_tree = self.main_window.saver.tech_tree
-        techstr = "tech-tree:\n" + "-" * 40 + "\n"
-        for n, (k, v) in enumerate(tech_tree.items()):
-            techstr += f"{k}:\n"
-            techstr += f"\tcost: {v['cost']}\n"
-            if "need" in v:
-                techneed = " | ".join(v["need"])
-                techstr += f"\tneed: {techneed}\n"
+    def tech_list_view(self):
+        tech_list = self.main_window.saver.tech_list
+        techstr = "tech-list:\n" + "-" * 40 + "\n"
+        for n, k in enumerate(tech_list):
+            techstr += f"{n+1}. {k}\n"
         self.display_content = techstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)

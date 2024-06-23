@@ -139,8 +139,8 @@ class HexWindow(NaviWindow):
         elif key_name == "<":
             self.control_panel.backward_display()
         elif key_name == "t":
-            print("##> show tech tree")
-            self.control_panel.tech_tree_view()
+            print("##> show tech list")
+            self.control_panel.tech_list_view()
         elif key_name == "c":
             print("##> show control")
             self.control_panel.control_view()
