@@ -87,10 +87,17 @@ infra_list_0 = ["link", "unit", "tech", "fort", "airport", "seahub"]
 infra_0 = {
     (2, 3): [
         {"type": "unit", "next": None, "own": "Aaa", "done": 1.0},
-        {"type": "tech", "next": None, "own": "Aaa", "done": 1.0, "tech": "infantry"},
+        {"type": "fort", "next": None, "own": "Aaa", "done": 1.0},
+        {"type": "unit", "next": None, "own": "Bbb", "done": 1.0},
         {"type": "tech", "next": "unit", "own": "Aaa", "done": 1.0, "tech": "infantry"},
-        {"type": "seahub", "next": None, "own": "Aaa", "done": 1.0},
+        {"type": "tech", "next": "unit", "own": "Aaa", "done": 1.0, "tech": "infantry"},
+        {"type": "fort", "next": None, "own": "Aaa", "done": 1.0},
         {"type": "link", "target": (3, 4), "done": 1.0}
+    ],
+    (2, 2): [
+        {"type": "seahub", "next": None, "own": "Aaa", "done": 1.0},
+        {"type": "airport", "next": None, "own": "Aaa", "done": 1.0},
+        {"type": "unit", "next": None, "own": "Aaa", "done": 1.0}
     ]
 }
 
