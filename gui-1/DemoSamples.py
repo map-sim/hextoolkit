@@ -86,18 +86,18 @@ infra_list_0 = ["link", "unit", "tech", "fort", "airport", "seahub"]
 
 infra_0 = {
     (2, 3): [
-        {"type": "unit", "next": None, "own": "Aaa", "done": 1.0},
-        {"type": "fort", "next": None, "own": "Aaa", "done": 1.0},
-        {"type": "unit", "next": None, "own": "Bbb", "done": 1.0},
-        {"type": "tech", "next": "unit", "own": "Aaa", "done": 1.0, "tech": "infantry"},
-        {"type": "tech", "next": "unit", "own": "Aaa", "done": 1.0, "tech": "infantry"},
-        {"type": "fort", "next": None, "own": "Aaa", "done": 1.0},
-        {"type": "link", "target": (3, 4), "done": 1.0}
+        {"type": "unit", "own": "Aaa", "done": 1.0},
+        {"type": "fort", "own": "Aaa", "done": 1.0},
+        {"type": "unit", "own": "Bbb", "done": 1.0},
+        {"type": "fort", "own": "Aaa", "done": 1.0},
+        {"type": "supply", "own": "Aaa", "done": 1.0, "what": "devel"},
+        {"type": "supply", "own": "Aaa", "done": 1.0, "what": "devel"}
     ],
     (2, 2): [
-        {"type": "seahub", "next": None, "own": "Aaa", "done": 1.0},
-        {"type": "airport", "next": None, "own": "Aaa", "done": 1.0},
-        {"type": "unit", "next": None, "own": "Aaa", "done": 1.0}
+        {"type": "airport", "own": "Aaa", "done": 1.0},
+        {"type": "seahub", "own": "Aaa", "done": 1.0},
+        {"type": "unit", "own": "Aaa", "done": 1.0},
+        {"type": "link", "own": "Aaa", "done": 1.0}
     ]
 }
 
@@ -124,23 +124,14 @@ markers_0 = [
 ###
 
 tech_list_0 = {
-    "armored": "combat-strike performance",
-    "infantry": "combat-defence performance",
-    "artillery": "close range-strike performance",
-    "counter-battery": "counter-battery fire",
-    "air-force": "far range-strike performance",
-    "anti-access": "range-strike defence performance",
-    "naval-force": "navy-navy combat performance",
-    "landing": "marine and airborne performance",
-    "logistic": "transportation performance",
-    "supply": "common but poor supply",
+    "devel": "development supply",
+    "supply": "common military supply",
 
-    "recruitment": "military training support",
-    "development": "techique construction supply",
-    "seahub": "port & shipyard construction supply",
-    "airport": "airport construction supply",
-    "fortress": "fort construction supply",
-    "transport": "routes construction supply",
+    "armored": "armored force supply",
+    "infantry": "infantry supply",
+    "artillery": "artillery supply",
+    "air-force": "air-force supply",
+    "naval-force": "naval supply"
 }
 
 ###

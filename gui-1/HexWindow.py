@@ -109,9 +109,9 @@ class HexWindow(NaviWindow):
                 if self.selected_vex in self.terr_graph.vex_dict:
                     for i, item in enumerate(self.saver.landform):
                         if item[0] != "vex": continue 
-                        if tuple(item[2]) == self.selected_vex:
-                            self.terr_graph.vex_dict[tuple(item[2])] = new_terr
-                            self.saver.landform[i] = item[0], new_terr, self.selected_vex
+                        if tuple(item[2]) != self.selected_vex: continue
+                        self.terr_graph.vex_dict[tuple(item[2])] = new_terr
+                        self.saver.landform[i] = item[0], new_terr, self.selected_vex
                 else:
                     self.terr_graph.vex_dict[self.selected_vex] = new_terr
                     for i, item in enumerate(self.saver.landform):

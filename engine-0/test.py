@@ -126,6 +126,7 @@ a = Analyzer()
 
 u0 = a.supplier((0, 0), 0, 3)
 u1 = a.supplier((0, 0), 1, 2)
+
 r0 = a.effector((0, 0), 2, 10)
 r1 = a.effector((0, 0), 3, 10)
 
@@ -142,11 +143,10 @@ l4 = a.link((1, 0), (1, 1), 0.1)
 
 a.simulate()
 
-print("effector 1,1:", a.check_node(1, 1), "V")
-print("effector b1:", a.check_node("b1"), "V")
-
-
-
-
 a.show_suppliers()
 a.show_effectors()
+
+print("=========== MANUAL ========= >>")
+print("effector 1,1:", a.check_node(1, 1), "V")
+print("effector b1:", a.check_node("b1"), "V")
+print("=========== MANUAL ========= <<")
