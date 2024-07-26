@@ -58,10 +58,12 @@ landform_0 = [
 controls_0 = {
     "Aaa": {
         "base-color": [0.1, 0.8, 0.1],
+        "unit-color": [0.5, 1.0, 0.5],
         "marker-color": [0.2, 0.7, 0.2],
     },
     "Bbb": {
         "base-color": [0.9, 0.2, 0.2],
+        "unit-color": [1.0, 0.5, 0.5],
         "marker-color": [1.0, 0.3, 0.3],
     }
 }
@@ -114,6 +116,9 @@ infra_0 = {
         {"type": "unit", "own": "Aaa"},
         {"type": "link", "own": "Aaa"},
         {"type": "plant", "own": "Aaa"}
+    ],
+    (1, 2): [
+        {"type": "plant", "own": "Bbb"}
     ]
 }
 

@@ -12,8 +12,10 @@ from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
-from TerrToolbox import ObjPainter
 
+from ObjPainter import ObjPainter
+from UnitPainter import UnitPainter
+from InfraPainter import InfraPainter
 
 class HexWindow(NaviWindow):
     window_modes = ["view", "edit"]
@@ -21,6 +23,8 @@ class HexWindow(NaviWindow):
         self.terr_graph = TerrGraph(saver)
         self.obj_painter = ObjPainter(saver)
         self.terr_painter = TerrPainter(saver)
+        self.unit_painter = UnitPainter(saver)
+        self.infra_painter = InfraPainter(saver)
         self.settings_backup = copy.deepcopy(saver.settings)
 
         self.saver = saver
@@ -36,6 +40,8 @@ class HexWindow(NaviWindow):
     @BaseWindow.double_buffering
     def draw_content(self, context):
         self.terr_painter.draw(context)
+        self.infra_painter.draw(context)
+        self.unit_painter.draw(context)
         self.obj_painter.draw(context)
         context.stroke()
 
