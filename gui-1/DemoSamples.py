@@ -78,26 +78,42 @@ stats_0 = {
 }
 
 ###
+### units
+###
+
+units_0 = {
+    (2, 3): [
+        {"own": "Aaa", "type": "infantry", "size": 1}
+    ],
+    (2, 2): [
+        {"own": "Bbb", "type": "infantry", "size": 1},
+        {"own": "Bbb", "type": "infantry", "size": 1}
+    ]
+}
+
+###
 ### infrastructure
 ###
 
-
-infra_list_0 = ["link", "unit", "tech", "fort", "airport", "seahub"]
+# fort, link
+# unit, supply
+# seahub, airport
 
 infra_0 = {
     (2, 3): [
-        {"type": "unit", "own": "Aaa", "done": 1.0},
-        {"type": "fort", "own": "Aaa", "done": 1.0},
-        {"type": "unit", "own": "Bbb", "done": 1.0},
-        {"type": "fort", "own": "Aaa", "done": 1.0},
-        {"type": "supply", "own": "Aaa", "done": 1.0, "what": "devel"},
-        {"type": "supply", "own": "Aaa", "done": 1.0, "what": "devel"}
+        {"type": "unit", "own": "Aaa"},
+        {"type": "fort", "own": "Aaa"},
+        {"type": "unit", "own": "Bbb"},
+        {"type": "fort", "own": "Aaa"},
+        {"type": "supply", "own": "Aaa"},
+        {"type": "supply", "own": "Aaa"}
     ],
     (2, 2): [
-        {"type": "airport", "own": "Aaa", "done": 1.0},
-        {"type": "seahub", "own": "Aaa", "done": 1.0},
-        {"type": "unit", "own": "Aaa", "done": 1.0},
-        {"type": "link", "own": "Aaa", "done": 1.0}
+        {"type": "airport", "own": "Aaa"},
+        {"type": "seahub", "own": "Aaa"},
+        {"type": "unit", "own": "Aaa"},
+        {"type": "link", "own": "Aaa"},
+        {"type": "plant", "own": "Aaa"}
     ]
 }
 

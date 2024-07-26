@@ -6,6 +6,7 @@ class SaveHandler:
     def __init__(self):
         self.stats = {}
         self.infra = {}
+        self.units = {}
         self.controls = {}
         self.settings = {}
         self.terrains = {}
@@ -22,6 +23,7 @@ class SaveHandler:
         self.markers = demo.markers_0
         self.stats = demo.stats_0
         self.infra = demo.infra_0
+        self.units = demo.units_0
 
     def save_on_drive(self, prefix="save."):
         fname = lambda c: f"{prefix}{c}"; counter = 0
@@ -44,6 +46,7 @@ class SaveHandler:
         inner("markers.json", self.markers)
         inner("stats.json", self.stats)
         inner2("infra.json", self.infra)
+        inner2("units.json", self.units)
         return dir_name
     def load_from_drive(self, save_name):
         def inner(fname):
@@ -63,6 +66,7 @@ class SaveHandler:
         self.markers = inner("markers.json")
         self.stats = inner("stats.json")
         self.infra = inner2("infra.json")
+        self.units = inner2("units.json")
 
     def remove_links(self, vex):
         for n, marker in reversed(list(enumerate(self.markers))):

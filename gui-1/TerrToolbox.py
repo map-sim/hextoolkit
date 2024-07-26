@@ -414,6 +414,50 @@ class ObjPainter(AbstractPainter):
         context.line_to(xo - 0.26 * zoom, yo + 0.26 * zoom)
         context.fill()
 
+    def draw_infra_plant(self, context, vex, index, own, **item):
+        r = self.saver.settings.get("hex-radius", 1.0)
+        zoom = self.saver.settings["window-zoom"]
+        color = self.saver.controls[own]["base-color"]
+        loc = AbstractPainter.vex_to_loc(vex, r)
+        xo, yo = self.translate_xy(*loc)
+        xo, yo = self.__to_slot(xo, yo, zoom*r, index)
+
+        context.set_source_rgba(1, 1, 1)
+        context.move_to(xo - 0.42 * zoom, yo + 0.25 * zoom)
+        context.line_to(xo + 0.42 * zoom, yo + 0.25 * zoom)
+        context.line_to(xo, yo - 0.44 * zoom)
+        context.line_to(xo - 0.42 * zoom, yo + 0.25 * zoom)
+        context.fill()
+        context.move_to(xo - 0.42 * zoom, yo - 0.25 * zoom)
+        context.line_to(xo + 0.42 * zoom, yo - 0.25 * zoom)
+        context.line_to(xo, yo + 0.44 * zoom)
+        context.line_to(xo - 0.42 * zoom, yo - 0.25 * zoom)
+        context.fill()
+
+        context.set_source_rgba(0, 0, 0)
+        context.move_to(xo - 0.36 * zoom, yo + 0.215 * zoom)
+        context.line_to(xo + 0.36 * zoom, yo + 0.215 * zoom)
+        context.line_to(xo, yo - 0.38 * zoom)
+        context.line_to(xo - 0.36 * zoom, yo + 0.215 * zoom)
+        context.fill()
+        context.move_to(xo - 0.36 * zoom, yo - 0.215 * zoom)
+        context.line_to(xo + 0.36 * zoom, yo - 0.215 * zoom)
+        context.line_to(xo, yo + 0.38 * zoom)
+        context.line_to(xo - 0.36 * zoom, yo - 0.215 * zoom)
+        context.fill()
+
+        context.set_source_rgba(*color)
+        context.move_to(xo - 0.3 * zoom, yo + 0.18 * zoom)
+        context.line_to(xo + 0.3 * zoom, yo + 0.18 * zoom)
+        context.line_to(xo, yo - 0.32 * zoom)
+        context.line_to(xo - 0.3 * zoom, yo + 0.18 * zoom)
+        context.fill()
+        context.move_to(xo - 0.3 * zoom, yo - 0.18 * zoom)
+        context.line_to(xo + 0.3 * zoom, yo - 0.18 * zoom)
+        context.line_to(xo, yo + 0.32 * zoom)
+        context.line_to(xo - 0.3 * zoom, yo - 0.18 * zoom)
+        context.fill()
+
     def draw_infra_airport(self, context, vex, index, own, **item):
         r = self.saver.settings.get("hex-radius", 1.0)
         zoom = self.saver.settings["window-zoom"]
@@ -529,6 +573,48 @@ class ObjPainter(AbstractPainter):
         context.set_source_rgba(*color)
         context.arc(xo, yo, 0.3*zoom, 0, TWO_PI)
         context.fill()
+
+    def draw_unit_size(self, context, vex, size):
+        r = self.saver.settings.get("hex-radius", 1.0)
+        zoom = self.saver.settings["window-zoom"]
+        loc = AbstractPainter.vex_to_loc(vex, r)                
+        xo, yo = self.translate_xy(*loc)
+
+        # color = self.saver.controls[own]["base-color"]
+
+
+    def draw_unit_infantry(self, context, vex, own, size):
+        r = self.saver.settings.get("hex-radius", 1.0)
+        zoom = self.saver.settings["window-zoom"]
+        color = self.saver.controls[own]["base-color"]
+        loc = AbstractPainter.vex_to_loc(vex, r)                
+        xo, yo = self.translate_xy(*loc)
+
+        context.set_source_rgba(1, 1, 1)
+        context.move_to(xo - 0.8 * zoom, yo + 0.6 * zoom)
+        context.line_to(xo + 0.8 * zoom, yo + 0.6 * zoom)
+        context.line_to(xo + 0.8 * zoom, yo - 0.6 * zoom)
+        context.line_to(xo - 0.8 * zoom, yo - 0.6 * zoom)
+        context.line_to(xo - 0.8 * zoom, yo + 0.6 * zoom)
+        context.fill()
+
+        context.set_source_rgba(0, 0, 0)
+        context.move_to(xo - 0.77 * zoom, yo + 0.57 * zoom)
+        context.line_to(xo + 0.77 * zoom, yo + 0.57 * zoom)
+        context.line_to(xo + 0.77 * zoom, yo - 0.57 * zoom)
+        context.line_to(xo - 0.77 * zoom, yo - 0.57 * zoom)
+        context.line_to(xo - 0.77 * zoom, yo + 0.57 * zoom)
+        context.fill()
+
+        context.set_source_rgba(*color)
+        context.move_to(xo - 0.74 * zoom, yo + 0.54 * zoom)
+        context.line_to(xo + 0.74 * zoom, yo + 0.54 * zoom)
+        context.line_to(xo + 0.74 * zoom, yo - 0.54 * zoom)
+        context.line_to(xo - 0.74 * zoom, yo - 0.54 * zoom)
+        context.line_to(xo - 0.74 * zoom, yo + 0.54 * zoom)
+        context.fill()
+
+        self.draw_unit_size(context, vex, size)
         
     def draw(self, context):
         for shape, *params in self.saver.markers:
@@ -548,9 +634,18 @@ class ObjPainter(AbstractPainter):
         for vex, infra in self.saver.infra.items():
             for i, item in enumerate(infra):
                 if item["type"] == "airport": self.draw_infra_airport(context, vex, i, **item)
+                elif item["type"] == "plant": self.draw_infra_plant(context, vex, i, **item)
                 elif item["type"] == "seahub": self.draw_infra_port(context, vex, i, **item)
                 elif item["type"] == "supply": self.draw_infra_tech(context, vex, i, **item)
                 elif item["type"] == "fort": self.draw_infra_fort(context, vex, i, **item)
                 elif item["type"] == "unit": self.draw_infra_unit(context, vex, i, **item)
                 elif item["type"] == "link": self.draw_infra_link(context, vex, i, **item)
-                else: raise ValueError(f"Not supported type: {item['type']}")
+                else: raise ValueError(f"Not supported infra type: {item['type']}")
+
+        for vex, units in self.saver.units.items():
+            own, symbol, size = self.estimate_unit(*units)
+            if symbol == "infantry": self.draw_unit_infantry(context, vex, own, size)
+            else: raise ValueError(f"Not supported unit type: {unit['type']}")
+
+    def estimate_unit(self, *units):
+        return units[0]["own"], units[0]["type"], 1
