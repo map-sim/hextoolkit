@@ -4,7 +4,7 @@
 
 settings_0 = {
     'window-title': 'main-window',
-    'window-size': (1800, 780),
+    'window-size': (1220, 1020),
     'window-offset': (840, 125),
     'window-zoom': 15.0,
     'move-sensitive': 50,

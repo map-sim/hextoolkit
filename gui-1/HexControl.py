@@ -93,13 +93,13 @@ class HexControl(Gtk.Window):
         self.display_content = self.get_init_info()
         display_data = self.get_display_data()        
         self.info = Gtk.Label(label=display_data)
-        self.info.set_max_width_chars(40)
+        # self.info.set_max_width_chars(1000)
         self.info.set_yalign(0.0)
         self.info.set_selectable(True)
         vbox.pack_start(self.info, True, True, 3)
         self.plotter.set_controls(plot_but, self.info)
 
-
+        self.welcome_view()
         self.show_all()
 
     def forward_display(self):
@@ -163,9 +163,11 @@ class HexControl(Gtk.Window):
         cc = self.main_window.saver.controls[name]
         bcolor = ", ".join(map(str, cc["base-color"]))
         mcolor = ", ".join(map(str, cc["marker-color"]))
+        ucolor = ", ".join(map(str, cc["unit-color"]))
         name = name + ":" + " " * (40 - len(name))
         cstr = f"{name}\n{'-' * 40}\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
+        cstr = f"{cstr}\nu-color: {ucolor}"
         self.display_content = cstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
@@ -177,5 +179,14 @@ class HexControl(Gtk.Window):
         for n, (k, v) in enumerate(tech_list.items()):
             techstr += f"{n+1}. {k} - {v}\n"
         self.display_content = techstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+
+    def welcome_view(self):
+        self.__display_offset = 0
+        content = "------------------------------"
+        content += "-----------------------------"
+        content += "\nWELCOME !!!" * 40
+        self.display_content = content
         display_data = self.get_display_data()
         self.info.set_text(display_data)

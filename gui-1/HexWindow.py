@@ -125,6 +125,10 @@ class HexWindow(NaviWindow):
                     row = "vex", new_terr, self.selected_vex
                     self.saver.landform.insert(i, row)
                 self.draw_content()
+            elif self.window_mode != "edit":
+                print("No edit mode!")
+            elif self.selected_vex is None:
+                print("No selexted hex!")                
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
             if self.window_mode == "edit":
