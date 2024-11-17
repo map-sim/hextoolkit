@@ -114,7 +114,7 @@ infra_0 = {
         {"type": "supply", "own": "Aaa"}
     ],
     (2, 2): [
-        {"type": "airport", "own": "Aaa"},
+        {"type": "airhub", "own": "Aaa"},
         {"type": "seahub", "own": "Aaa"},
         {"type": "unit", "own": "Aaa"},
         {"type": "link", "own": "Aaa"},
@@ -144,21 +144,6 @@ markers_0 = [
 ]
 
 ###
-### tech tree
-###
-
-tech_list_0 = {
-    "devel": "development supply",
-    "supply": "common military supply",
-
-    "armored": "armored force supply",
-    "infantry": "infantry supply",
-    "artillery": "artillery supply",
-    "air-force": "air-force supply",
-    "naval-force": "naval supply"
-}
-
-###
 ### terrains
 ###
 
@@ -168,7 +153,7 @@ terrains_0 = {
         'color': [0.0, 0.0, 0.0],
         'navigable': False,
         'buildable': False,
-        'conductance': 0.0,
+        'mobile': 0.0,
         'slots': 0
     },
     'desert-0': {
@@ -176,15 +161,15 @@ terrains_0 = {
         'color': [1.0, 0.96, 0.75],
         'navigable': False,
         'buildable': True,        
-        'conductance': 1.0,
-        'slots': 2
+        'mobile': 1.0,
+        'slots': 1
     },
     'shallows-0': {
         'desc': 'shallows',
         'color': [0.7, 0.85, 1.0],
         'navigable': True,
         'buildable': False,        
-        'conductance': 10.0,
+        'mobile': 10.0,
         'slots': 0
     },
     'water-0': {
@@ -192,7 +177,7 @@ terrains_0 = {
         'color': [0.54, 0.7, 1.0],
         'navigable': True,
         'buildable': False,        
-        'conductance': 100.0,
+        'mobile': 100.0,
         'slots': 0
     },
     'mountains-0': {
@@ -200,15 +185,15 @@ terrains_0 = {
         'color': [0.9, 0.7, 0.7],
         'navigable': False,
         'buildable': True,        
-        'conductance': 0.1,
-        'slots': 3
+        'mobile': 0.1,
+        'slots': 1
     },
     'steppe-0': {
         'desc': 'warm steppe',
         'color': [0.55, 0.92, 0.7],
         'navigable': False,
         'buildable': True,        
-        'conductance': 3.0,
+        'mobile': 3.0,
         'slots': 6
     }
 }

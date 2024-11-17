@@ -76,6 +76,29 @@ class HexWindow(NaviWindow):
             self.draw_content()
         return True
 
+    def reset_vex(self, vex):
+        if vex in self.saver.infra:
+            del self.saver.infra[vex]
+        if vex in self.saver.units:
+            del self.saver.units[vex]
+        self.saver.remove_links(vex)
+        self.saver.remove_vectors(vex)
+        self.saver.remove_dashes(vex)
+
+    def set_vex_terrain(self, vex, terr):
+        if vex in self.terr_graph.vex_dict:
+            for i, item in enumerate(self.saver.landform):
+                if item[0] == "vex" and tuple(item[2]) == vex:
+                    self.saver.landform[i] = "vex", terr, vex
+                    self.terr_graph.vex_dict[vex] = terr
+                    break
+        else:
+            for i, item in enumerate(self.saver.landform):
+                if item[0] == "grid": break
+            self.saver.landform.insert(i, ("vex", terr, vex))
+            self.terr_graph.vex_dict[vex] = terr
+        self.reset_vex(vex)
+
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
@@ -110,25 +133,38 @@ class HexWindow(NaviWindow):
                 it = terr_list.index(terr) + 1
                 if it >= len(terr_list): it = 0
                 new_terr = terr_list[it]
-                print(new_terr)
-
-                if self.selected_vex in self.terr_graph.vex_dict:
-                    for i, item in enumerate(self.saver.landform):
-                        if item[0] != "vex": continue 
-                        if tuple(item[2]) != self.selected_vex: continue
-                        self.terr_graph.vex_dict[tuple(item[2])] = new_terr
-                        self.saver.landform[i] = item[0], new_terr, self.selected_vex
-                else:
-                    self.terr_graph.vex_dict[self.selected_vex] = new_terr
-                    for i, item in enumerate(self.saver.landform):
-                        if item[0] == "grid": break
-                    row = "vex", new_terr, self.selected_vex
-                    self.saver.landform.insert(i, row)
-                self.draw_content()
+                self.set_vex_terrain(self.selected_vex, new_terr)
+                self.draw_content(); print(new_terr)
             elif self.window_mode != "edit":
                 print("No edit mode!")
             elif self.selected_vex is None:
                 print("No selexted hex!")                
+        elif key_name == "D":
+            print("##> dilation (try to)")
+            if self.window_mode == "edit" and self.selected_vex is not None:
+                terr = self.terr_graph.get_hex_terr(self.selected_vex)
+                selected_vexes = set()
+                for item in self.saver.landform:
+                    if item[0] == "vex" and item[1] == terr:
+                        selected_vexes.add(item[2])
+                total = len(selected_vexes)
+                print(f"selected vexes: {total}")
+                for vex in selected_vexes:
+                    self.set_vex_terrain((vex[0]-1, vex[1]), terr)
+                    self.set_vex_terrain((vex[0]+1, vex[1]), terr)
+                    self.set_vex_terrain((vex[0], vex[1]+1), terr)
+                    self.set_vex_terrain((vex[0], vex[1]-1), terr)
+                    if vex[1] % 2:
+                        self.set_vex_terrain((vex[0]+1, vex[1]+1), terr)
+                        self.set_vex_terrain((vex[0]+1, vex[1]-1), terr)
+                    else:
+                        self.set_vex_terrain((vex[0]-1, vex[1]+1), terr)
+                        self.set_vex_terrain((vex[0]-1, vex[1]-1), terr)
+                self.draw_content()
+            elif self.window_mode != "edit":
+                print("No edit mode!")
+            elif self.selected_vex is None:
+                print("No selexted hex!")
         elif key_name == "d":
             print("##> delete links/vectors (try to)")
             if self.window_mode == "edit":
@@ -137,7 +173,7 @@ class HexWindow(NaviWindow):
                     self.saver.remove_vectors(self.selected_vex)
                     self.saver.remove_dashes(self.selected_vex)
                     self.draw_content()
-            else: print("not active in current mode...")
+            else: print("No edit mode!")
         elif key_name == "s":
             print("##> save on drive ... ", end="")
             dir_name = self.saver.save_on_drive()
@@ -149,9 +185,6 @@ class HexWindow(NaviWindow):
         elif key_name == "less" or key_name == "comma":
             self.control_panel.backward_display()
         elif key_name == "t":
-            print("##> show tech list")
-            self.control_panel.tech_list_view()
-        elif key_name == "r":
             print("##> show terr list")
             self.control_panel.terrains_view()
         elif key_name == "c":

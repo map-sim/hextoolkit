@@ -64,8 +64,7 @@ class HexControl(Gtk.Window):
         
         self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Save (s)", "s")
-        self.make_button(vbox, "Terr-List (r)", "r")
-        self.make_button(vbox, "Tech-List (t)", "t")
+        self.make_button(vbox, "Terr-List (r)", "t")
         self.make_button(vbox, "Control (c)", "c")
 
         vbox = Gtk.VBox(spacing=3)
@@ -76,6 +75,7 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "S/H Markers (m)", "m")
         self.make_button(vbox, "Del Markers (d)", "d")
         self.make_button(vbox, "Change Terrain (T)", "T")
+        self.make_button(vbox, "Terrain Dilation (D)", "D")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
 
         vbox = Gtk.VBox(spacing=3)
@@ -126,7 +126,6 @@ class HexControl(Gtk.Window):
             return "\n".join(lines[o:e])
         else: return "\n".join(lines[o:e]) + "\n..."
 
-            
     def get_init_info(self):
         if self.main_window.selected_vex is not None:
             x, y = self.main_window.selected_vex
@@ -144,12 +143,11 @@ class HexControl(Gtk.Window):
             info = "\n\tSlots " + str(v["slots"])
             if v["navigable"]: info += "\n\t+Navigable"
             if v["buildable"]: info += "\n\t+Buildable"
-            info += "\n\tConduct " + str(v["conductance"])            
+            info += "\n\tMobile " + str(v["mobile"])            
             terrstr += f"{n+1}. {k} {info} \n"
         self.display_content = terrstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
-
         
     def control_view(self):
         self.__display_offset = 0
@@ -172,21 +170,12 @@ class HexControl(Gtk.Window):
         display_data = self.get_display_data()
         self.info.set_text(display_data)
         
-    def tech_list_view(self):
-        self.__display_offset = 0
-        tech_list = self.main_window.saver.tech_list
-        techstr = "tech-list:\n" + "-" * 40 + "\n"
-        for n, (k, v) in enumerate(tech_list.items()):
-            techstr += f"{n+1}. {k} - {v}\n"
-        self.display_content = techstr
-        display_data = self.get_display_data()
-        self.info.set_text(display_data)
-
     def welcome_view(self):
         self.__display_offset = 0
         content = "------------------------------"
         content += "-----------------------------"
-        content += "\nWELCOME !!!" * 40
+        content += "\nWELCOME !!!" * 20
         self.display_content = content
         display_data = self.get_display_data()
         self.info.set_text(display_data)
+        

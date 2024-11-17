@@ -10,12 +10,10 @@ class SaveHandler:
         self.controls = {}
         self.settings = {}
         self.terrains = {}
-        self.tech_list = []
         self.landform = []
         self.markers = []
 
     def load_demo_0(self):
-        self.tech_list = demo.tech_list_0
         self.settings = demo.settings_0
         self.terrains = demo.terrains_0
         self.controls = demo.controls_0
@@ -38,7 +36,6 @@ class SaveHandler:
             with open(ffname, "w") as fd:
                 data2 = {str(k): v for k, v in data.items()}
                 json.dump(data2, fd, indent=4)
-        inner("tech_list.json", self.tech_list)
         inner("settings.json", self.settings)
         inner("terrains.json", self.terrains)
         inner("controls.json", self.controls)
@@ -58,7 +55,6 @@ class SaveHandler:
             with open(ffname, "r") as fd:
                 data = json.load(fd)
                 return {literal_eval(k): v for k, v in data.items()}
-        self.tech_list = inner("tech_list.json")
         self.settings = inner("settings.json")
         self.terrains = inner("terrains.json")
         self.controls = inner("controls.json")

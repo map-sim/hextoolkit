@@ -6,9 +6,9 @@ class InfraPainter(AbstractPainter):
     def draw(self, context):
         for vex, infra in self.saver.infra.items():
             for i, item in enumerate(infra):
-                if item["type"] == "airport": self.draw_infra_airport(context, vex, i, **item)
-                elif item["type"] == "plant": self.draw_infra_plant(context, vex, i, **item)
+                if item["type"] == "airhub": self.draw_infra_airhub(context, vex, i, **item)
                 elif item["type"] == "seahub": self.draw_infra_port(context, vex, i, **item)
+                elif item["type"] == "plant": self.draw_infra_plant(context, vex, i, **item)
                 elif item["type"] == "supply": self.draw_infra_tech(context, vex, i, **item)
                 elif item["type"] == "fort": self.draw_infra_fort(context, vex, i, **item)
                 elif item["type"] == "unit": self.draw_infra_unit(context, vex, i, **item)
@@ -217,7 +217,7 @@ class InfraPainter(AbstractPainter):
         context.line_to(xo - 0.3 * zoom, yo - 0.18 * zoom)
         context.fill()
 
-    def draw_infra_airport(self, context, vex, index, own, **item):
+    def draw_infra_airhub(self, context, vex, index, own, **item):
         r = self.saver.settings.get("hex-radius", 1.0)
         zoom = self.saver.settings["window-zoom"]
         color = self.saver.controls[own]["base-color"]
