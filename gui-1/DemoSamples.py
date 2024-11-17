@@ -23,7 +23,6 @@ settings_0 = {
 
 landform_0 = [
     ('base', 'water-0'),
-    ### ('rect', 'void-0', -40, -10, 80, 40),
     ('vex', 'desert-0', (0, 3)),
     ('vex', 'desert-0', (1, 3)),
     ('vex', 'desert-0', (1, 2)),
@@ -83,13 +82,17 @@ stats_0 = {
 ### units
 ###
 
+# orders: defense
+#         move (target: hex)
+#         storm (target: hex | index)
+
 units_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "infantry", "size": 1}
+        {"own": "Aaa", "type": "infantry", "size": 1, "order": "defense"}
     ],
     (2, 2): [
-        {"own": "Bbb", "type": "infantry", "size": 1},
-        {"own": "Bbb", "type": "infantry", "size": 1}
+        {"own": "Bbb", "type": "infantry", "size": 1, "order": "storm", "target": (2, 3)},
+        {"own": "Bbb", "type": "infantry", "size": 1, "order": "storm", "target": 2}
     ]
 }
 

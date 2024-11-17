@@ -82,8 +82,8 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "<", "<")
-        self.make_button(vbox, ">", ">")
+        self.make_button(vbox, "<", "less")
+        self.make_button(vbox, ">", "greater")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
         vbox = Gtk.VBox(spacing=3)
