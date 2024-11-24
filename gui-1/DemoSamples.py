@@ -99,6 +99,9 @@ units_0 = {
     (2, 3): [
         {"own": "Aaa", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)}
     ],
+    (0, 2): [
+        {"own": "Aaa", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+    ],
     (2, 2): [
         {"own": "Bbb", "type": "infantry", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (2, 3)},
         {"own": "Bbb", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}

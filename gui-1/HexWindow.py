@@ -30,6 +30,8 @@ class HexWindow(NaviWindow):
         self.saver = saver
         self.settings = saver.settings        
         self.selected_vex = tuple(saver.get_selected_vex())
+        self.selected_infra = None
+        self.selected_unit = None
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -67,6 +69,9 @@ class HexWindow(NaviWindow):
             print(f"hex-terrain: {hex_terr}")
             ## hex selection
             self.selected_vex = tuple(hex_index_xy)
+            self.selected_infra = None
+            self.selected_unit = None
+
             self.saver.select_only_one_vex(hex_index_xy)
             self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
             self.draw_content()                
@@ -110,6 +115,8 @@ class HexWindow(NaviWindow):
             print("##> unselect vexes & redraw")
             self.saver.unselect_all_vexes()
             self.control_panel.info.set_text("")
+            self.selected_infra = None
+            self.selected_unit = None
             self.selected_vex = None
             self.draw_content()
         elif key_name == "m":
@@ -189,6 +196,22 @@ class HexWindow(NaviWindow):
         elif key_name == "p":
             print("##> show stat plot")
             self.control_panel.plotter.plot()
+        elif key_name == "u":
+            print("##> show/select next unit")
+            if self.selected_vex is None:
+                print("no selection...")
+                self.control_panel.info.set_text("no selection...")
+                return True
+            units = self.saver.units.get(self.selected_vex)
+            if units is None:
+                print("no units...")
+                self.control_panel.info.set_text("no units...")
+                return True
+            if self.selected_unit is not None:
+                i = (self.selected_unit[1] + 1) % len(units)
+                self.selected_unit = self.selected_vex, i                
+            else: self.selected_unit = self.selected_vex, 0
+            self.control_panel.selected_unit_view()            
         else: NaviWindow.on_press(self, widget, event)
         return True
 

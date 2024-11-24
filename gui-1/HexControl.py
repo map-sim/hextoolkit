@@ -66,6 +66,7 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Save (s)", "s")
         self.make_button(vbox, "Terr-List (r)", "t")
         self.make_button(vbox, "Control (c)", "c")
+        self.make_button(vbox, "Unit (u)", "u")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
@@ -156,6 +157,27 @@ class HexControl(Gtk.Window):
             info += f"\n {i}. {it}"            
         self.info.set_text(info)
 
+    def selected_unit_view(self):
+        if self.main_window.selected_unit is not None:
+            info = "selected unit:"
+            hex_xy, index = self.main_window.selected_unit
+            units = self.main_window.saver.units.get(hex_xy)
+            if units is not None:
+                unit = units[index]
+                info = f"unit ({index}) from {len(units)}"
+                info += f"\nowner: {unit['own']}"
+                info += f"\ntype: {unit['type']}"
+                info += f"\nsize: {unit['size']}"
+                info += f"\nstate: {round(100*unit['state'], 2)}%"
+                info += f"\nstock 1: {round(100*unit['stock'][0], 2)}%"
+                info += f"\nstock 2: {round(100*unit['stock'][1], 2)}%"
+                info += f"\norder: {unit['order']}"
+                if "target" in unit:
+                    info += f"\ntarget: {unit['target']}"
+            else:  info = "No units to select..."
+        else: info = "No selected unit..."
+        self.info.set_text(info)
+        
     def terrains_view(self):
         self.__display_offset = 0
         terrstr = "terr-list:\n" + "-" * 40 + "\n"
