@@ -134,7 +134,28 @@ class HexControl(Gtk.Window):
             terr = self.main_window.terr_graph.get_hex_terr((x, y))
             return init_info + f"\nterrain: {terr}"
         else: return " " * 40
-        
+
+    def selected_hex_view(self, hex_xy, hex_terr):
+        info = f"selected hex: {hex_xy[0]} {hex_xy[1]}"
+        info += f"\nterrain: {hex_terr}"
+        infra = self.main_window.saver.infra.get(hex_xy, [])
+        if infra: info += "\ninfrastructure:"
+        for i, item in enumerate(infra):
+            it = f"{item['type']} ({item['own']})"
+            it += f" --> {100 * round(item['build'], 1)}%"
+            info += f"\n {i}. {it}"
+        units = self.main_window.saver.units.get(hex_xy, [])
+        if units: info += "\nunits:"
+        for i, item in enumerate(units):
+            if item['type'] == "infantry": t = "inf"
+            else: t = item['type']
+            it = f"{t}{item['size']} ({item['own']})"
+            it += f" --> {100 * round(item['state'], 1)}%"
+            it += f" / {100 * round(item['stock'][0], 1)}%"
+            it += f" {100 * round(item['stock'][1], 1)}%"
+            info += f"\n {i}. {it}"            
+        self.info.set_text(info)
+
     def terrains_view(self):
         self.__display_offset = 0
         terrstr = "terr-list:\n" + "-" * 40 + "\n"
@@ -163,7 +184,10 @@ class HexControl(Gtk.Window):
         mcolor = ", ".join(map(str, cc["marker-color"]))
         ucolor = ", ".join(map(str, cc["unit-color"]))
         name = name + ":" + " " * (40 - len(name))
-        cstr = f"{name}\n{'-' * 40}\nb-color: {bcolor}"
+        cstr = f"{name}\n{'-' * 40}"
+        pop = cc["population"]
+        cstr = f"{cstr}\npopulation: {pop}"
+        cstr = f"{cstr}\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
         cstr = f"{cstr}\nu-color: {ucolor}"
         self.display_content = cstr

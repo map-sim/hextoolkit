@@ -59,21 +59,17 @@ class HexWindow(NaviWindow):
             print(f"oriented-location: ({rox}, {roy})")
         elif event.button == 3:
             terr, terr_obj = self.terr_graph.check_terrain(ox, oy)
-            hex_xyi, hex_xyo = self.terr_graph.transform_to_vex(ox, oy)
-            hex_terr = self.terr_graph.get_hex_terr(hex_xyi)            
+            hex_index_xy, _ = self.terr_graph.transform_to_vex(ox, oy)
+            hex_terr = self.terr_graph.get_hex_terr(hex_index_xy)            
             print(f"landform-terrain: {terr}")
             print(f"landform-object: {terr_obj}")
-            print(f"hex-location: {hex_xyi}")
+            print(f"hex-location: {hex_index_xy}")
             print(f"hex-terrain: {hex_terr}")
-
             ## hex selection
-            self.selected_vex = tuple(hex_xyi)
-            self.saver.select_only_one_vex(hex_xyi)
-            if hex_xyi is not None:
-                info = f"selected hex: {hex_xyi[0]} {hex_xyi[1]}"
-                info += f"\nterrain: {terr}"
-                self.control_panel.info.set_text(info)
-            self.draw_content()
+            self.selected_vex = tuple(hex_index_xy)
+            self.saver.select_only_one_vex(hex_index_xy)
+            self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
+            self.draw_content()                
         return True
 
     def reset_vex(self, vex):

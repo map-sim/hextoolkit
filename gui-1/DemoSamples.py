@@ -59,11 +59,13 @@ controls_0 = {
         "base-color": [0.1, 0.8, 0.1],
         "unit-color": [0.5, 1.0, 0.5],
         "marker-color": [0.2, 0.7, 0.2],
+        "population": 50
     },
     "Bbb": {
         "base-color": [0.9, 0.2, 0.2],
         "unit-color": [1.0, 0.5, 0.5],
         "marker-color": [1.0, 0.3, 0.3],
+        "population": 60
     }
 }
 
@@ -79,49 +81,64 @@ stats_0 = {
 }
 
 ###
+### stock
+###
+
+# basic, devel, infantry
+
+###
 ### units
 ###
 
 # orders: defense
 #         move (target: hex)
 #         storm (target: hex | index)
+#         shot (target: hex | index | hex + index)
 
 units_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "infantry", "size": 1, "order": "defense"}
+        {"own": "Aaa", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)}
     ],
     (2, 2): [
-        {"own": "Bbb", "type": "infantry", "size": 1, "order": "storm", "target": (2, 3)},
-        {"own": "Bbb", "type": "infantry", "size": 1, "order": "storm", "target": 2}
+        {"own": "Bbb", "type": "infantry", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (2, 3)},
+        {"own": "Bbb", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
     ]
 }
+
 
 ###
 ### infrastructure
 ###
+# common: type, own, build
+# --------------- no slot needed:
+# fort: stock, state(in, out, io)
+# link: stock, state(in, out, io)
+# --------------- slot limit:
+# unit: index
+# supply: what
+# seahub: stock
+# airhub: stock
+# plant: stock
 
-# fort, link
-# unit, supply
-# seahub, airport
 
 infra_0 = {
     (2, 3): [
-        {"type": "unit", "own": "Aaa"},
-        {"type": "fort", "own": "Aaa"},
-        {"type": "unit", "own": "Bbb"},
-        {"type": "fort", "own": "Aaa"},
-        {"type": "supply", "own": "Aaa"},
-        {"type": "supply", "own": "Aaa"}
+        {"type": "unit", "own": "Aaa", "build": 1.0},
+        {"type": "fort", "own": "Aaa", "build": 1.0},
+        {"type": "unit", "own": "Bbb", "build": 1.0},
+        {"type": "fort", "own": "Aaa", "build": 1.0},
+        {"type": "supply", "own": "Aaa", "build": 1.0},
+        {"type": "supply", "own": "Aaa", "build": 1.0}
     ],
     (2, 2): [
-        {"type": "airhub", "own": "Aaa"},
-        {"type": "seahub", "own": "Aaa"},
-        {"type": "unit", "own": "Aaa"},
-        {"type": "link", "own": "Aaa"},
-        {"type": "plant", "own": "Aaa"}
+        {"type": "airhub", "own": "Aaa", "build": 0.5},
+        {"type": "seahub", "own": "Aaa", "build": 0.5},
+        {"type": "unit", "own": "Aaa", "build": 0.5},
+        {"type": "link", "own": "Aaa", "build": 0.5},
+        {"type": "plant", "own": "Aaa", "build": 0.5}
     ],
     (1, 2): [
-        {"type": "plant", "own": "Bbb"}
+        {"type": "plant", "own": "Bbb", "build": 1.0}
     ]
 }
 
