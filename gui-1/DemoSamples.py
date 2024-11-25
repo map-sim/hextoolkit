@@ -97,7 +97,10 @@ stats_0 = {
 
 units_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)}
+        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (0, 2): [
         {"own": "Aaa", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}

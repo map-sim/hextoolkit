@@ -196,22 +196,39 @@ class HexWindow(NaviWindow):
         elif key_name == "p":
             print("##> show stat plot")
             self.control_panel.plotter.plot()
+
         elif key_name == "u":
             print("##> show/select next unit")
             if self.selected_vex is None:
-                print("no selection...")
                 self.control_panel.info.set_text("no selection...")
+                print("no selection...")
                 return True
             units = self.saver.units.get(self.selected_vex)
             if units is None:
-                print("no units...")
                 self.control_panel.info.set_text("no units...")
+                print("no units...")
                 return True
             if self.selected_unit is not None:
-                i = (self.selected_unit[1] + 1) % len(units)
-                self.selected_unit = self.selected_vex, i                
-            else: self.selected_unit = self.selected_vex, 0
+                i = (self.selected_unit + 1) % len(units)
+                self.selected_unit = i                
+            else: self.selected_unit = 0
             self.control_panel.selected_unit_view()            
+        elif key_name == "i":
+            print("##> show/select next infra")
+            if self.selected_vex is None:
+                self.control_panel.info.set_text("no selection...")
+                print("no selection...")
+                return True
+            infra = self.saver.infra.get(self.selected_vex)
+            if infra is None:
+                self.control_panel.info.set_text("no infra...")
+                print("no infra...")
+                return True
+            if self.selected_infra is not None:
+                i = (self.selected_infra + 1) % len(infra)
+                self.selected_infra = i                
+            else: self.selected_infra = 0
+            self.control_panel.selected_infra_view()
         else: NaviWindow.on_press(self, widget, event)
         return True
 

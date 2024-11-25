@@ -67,6 +67,7 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Terr-List (r)", "t")
         self.make_button(vbox, "Control (c)", "c")
         self.make_button(vbox, "Unit (u)", "u")
+        self.make_button(vbox, "Infra (i)", "i")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
@@ -160,7 +161,8 @@ class HexControl(Gtk.Window):
     def selected_unit_view(self):
         if self.main_window.selected_unit is not None:
             info = "selected unit:"
-            hex_xy, index = self.main_window.selected_unit
+            hex_xy = self.main_window.selected_vex
+            index = self.main_window.selected_unit
             units = self.main_window.saver.units.get(hex_xy)
             if units is not None:
                 unit = units[index]
@@ -177,7 +179,21 @@ class HexControl(Gtk.Window):
             else:  info = "No units to select..."
         else: info = "No selected unit..."
         self.info.set_text(info)
-        
+    def selected_infra_view(self):
+        if self.main_window.selected_infra is not None:
+            info = "selected infra:"
+            hex_xy = self.main_window.selected_vex
+            index = self.main_window.selected_infra
+            buildings = self.main_window.saver.infra.get(hex_xy)
+            if buildings is not None:
+                infra = buildings[index]
+                info = f"building ({index}) from {len(buildings)}"
+                info += f"\nowner: {infra['own']}"
+                info += f"\ntype: {infra['type']}"
+                info += f"\nbuild: {round(100*infra['build'], 1)}%"
+        else: info = "No selected infra..."
+        self.info.set_text(info)
+
     def terrains_view(self):
         self.__display_offset = 0
         terrstr = "terr-list:\n" + "-" * 40 + "\n"
