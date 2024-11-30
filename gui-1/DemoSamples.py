@@ -10,10 +10,8 @@ settings_0 = {
     'move-sensitive': 50,
     'hex-radius': 2.2,
     'base-thickness': 0.08,
-    'marker-color': (0.0, 0.0, 0.0),
-    'show-dashes': True,
-    'show-arrows': True,
-    'show-links': True,
+    'marker-color': (1.0, 1.0, 0.3),
+    'show-markers': True,
     'display_length': 14
 }
 
@@ -23,12 +21,21 @@ settings_0 = {
 
 landform_0 = [
     ('base', 'water-0'),
+    ('vex', 'desert-0', (-3, -1)),
+    ('vex', 'desert-0', (-2, 0)),
+    ('vex', 'desert-0', (-2, -1)),
+    ('vex', 'desert-0', (-1, -1)),
+    ('vex', 'steppe-0', (-1, -2)),
+    ('vex', 'steppe-0', (0, -2)),
+    ('vex', 'steppe-0', (0, -1)),
+    ('vex', 'desert-0', (0, 0)),
+    ('vex', 'desert-0', (-1, 0)),
+    ('vex', 'desert-0', (-2, 1)),
     ('vex', 'desert-0', (0, 3)),
     ('vex', 'desert-0', (1, 3)),
     ('vex', 'desert-0', (1, 2)),
     ('vex', 'desert-0', (-1, 3)),
     ('vex', 'desert-0', (-1, 2)),
-    ('vex', 'desert-0', (-1, 1)),
     ('vex', 'desert-0', (0, 1)),
     ('vex', 'desert-0', (0, 4)),
     ('vex', 'steppe-0', (1, 1)),
@@ -45,6 +52,7 @@ landform_0 = [
     ('vex', 'shallows-0', (2, 5)),
     ('vex', 'shallows-0', (3, 5)),
     ('vex', 'shallows-0', (4, 4)),
+    ('vex', 'mountains-0', (-1, 1)),
     ('vex', 'mountains-0', (0, 2)),
     ('grid', (0.8, 0.8, 0.8), 0.16),
     ('grid', (0.4, 0.4, 0.4), 0.08)
@@ -58,13 +66,13 @@ controls_0 = {
     "Aaa": {
         "base-color": [0.1, 0.8, 0.1],
         "unit-color": [0.5, 1.0, 0.5],
-        "marker-color": [0.2, 0.7, 0.2],
+        "marker-color": [0.6, 1.0, 0.6],
         "population": 50
     },
     "Bbb": {
         "base-color": [0.9, 0.2, 0.2],
         "unit-color": [1.0, 0.5, 0.5],
-        "marker-color": [1.0, 0.3, 0.3],
+        "marker-color": [1.0, 0.6, 0.6],
         "population": 60
     }
 }
@@ -108,9 +116,11 @@ units_0 = {
     (2, 2): [
         {"own": "Bbb", "type": "infantry", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (2, 3)},
         {"own": "Bbb", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
+    ],
+    (1, 1): [
+        {"own": "Bbb", "type": "infantry", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 1)]}
     ]
 }
-
 
 ###
 ### infrastructure
@@ -125,7 +135,6 @@ units_0 = {
 # seahub: stock
 # airhub: stock
 # plant: stock
-
 
 infra_0 = {
     (2, 3): [
@@ -157,12 +166,12 @@ markers_0 = [
     ("vex", "Bbb", (1, 3)),
     ("vex", "Aaa", (3, 4)),
     ("vex", "Aaa", (2, 4)),
-    ("arr", "Bbb", (0, 3), (1, 3)),
-    ("arr", "Aaa", (3, 3), (3, 4)),
-    ("arr", "Aaa", (3, 4), (4, 4)),
-    ("arr", "Aaa", (3, 8), (8, 8)),
-    ("link", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
-    ("dash", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11), (10, 14)),
+    ("a1", "Bbb", (0, 3), (1, 3)),
+    ("a1", "Aaa", (3, 3), (3, 4)),
+    ("a1", "Aaa", (3, 4), (4, 4)),
+    ("a1", "Aaa", (3, 8), (8, 8)),
+    ("l1", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
+    ("a2", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11), (10, 14)),
     ("vex", None, (-1, -1))
 ]
 
@@ -181,7 +190,7 @@ terrains_0 = {
     },
     'desert-0': {
         'desc': 'desert',
-        'color': [1.0, 0.96, 0.75],
+        'color': [0.95, 0.95, 0.95],
         'navigable': False,
         'buildable': True,        
         'mobile': 1.0,
@@ -189,7 +198,7 @@ terrains_0 = {
     },
     'shallows-0': {
         'desc': 'shallows',
-        'color': [0.7, 0.85, 1.0],
+        'color': [0.75, 0.85, 1.0],
         'navigable': True,
         'buildable': False,        
         'mobile': 10.0,
@@ -197,7 +206,7 @@ terrains_0 = {
     },
     'water-0': {
         'desc': 'water',
-        'color': [0.54, 0.7, 1.0],
+        'color': [0.65, 0.7, 1.0],
         'navigable': True,
         'buildable': False,        
         'mobile': 100.0,
@@ -205,7 +214,7 @@ terrains_0 = {
     },
     'mountains-0': {
         'desc': 'mountains',
-        'color': [0.9, 0.7, 0.7],
+        'color': [0.8, 0.8, 0.8],
         'navigable': False,
         'buildable': True,        
         'mobile': 0.1,
@@ -213,7 +222,7 @@ terrains_0 = {
     },
     'steppe-0': {
         'desc': 'warm steppe',
-        'color': [0.55, 0.92, 0.7],
+        'color': [1.0, 1.0, 1.0],
         'navigable': False,
         'buildable': True,        
         'mobile': 3.0,

@@ -82,9 +82,7 @@ class HexWindow(NaviWindow):
             del self.saver.infra[vex]
         if vex in self.saver.units:
             del self.saver.units[vex]
-        self.saver.remove_links(vex)
-        self.saver.remove_vectors(vex)
-        self.saver.remove_dashes(vex)
+        self.saver.remove_markers(vex)
 
     def set_vex_terrain(self, vex, terr):
         if vex in self.terr_graph.vex_dict:
@@ -121,12 +119,18 @@ class HexWindow(NaviWindow):
             self.draw_content()
         elif key_name == "m":
             print("##> show / hide markers")
-            state_l = not self.saver.settings["show-links"]
-            state_a = not self.saver.settings["show-arrows"]
-            state_d = not self.saver.settings["show-dashes"]
-            self.saver.settings["show-links"] = state_l
-            self.saver.settings["show-arrows"] = state_a
-            self.saver.settings["show-dashes"] = state_d
+            self.saver.orders_to_markers()
+            state = not self.saver.settings["show-markers"]
+            self.saver.settings["show-markers"] = state
+            self.draw_content()
+        elif key_name == "a":
+            print("##> area control markers")
+            self.saver.unselect_all_vexes()
+            self.control_panel.info.set_text("")
+            self.selected_infra = None
+            self.selected_unit = None
+            self.selected_vex = None
+            self.saver.area_control_markers()
             self.draw_content()
         elif key_name == "T":
             print("##> change terrain (try to)")
@@ -172,9 +176,9 @@ class HexWindow(NaviWindow):
             print("##> delete links/vectors (try to)")
             if self.window_mode == "edit":
                 if self.selected_vex is not None:
-                    self.saver.remove_links(self.selected_vex)
-                    self.saver.remove_vectors(self.selected_vex)
-                    self.saver.remove_dashes(self.selected_vex)
+                    self.saver.remove_markers(self.selected_vex, "a1")
+                    self.saver.remove_markers(self.selected_vex, "l1")
+                    self.saver.remove_markers(self.selected_vex, "a2")
                     self.draw_content()
             else: print("No edit mode!")
         elif key_name == "s":
@@ -192,7 +196,13 @@ class HexWindow(NaviWindow):
             self.control_panel.terrains_view()
         elif key_name == "c":
             print("##> show control")
-            self.control_panel.control_view()
+            owner = self.control_panel.control_view()
+            self.saver.unselect_all_vexes()
+            self.selected_infra = None
+            self.selected_unit = None
+            self.selected_vex = None
+            self.saver.area_control_markers(owner)
+            self.draw_content()
         elif key_name == "p":
             print("##> show stat plot")
             self.control_panel.plotter.plot()

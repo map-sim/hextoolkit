@@ -75,6 +75,7 @@ class HexControl(Gtk.Window):
 
         self.make_button(vbox, "Un-Select (q)", "q")
         self.make_button(vbox, "S/H Markers (m)", "m")
+        self.make_button(vbox, "Area Control (a)", "a")
         self.make_button(vbox, "Del Markers (d)", "d")
         self.make_button(vbox, "Change Terrain (T)", "T")
         self.make_button(vbox, "Terrain Dilation (D)", "D")
@@ -221,8 +222,8 @@ class HexControl(Gtk.Window):
         bcolor = ", ".join(map(str, cc["base-color"]))
         mcolor = ", ".join(map(str, cc["marker-color"]))
         ucolor = ", ".join(map(str, cc["unit-color"]))
-        name = name + ":" + " " * (40 - len(name))
-        cstr = f"{name}\n{'-' * 40}"
+        nstr = name + ":" + " " * (40 - len(name))
+        cstr = f"{nstr}\n{'-' * 40}"
         pop = cc["population"]
         cstr = f"{cstr}\npopulation: {pop}"
         cstr = f"{cstr}\nb-color: {bcolor}"
@@ -231,7 +232,8 @@ class HexControl(Gtk.Window):
         self.display_content = cstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
-        
+        return name
+
     def welcome_view(self):
         self.__display_offset = 0
         content = "------------------------------"

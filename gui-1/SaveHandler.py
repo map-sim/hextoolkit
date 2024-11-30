@@ -1,4 +1,5 @@
 import DemoSamples as demo
+import MapValidate as valid
 from ast import literal_eval
 import os, json
 
@@ -22,7 +23,8 @@ class SaveHandler:
         self.stats = demo.stats_0
         self.infra = demo.infra_0
         self.units = demo.units_0
-
+        valid.MapValidate(self)
+        
     def save_on_drive(self, prefix="save."):
         fname = lambda c: f"{prefix}{c}"; counter = 0
         while os.path.exists(fname(counter)): counter += 1
@@ -63,18 +65,11 @@ class SaveHandler:
         self.stats = inner("stats.json")
         self.infra = inner2("infra.json")
         self.units = inner2("units.json")
+        valid.MapValidate(self)
 
-    def remove_links(self, vex):
+    def remove_markers(self, vex, name=None):
         for n, marker in reversed(list(enumerate(self.markers))):
-            if marker[0] == "link" and vex in marker:
-                del self.markers[n]
-    def remove_vectors(self, vex):
-        for n, marker in reversed(list(enumerate(self.markers))):
-            if marker[0] == "arr" and vex in marker:
-                del self.markers[n]
-    def remove_dashes(self, vex):
-        for n, marker in reversed(list(enumerate(self.markers))):
-            if marker[0] == "dash" and vex in marker:
+            if (marker[0] == name or name is None) and vex in marker:
                 del self.markers[n]
 
     def get_selected_vex(self):
@@ -89,7 +84,54 @@ class SaveHandler:
         self.unselect_all_vexes()
         self.markers.append(("vex", None, vex))
         
-        
+    def orders_to_markers(self):
+        to_remove = []
+        for m, marker in enumerate(self.markers):
+            if marker[0] in ["a1", "l1", "a2"]:
+                to_remove.append(m)
+        for m in reversed(to_remove):
+            del self.markers[m]
+    
+        for vex, units in self.units.items():
+            for unit in units:
+                if unit["order"] != "move": continue                        
+                marker = ["a1", unit["own"], vex, *unit["target"]]
+                self.markers.append(marker)
+        for vex, units in self.units.items():
+            for unit in units:
+                if unit["order"] != "storm": continue
+                if isinstance(unit["target"], tuple):
+                    vex2 = tuple(unit["target"][:2])
+                    marker = ["a1", unit["own"], vex, vex2]
+                    self.markers.append(marker)
+                else: print(f"TODO: storm infra in {vex}")
+        for vex, units in self.units.items():
+            for unit in units:
+                if unit["order"] != "shot": continue
+                if isinstance(unit["target"], tuple):
+                    vex2 = tuple(unit["target"][:2])
+                    marker = ["a2", unit["own"], vex, vex2]
+                    self.markers.append(marker)
+                    if len(unit["target"]) != 2:
+                        print(f"TODO: shot infra in {vex}")
+                else: print(f"TODO: shot infra in {vex}")
+    def area_control_markers(self, control=None):
+        vex_to_own = {}
+        for vex, units in self.units.items():
+            for unit in units:
+                if control and control != unit["own"]: continue
+                if vex not in vex_to_own: vex_to_own[vex] = unit["own"]
+                elif vex_to_own[vex] == unit["own"]: pass
+                else: vex_to_own[vex] = None
+        for vex, infra in self.infra.items():
+            for build in infra:
+                if control and control != build["own"]: continue
+                if vex not in vex_to_own: vex_to_own[vex] = build["own"]
+                elif vex_to_own[vex] == build["own"]: pass
+                else: vex_to_own[vex] = None
+        for vex, own in vex_to_own.items():
+            self.markers.append(["vex", own, vex])
+    
 if __name__ == "__main__":
     saver = Saver()
     saver.load_demo_0()
