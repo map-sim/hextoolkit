@@ -118,8 +118,8 @@ class NaviWindow(BaseWindow):
             self.settings["window-zoom"] *= 1.25
 
         zoom2 = self.settings["window-zoom"]
-        xoffset = event.x - ox * zoom2
-        yoffset = event.y - oy * zoom2
+        xoffset = round(event.x - ox * zoom2, 3)
+        yoffset = round(event.y - oy * zoom2, 3)
         self.settings["window-offset"] = xoffset, yoffset
         self.draw_content()
         return True

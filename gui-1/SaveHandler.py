@@ -14,14 +14,17 @@ class SaveHandler:
         self.landform = []
         self.markers = []
         self.xsystem = {}
+        self.isystem = {}
 
     def load_demo_0(self):
+        print("load demo_0")
         self.settings = demo.settings_0
         self.terrains = demo.terrains_0
         self.controls = demo.controls_0
         self.landform = demo.landform_0
         self.markers = demo.markers_0
         self.xsystem = demo.xsystem_0
+        self.isystem = demo.isystem_0
         self.stats = demo.stats_0
         self.infra = demo.infra_0
         self.units = demo.units_0
@@ -46,11 +49,13 @@ class SaveHandler:
         inner("landform.json", self.landform)
         inner("markers.json", self.markers)
         inner("xsystem.json", self.xsystem)
+        inner("isystem.json", self.isystem)
         inner("stats.json", self.stats)
         inner2("infra.json", self.infra)
         inner2("units.json", self.units)
         return dir_name
     def load_from_drive(self, save_name):
+        print(f"load from drive {save_name}")
         def inner(fname):
             ffname = os.path.join(save_name, fname)
             with open(ffname, "r") as fd:
@@ -66,6 +71,7 @@ class SaveHandler:
         self.landform = inner("landform.json")
         self.markers = inner("markers.json")
         self.xsystem = inner("xsystem.json")
+        self.isystem = inner("isystem.json")
         self.stats = inner("stats.json")
         self.infra = inner2("infra.json")
         self.units = inner2("units.json")
@@ -81,6 +87,8 @@ class SaveHandler:
             if marker[0] == "vex" and marker[1] is None:
                 return marker[2]
         return None
+    def unselect_all(self):
+        self.markers = []
     def unselect_all_vexes(self):
         for n, marker in reversed(list(enumerate(self.markers))):
             if marker[0] == "vex": del self.markers[n]        

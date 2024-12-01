@@ -11,12 +11,56 @@ settings_0 = {
     'hex-radius': 2.2,
     'base-thickness': 0.08,
     'marker-color': (1.0, 1.0, 0.3),
-    'show-markers': True,
+    'show-markers': False,
     'display_length': 14
+}
+
+isystem_0 = {
+    "plant": {
+        "cost": 100,
+        "strength": 80,
+        "range": 30,
+        "power": 20,
+    },
+    "supply": {
+        "cost": 50,
+        "strength": 20,
+        "no-power": 0.0,
+        "power": -3,
+    },
+    "unit": {
+        "cost": 40,
+        "strength": 10,
+        "no-power": 0.5,
+        "power": -1,
+    },
+    "link": {
+        "cost": 10,
+        "strength": 60,
+        "power": 0,
+    },
+    "seahub": {
+        "cost": 50,
+        "strength": 90,
+        "no-power": 0.5,
+        "power": -1,
+    },
+    "airhub": {
+        "cost": 40,
+        "strength": 50,
+        "no-power": 0.25,
+        "power": -1,
+    },
+    "fort": {
+        "cost": 30,
+        "strength": 200,
+        "power": 0,
+    }
 }
 
 xsystem_0 = {
     "supplying": {
+        "cost": 20.5,
         "stock": None,
         "shot-range": 0,
         "efficiency": {
@@ -31,6 +75,7 @@ xsystem_0 = {
         }
     },
     "motorized": {
+        "cost": 32.0,
         "stock": "mech",
         "shot-range": 2,
         "efficiency": {
@@ -44,6 +89,23 @@ xsystem_0 = {
             "defence": (0.75, 0.5),
             "storm": (1.25, 1.1),
             "shot": (0.25, 0.5)
+        }
+    },
+    "mechanized": {
+        "cost": 72.0,
+        "stock": "mech",
+        "shot-range": 5,
+        "efficiency": {
+            "move": 0.9,
+            "defence": 1.0,
+            "storm": 0.75,
+            "shot": 0.5
+        },
+        "usage": {
+            "move": (0.72, 0.0),
+            "defence": (0.85, 0.6),
+            "storm": (1.35, 1.5),
+            "shot": (0.35, 0.7)
         }
     }    
 }
@@ -90,12 +152,16 @@ landform_0 = [
     ('vex', 'shallows-0', (4, 4)),
     ('vex', 'shallows-0', (-3, 3)),
     ('vex', 'shallows-0', (-2, 3)),
+    ('vex', 'shallows-0', (-2, -2)),
+    ('vex', 'shallows-0', (-3, -2)),
+    ('vex', 'shallows-0', (-4, -1)),
+    ('vex', 'shallows-0', (-4, 0)),
     ('vex', 'mountains-0', (-2, 0)),
     ('vex', 'mountains-0', (-1, 2)),
     ('vex', 'mountains-0', (-1, 1)),
     ('vex', 'mountains-0', (0, 2)),
-    ('grid', (0.8, 0.8, 0.8), 0.16),
-    ('grid', (0.4, 0.4, 0.4), 0.08)
+    ('grid', (0.9, 0.9, 0.9), 0.16),
+    ('grid', (0.6, 0.6, 0.6), 0.08)
 ]
 
 ###
@@ -145,8 +211,8 @@ stats_0 = {
 
 units_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
         {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
         {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
@@ -181,22 +247,25 @@ units_0 = {
 
 infra_0 = {
     (2, 3): [
-        {"type": "unit", "own": "Aaa", "build": 1.0},
-        {"type": "fort", "own": "Aaa", "build": 1.0},
-        {"type": "unit", "own": "Bbb", "build": 1.0},
-        {"type": "fort", "own": "Aaa", "build": 1.0},
-        {"type": "supply", "own": "Aaa", "build": 1.0},
-        {"type": "supply", "own": "Aaa", "build": 1.0}
+        {"type": "unit", "own": "Aaa", "state": 1.0},
+        {"type": "fort", "own": "Aaa", "state": 1.0},
+        {"type": "unit", "own": "Bbb", "state": 1.0},
+        {"type": "fort", "own": "Aaa", "state": 1.0},
+        {"type": "supply", "own": "Aaa", "state": 1.0},
+        {"type": "supply", "own": "Aaa", "state": 1.0}
     ],
     (2, 2): [
-        {"type": "airhub", "own": "Aaa", "build": 0.5},
-        {"type": "seahub", "own": "Aaa", "build": 0.5},
-        {"type": "unit", "own": "Aaa", "build": 0.5},
-        {"type": "link", "own": "Aaa", "build": 0.5},
-        {"type": "plant", "own": "Aaa", "build": 0.5}
+        {"type": "airhub", "own": "Aaa", "state": 0.5},
+        {"type": "seahub", "own": "Aaa", "state": 0.5},
+        {"type": "unit", "own": "Aaa", "state": 0.5},
+        {"type": "link", "own": "Aaa", "state": 0.5},
+        {"type": "plant", "own": "Aaa", "state": 0.5}
     ],
     (1, 2): [
-        {"type": "plant", "own": "Bbb", "build": 1.0}
+        {"type": "plant", "own": "Bbb", "state": 1.0}
+    ],
+    (-3, 2): [
+        {"type": "seahub", "own": "Bbb", "state": 1.0}
     ]
 }
 
@@ -205,16 +274,16 @@ infra_0 = {
 ###
 
 markers_0 = [
-    ("vex", "Aaa", (2, 3)),
-    ("vex", "Bbb", (1, 3)),
-    ("vex", "Aaa", (3, 4)),
-    ("vex", "Aaa", (2, 4)),
-    ("a1", "Bbb", (0, 3), (1, 3)),
-    ("a1", "Aaa", (3, 3), (3, 4)),
-    ("a1", "Aaa", (3, 4), (4, 4)),
-    ("a1", "Aaa", (3, 8), (8, 8)),
-    ("l1", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
-    ("a2", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11), (10, 14)),
+    # ("vex", "Aaa", (2, 3)),
+    # ("vex", "Bbb", (1, 3)),
+    # ("vex", "Aaa", (3, 4)),
+    # ("vex", "Aaa", (2, 4)),
+    # ("a1", "Bbb", (0, 3), (1, 3)),
+    # ("a1", "Aaa", (3, 3), (3, 4)),
+    # ("a1", "Aaa", (3, 4), (4, 4)),
+    # ("a1", "Aaa", (3, 8), (8, 8)),
+    # ("l1", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
+    # ("a2", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11), (10, 14)),
     ("vex", None, (-3, 5))
 ]
 
@@ -241,7 +310,7 @@ terrains_0 = {
     },
     'shallows-0': {
         'desc': 'shallows',
-        'color': [0.75, 0.85, 1.0],
+        'color': [0.8, 0.9, 1.0],
         'navigable': True,
         'buildable': False,        
         'mobile': 10.0,
@@ -249,7 +318,7 @@ terrains_0 = {
     },
     'water-0': {
         'desc': 'water',
-        'color': [0.65, 0.7, 1.0],
+        'color': [0.75, 0.85, 1.0],
         'navigable': True,
         'buildable': False,        
         'mobile': 100.0,

@@ -111,8 +111,9 @@ class HexWindow(NaviWindow):
             print("to", self.window_mode)
         elif key_name == "q":
             print("##> unselect vexes & redraw")
-            self.saver.unselect_all_vexes()
             self.control_panel.info.set_text("")
+            self.saver.settings["show-markers"] = False
+            self.saver.unselect_all()
             self.selected_infra = None
             self.selected_unit = None
             self.selected_vex = None
@@ -187,10 +188,12 @@ class HexWindow(NaviWindow):
             info = f"save on drive in {dir_name}"
             self.control_panel.info.set_text(info)
             print(dir_name)
-        elif key_name == "greater" or key_name == "period":
+        elif key_name == "period":
             self.control_panel.forward_display()
-        elif key_name == "less" or key_name == "comma":
+        elif key_name == "comma":
             self.control_panel.backward_display()
+        elif key_name == "Home":
+            self.control_panel.home_display()
         elif key_name == "t":
             print("##> show terr list")
             self.control_panel.terrains_view()

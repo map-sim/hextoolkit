@@ -86,8 +86,9 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "<", "less")
-        self.make_button(vbox, ">", "greater")
+        self.make_button(vbox, "<<", "Home")
+        self.make_button(vbox, "<", "comma")
+        self.make_button(vbox, ">", "period")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
         vbox = Gtk.VBox(spacing=3)
@@ -120,6 +121,11 @@ class HexControl(Gtk.Window):
         display_data = self.get_display_data()
         self.info.set_text(display_data)
 
+    def home_display(self):
+        self.__display_offset = 0
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+
     def get_display_data(self):
         w = self.main_window.saver.settings["display_length"]
         lines = self.display_content.split("\n")
@@ -133,30 +139,32 @@ class HexControl(Gtk.Window):
     def get_init_info(self):
         if self.main_window.selected_vex is not None:
             x, y = self.main_window.selected_vex
-            init_info = f"selected hex: {x} {y}"
+            init_info = f"selected hex: ({x}, {y})"
             init_info += " " * (40 - len(init_info))
             terr = self.main_window.terr_graph.get_hex_terr((x, y))
             return init_info + f"\nterrain: {terr}"
         else: return " " * 40
 
     def selected_hex_view(self, hex_xy, hex_terr):
-        info = f"selected hex: {hex_xy[0]} {hex_xy[1]}"
+        info = f"selected hex: ({hex_xy[0]}, {hex_xy[1]})"
         info += f"\nterrain: {hex_terr}"
         infra = self.main_window.saver.infra.get(hex_xy, [])
         if infra: info += "\ninfrastructure:"
         for i, item in enumerate(infra):
             it = f"{item['type']} ({item['own']})"
-            it += f" --> {100 * round(item['build'], 1)}%"
+            it += f" --> {100 * round(item['state'], 1)}%"
             info += f"\n {i}. {it}"
         units = self.main_window.saver.units.get(hex_xy, [])
         if units: info += "\nunits:"
         for i, item in enumerate(units):
-            if item['type'] == "infantry": t = "inf"
+            if item['type'] == "motorized": t = "motor"
+            elif item['type'] == "mechanized": t = "mech"
+            elif item['type'] == "supplying": t = "supp"
             else: t = item['type']
-            it = f"{t}{item['size']} ({item['own']})"
-            it += f" --> {100 * round(item['state'], 1)}%"
-            it += f" / {100 * round(item['stock'][0], 1)}%"
-            it += f" {100 * round(item['stock'][1], 1)}%"
+            it = f"{t}-{item['size']} ({item['own']})"
+            it += f" --> {100 * round(item['state'], 1)}"
+            it += f" / {100 * round(item['stock'][0], 1)}"
+            it += f" / {100 * round(item['stock'][1], 1)}%"
             info += f"\n {i}. {it}"            
         self.info.set_text(info)
 
@@ -169,6 +177,7 @@ class HexControl(Gtk.Window):
             if units is not None:
                 unit = units[index]
                 info = f"unit ({index}) from {len(units)}"
+                info += f"\nhex: {hex_xy}"
                 info += f"\nowner: {unit['own']}"
                 info += f"\ntype: {unit['type']}"
                 info += f"\nsize: {unit['size']}"
@@ -176,8 +185,14 @@ class HexControl(Gtk.Window):
                 info += f"\nstock 1: {round(100*unit['stock'][0], 2)}%"
                 info += f"\nstock 2: {round(100*unit['stock'][1], 2)}%"
                 info += f"\norder: {unit['order']}"
+                if "source" in unit:
+                    source = " > ".join(map(str, unit['source']))
+                    info += f"\nsource: {source}"
                 if "target" in unit:
-                    info += f"\ntarget: {unit['target']}"
+                    if isinstance(unit['target'], list):
+                        target = " > ".join(map(str, unit['target']))
+                    else: target = str(unit['target'])
+                    info += f"\ntarget: {target}"
             else:  info = "No units to select..."
         else: info = "No selected unit..."
         self.info.set_text(info)
@@ -190,9 +205,10 @@ class HexControl(Gtk.Window):
             if buildings is not None:
                 infra = buildings[index]
                 info = f"building ({index}) from {len(buildings)}"
+                info += f"\nhex: {hex_xy}"
                 info += f"\nowner: {infra['own']}"
                 info += f"\ntype: {infra['type']}"
-                info += f"\nbuild: {round(100*infra['build'], 1)}%"
+                info += f"\nstate: {round(100*infra['state'], 1)}%"
         else: info = "No selected infra..."
         self.info.set_text(info)
 
@@ -201,6 +217,10 @@ class HexControl(Gtk.Window):
         setstr = "settings:\n" + "-" * 40 + "\n"
         for p, v in self.main_window.saver.settings.items():
             setstr += f"{p}: {v}\n"
+        setstr += "-" * 40 + "\n"
+        for i, data in self.main_window.saver.isystem.items():
+            for k, v in data.items():                
+                setstr += f"{i}.{k}: {v}\n"
         setstr += "-" * 40 + "\n"
         for u, data in self.main_window.saver.xsystem.items():
             for k, vs in data.items():
