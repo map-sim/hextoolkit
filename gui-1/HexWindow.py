@@ -194,6 +194,9 @@ class HexWindow(NaviWindow):
         elif key_name == "t":
             print("##> show terr list")
             self.control_panel.terrains_view()
+        elif key_name == "x":
+            print("##> show settings")
+            self.control_panel.settings_view()
         elif key_name == "c":
             print("##> show control")
             owner = self.control_panel.control_view()

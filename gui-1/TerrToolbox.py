@@ -42,7 +42,6 @@ class TerrPainter(AbstractPainter):
                 self.design_hex(context, color, (xc, yc))
         context.stroke()        
 
-
 class TerrGraph:
     def __init__(self, saver):
         self.saver = saver

@@ -15,14 +15,51 @@ settings_0 = {
     'display_length': 14
 }
 
+xsystem_0 = {
+    "supplying": {
+        "stock": None,
+        "shot-range": 0,
+        "efficiency": {
+            "move": 1.5,
+            "supply": 1.0,
+            "defence": 0.33
+        },
+        "usage": {
+            "move": (0.5, 0.0),
+            "supply": (1.0, 0.0),
+            "defence": (0.75, 0.0)
+        }
+    },
+    "motorized": {
+        "stock": "mech",
+        "shot-range": 2,
+        "efficiency": {
+            "move": 1.0,
+            "defence": 1.1,
+            "storm": 0.5,
+            "shot": 0.3
+        },
+        "usage": {
+            "move": (0.66, 0.0),
+            "defence": (0.75, 0.5),
+            "storm": (1.25, 1.1),
+            "shot": (0.25, 0.5)
+        }
+    }    
+}
+
 ###
 ### landform
 ###
 
 landform_0 = [
     ('base', 'water-0'),
+    ('vex', 'steppe-0', (-3, 2)),
+    ('vex', 'steppe-0', (-4, 1)),
+    ('vex', 'steppe-0', (-2, 2)),
+    ('vex', 'steppe-0', (-3, 0)),
+    ('vex', 'steppe-0', (-3, 1)),
     ('vex', 'desert-0', (-3, -1)),
-    ('vex', 'desert-0', (-2, 0)),
     ('vex', 'desert-0', (-2, -1)),
     ('vex', 'desert-0', (-1, -1)),
     ('vex', 'steppe-0', (-1, -2)),
@@ -35,7 +72,6 @@ landform_0 = [
     ('vex', 'desert-0', (1, 3)),
     ('vex', 'desert-0', (1, 2)),
     ('vex', 'desert-0', (-1, 3)),
-    ('vex', 'desert-0', (-1, 2)),
     ('vex', 'desert-0', (0, 1)),
     ('vex', 'desert-0', (0, 4)),
     ('vex', 'steppe-0', (1, 1)),
@@ -52,6 +88,10 @@ landform_0 = [
     ('vex', 'shallows-0', (2, 5)),
     ('vex', 'shallows-0', (3, 5)),
     ('vex', 'shallows-0', (4, 4)),
+    ('vex', 'shallows-0', (-3, 3)),
+    ('vex', 'shallows-0', (-2, 3)),
+    ('vex', 'mountains-0', (-2, 0)),
+    ('vex', 'mountains-0', (-1, 2)),
     ('vex', 'mountains-0', (-1, 1)),
     ('vex', 'mountains-0', (0, 2)),
     ('grid', (0.8, 0.8, 0.8), 0.16),
@@ -105,20 +145,23 @@ stats_0 = {
 
 units_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
-        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
-        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
-        {"own": "Aaa", "type": "infantry", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (0, 2): [
-        {"own": "Aaa", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (2, 2): [
-        {"own": "Bbb", "type": "infantry", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (2, 3)},
-        {"own": "Bbb", "type": "infantry", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (2, 3)},
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
     ],
     (1, 1): [
-        {"own": "Bbb", "type": "infantry", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 1)]}
+        {"own": "Bbb", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+    ],
+    (-1, 0): [
+        {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.5, 0.0), "order": "supply", "source": [(-3, 2), (-3, 1), (-2, 1)], "target": [(0, 0), (0, 1)]}
     ]
 }
 
@@ -130,8 +173,8 @@ units_0 = {
 # fort: stock, state(in, out, io)
 # link: stock, state(in, out, io)
 # --------------- slot limit:
-# unit: index
-# supply: what
+# unit: stock, index
+# supply: stock, what
 # seahub: stock
 # airhub: stock
 # plant: stock
@@ -172,7 +215,7 @@ markers_0 = [
     ("a1", "Aaa", (3, 8), (8, 8)),
     ("l1", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
     ("a2", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11), (10, 14)),
-    ("vex", None, (-1, -1))
+    ("vex", None, (-3, 5))
 ]
 
 ###
@@ -190,7 +233,7 @@ terrains_0 = {
     },
     'desert-0': {
         'desc': 'desert',
-        'color': [0.95, 0.95, 0.95],
+        'color': [0.95, 0.95, 0.94],
         'navigable': False,
         'buildable': True,        
         'mobile': 1.0,
@@ -214,7 +257,7 @@ terrains_0 = {
     },
     'mountains-0': {
         'desc': 'mountains',
-        'color': [0.8, 0.8, 0.8],
+        'color': [0.88, 0.85, 0.85],
         'navigable': False,
         'buildable': True,        
         'mobile': 0.1,

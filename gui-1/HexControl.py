@@ -57,12 +57,12 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
+        self.make_button(vbox, "Settings (x)", "x")
         for group in main_window.saver.stats.keys():
             self.button_mapping[f"Plot {group} (p)"] = "p"
         plabel = self.plotter.get_next_label()
         plot_but = self.make_button(vbox, plabel, "p")
         
-        self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Save (s)", "s")
         self.make_button(vbox, "Terr-List (r)", "t")
         self.make_button(vbox, "Control (c)", "c")
@@ -73,6 +73,7 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
+        self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Un-Select (q)", "q")
         self.make_button(vbox, "S/H Markers (m)", "m")
         self.make_button(vbox, "Area Control (a)", "a")
@@ -195,6 +196,23 @@ class HexControl(Gtk.Window):
         else: info = "No selected infra..."
         self.info.set_text(info)
 
+    def settings_view(self):
+        self.__display_offset = 0
+        setstr = "settings:\n" + "-" * 40 + "\n"
+        for p, v in self.main_window.saver.settings.items():
+            setstr += f"{p}: {v}\n"
+        setstr += "-" * 40 + "\n"
+        for u, data in self.main_window.saver.xsystem.items():
+            for k, vs in data.items():
+                if vs is None: vs = "-"
+                if not isinstance(vs, (int, float, str)):
+                    for p, v in vs.items():
+                        setstr += f"{u}.{k}.{p}: {v}\n"
+                else: setstr += f"{u}.{k}: {vs}\n"
+        self.display_content = setstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+        
     def terrains_view(self):
         self.__display_offset = 0
         terrstr = "terr-list:\n" + "-" * 40 + "\n"

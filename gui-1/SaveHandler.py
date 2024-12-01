@@ -13,6 +13,7 @@ class SaveHandler:
         self.terrains = {}
         self.landform = []
         self.markers = []
+        self.xsystem = {}
 
     def load_demo_0(self):
         self.settings = demo.settings_0
@@ -20,6 +21,7 @@ class SaveHandler:
         self.controls = demo.controls_0
         self.landform = demo.landform_0
         self.markers = demo.markers_0
+        self.xsystem = demo.xsystem_0
         self.stats = demo.stats_0
         self.infra = demo.infra_0
         self.units = demo.units_0
@@ -43,6 +45,7 @@ class SaveHandler:
         inner("controls.json", self.controls)
         inner("landform.json", self.landform)
         inner("markers.json", self.markers)
+        inner("xsystem.json", self.xsystem)
         inner("stats.json", self.stats)
         inner2("infra.json", self.infra)
         inner2("units.json", self.units)
@@ -62,6 +65,7 @@ class SaveHandler:
         self.controls = inner("controls.json")
         self.landform = inner("landform.json")
         self.markers = inner("markers.json")
+        self.xsystem = inner("xsystem.json")
         self.stats = inner("stats.json")
         self.infra = inner2("infra.json")
         self.units = inner2("units.json")
@@ -96,6 +100,11 @@ class SaveHandler:
             for unit in units:
                 if unit["order"] != "move": continue                        
                 marker = ["a1", unit["own"], vex, *unit["target"]]
+                self.markers.append(marker)
+        for vex, units in self.units.items():
+            for unit in units:
+                if unit["order"] != "supply": continue                        
+                marker = ["a1", unit["own"], *unit["source"], vex, *unit["target"]]
                 self.markers.append(marker)
         for vex, units in self.units.items():
             for unit in units:
