@@ -60,6 +60,7 @@ isystem_0 = {
 
 xsystem_0 = {
     "supplying": {
+        "char": "S",
         "cost": 20.5,
         "stock": None,
         "shot-range": 0,
@@ -75,6 +76,7 @@ xsystem_0 = {
         }
     },
     "motorized": {
+        "char": "K",
         "cost": 32.0,
         "stock": "mech",
         "shot-range": 2,
@@ -92,6 +94,7 @@ xsystem_0 = {
         }
     },
     "mechanized": {
+        "char": "M",
         "cost": 72.0,
         "stock": "mech",
         "shot-range": 5,
@@ -211,19 +214,22 @@ stats_0 = {
 
 units_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
-        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (2, 2, 0)},
+        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (0, 2)},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (1, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": 3},
         {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
-    (0, 2): [
+    (2, 2): [
         {"own": "Aaa", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
-    (2, 2): [
-        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (2, 3)},
+    (-1, 2): [
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+    ],
+    (-2, 2): [
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (-1, 2)},
         {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
     ],
-    (1, 1): [
+    (0, 1): [
         {"own": "Bbb", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
     ],
     (-1, 0): [
@@ -260,6 +266,10 @@ infra_0 = {
         {"type": "unit", "own": "Aaa", "state": 0.5},
         {"type": "link", "own": "Aaa", "state": 0.5},
         {"type": "plant", "own": "Aaa", "state": 0.5}
+    ],
+    (-2, 2): [
+        {"type": "link", "own": "Aaa", "state": 0.5},
+        {"type": "unit", "own": "Aaa", "state": 0.5}
     ],
     (1, 2): [
         {"type": "plant", "own": "Bbb", "state": 1.0}

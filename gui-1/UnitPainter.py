@@ -9,19 +9,24 @@ class UnitPainter(AbstractPainter):
             self.draw_unit_label(context, vex, symbol, size)
             
     def estimate_unit(self, units):
-        size = 0
+        size = 0; letters = []
         for unit in units:
             size += unit["size"]
-        return units[0]["own"], "K", size
+            letter = self.saver.xsystem[unit["type"]]["char"]
+            letters.extend(unit["size"] * [letter])
+        if len(set(letters)) == 1:
+            letter = letters[0]
+        else: letter = "X"
+        return units[0]["own"], letter, size
 
     def draw_unit_label(self, context, vex, symbol, size):
         r = self.saver.settings.get("hex-radius", 1.0)
         zoom = self.saver.settings["window-zoom"]
         loc = AbstractPainter.vex_to_loc(vex, r)                
         xo, yo = self.translate_xy(*loc)
-        if size < 10: context.move_to(xo-0.5*zoom, yo+0.35*zoom)
-        else: context.move_to(xo-0.75*zoom, yo+0.35*zoom)
-        context.set_font_size(0.78*zoom)
+        if size < 10: context.move_to(xo-0.45*zoom, yo+0.35*zoom)
+        else: context.move_to(xo-0.7*zoom, yo+0.35*zoom)
+        context.set_font_size(0.66*zoom)
         context.set_source_rgba(0, 0, 0)
         context.show_text(f"{symbol}{size}")
         context.fill()

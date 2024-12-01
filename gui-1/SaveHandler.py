@@ -96,7 +96,7 @@ class SaveHandler:
         self.unselect_all_vexes()
         self.markers.append(("vex", None, vex))
         
-    def orders_to_markers(self):
+    def orders_to_markers(self, seleced_vex=None):
         to_remove = []
         for m, marker in enumerate(self.markers):
             if marker[0] in ["a1", "l1", "a2"]:
@@ -105,24 +105,32 @@ class SaveHandler:
             del self.markers[m]
     
         for vex, units in self.units.items():
+            if seleced_vex is not None:
+                if seleced_vex != vex: continue
             for unit in units:
                 if unit["order"] != "move": continue                        
                 marker = ["a1", unit["own"], vex, *unit["target"]]
                 self.markers.append(marker)
         for vex, units in self.units.items():
+            if seleced_vex is not None:
+                if seleced_vex != vex: continue
             for unit in units:
                 if unit["order"] != "supply": continue                        
                 marker = ["a1", unit["own"], *unit["source"], vex, *unit["target"]]
                 self.markers.append(marker)
         for vex, units in self.units.items():
+            if seleced_vex is not None:
+                if seleced_vex != vex: continue
             for unit in units:
                 if unit["order"] != "storm": continue
                 if isinstance(unit["target"], tuple):
                     vex2 = tuple(unit["target"][:2])
                     marker = ["a1", unit["own"], vex, vex2]
                     self.markers.append(marker)
-                else: print(f"TODO: storm infra in {vex}")
+                else: print(f"TODO: storm infra in", unit["target"])
         for vex, units in self.units.items():
+            if seleced_vex is not None:
+                if seleced_vex != vex: continue
             for unit in units:
                 if unit["order"] != "shot": continue
                 if isinstance(unit["target"], tuple):
@@ -130,8 +138,8 @@ class SaveHandler:
                     marker = ["a2", unit["own"], vex, vex2]
                     self.markers.append(marker)
                     if len(unit["target"]) != 2:
-                        print(f"TODO: shot infra in {vex}")
-                else: print(f"TODO: shot infra in {vex}")
+                        print(f"TODO: shot infra in", unit["target"])
+                else: print(f"TODO: shot infra in", unit["target"])
     def area_control_markers(self, control=None):
         vex_to_own = {}
         for vex, units in self.units.items():

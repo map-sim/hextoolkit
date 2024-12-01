@@ -120,7 +120,7 @@ class HexWindow(NaviWindow):
             self.draw_content()
         elif key_name == "m":
             print("##> show / hide markers")
-            self.saver.orders_to_markers()
+            self.saver.orders_to_markers(self.selected_vex)
             state = not self.saver.settings["show-markers"]
             self.saver.settings["show-markers"] = state
             self.draw_content()
