@@ -52,31 +52,31 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Move Down", "Down")
         self.make_button(vbox, "Move --->", "Right")
         self.make_button(vbox, "Move <---", "Left")
+        self.make_button(vbox, "Exit (E)", "E")
         
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
         self.make_button(vbox, "Settings (x)", "x")
-        for group in main_window.saver.stats.keys():
-            self.button_mapping[f"Plot {group} (p)"] = "p"
-        plabel = self.plotter.get_next_label()
-        plot_but = self.make_button(vbox, plabel, "p")
-        
-        self.make_button(vbox, "Save (s)", "s")
         self.make_button(vbox, "Terr-List (r)", "t")
         self.make_button(vbox, "Control (c)", "c")
         self.make_button(vbox, "Unit (u)", "u")
         self.make_button(vbox, "Infra (i)", "i")
         self.make_button(vbox, "Area Control (a)", "a")
+        self.make_button(vbox, "Un-Select (q)", "q")
+        self.make_button(vbox, "S/H Markers (m)", "m")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
+        for group in main_window.saver.stats.keys():
+            self.button_mapping[f"Plot {group} (p)"] = "p"
+        plabel = self.plotter.get_next_label()
+        plot_but = self.make_button(vbox, plabel, "p")        
+        self.make_button(vbox, "Save (s)", "s")
         self.make_button(vbox, "Next turn (n)", "n")
-        self.make_button(vbox, "Un-Select (q)", "q")
-        self.make_button(vbox, "S/H Markers (m)", "m")
         self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Remove Hex (R)", "R")
         self.make_button(vbox, "Change Terrain (T)", "T")

@@ -116,6 +116,9 @@ class HexWindow(NaviWindow):
             self.set_title(f"main-window ({self.window_mode})")
             self.control_panel.set_title(f"control ({self.window_mode})")
             print("to", self.window_mode)
+        elif key_name == "E":
+            print("##> exit")
+            Gtk.main_quit()
         elif key_name == "q":
             print("##> unselect vexes & redraw")
             self.control_panel.info.set_text("")
