@@ -13,7 +13,7 @@ settings_0 = {
     'base-thickness': 0.08,
     'marker-color': (1.0, 1.0, 0.3),
     'show-markers': False,
-    'display-length': 14
+    'display-length': 16,
 }
 
 isystem_0 = {
@@ -59,59 +59,155 @@ isystem_0 = {
     }
 }
 
+
 xsystem_0 = {
     "supplying": {
         "char": "S",
         "cost": 20.5,
-        "stock": None,
+        "stock-form": "mech",
+        "stock-reserve": "mech",
         "shot-range": 0,
-        "efficiency": {
+        "order-effect": {
             "move": 1.5,
             "supply": 1.0,
-            "defence": 0.33
+            "devel": 0.1,
+            "defence": 0.33,
+            "storm": 0.1,
         },
-        "usage": {
+        "order-cost": {
+            "move": (0.5, 0.1),
+            "supply": (1.0, 0.2),
+            "devel": (1.0, 1.0),
+            "defence": (0.75, 0.5),
+            "storm": (0.75, 0.5),
+        }
+    },
+    "engineering": {
+        "char": "E",
+        "cost": 30.5,
+        "stock-form": "mech",
+        "stock-reserve": "devel",
+        "shot-range": 0,
+        "order-effect": {
+            "move": 0.5,
+            "supply": 0.1,
+            "devel": 1.0,
+            "defence": 0.2,
+            "storm": 0.1,
+        },
+        "order-cost": {
             "move": (0.5, 0.0),
             "supply": (1.0, 0.0),
-            "defence": (0.75, 0.0)
+            "devel": (1.0, 1.0),
+            "defence": (1.0, 0.0),
+            "storm": (1.5, 0.0),
+        }
+    },
+    "special": {
+        "char": "Q",
+        "cost": 50.5,
+        "stock-form": "special",
+        "stock-reserve": "special",
+        "shot-range": 6,
+        "order-effect": {
+            "move": 1.75,
+            "supply": 0.3,
+            "devel": 0.1,
+            "defence": 1.0,
+            "storm": 0.9,
+            "shot": 0.33
+        },
+        "order-cost": {
+            "move": (0.5, 0.0),
+            "supply": (1.0, 0.0),
+            "devel": (1.0, 0.5),
+            "defence": (1.0, 1.0),
+            "storm": (1.5, 1.0),
+            "shot": (0.2, 1.0)
         }
     },
     "motorized": {
         "char": "K",
-        "cost": 32.0,
-        "stock": "mech",
+        "cost": 28.5,
+        "stock-form": "mech",
+        "stock-reserve": "mech",
         "shot-range": 2,
-        "efficiency": {
+        "order-effect": {
             "move": 1.0,
-            "defence": 1.1,
+            "supply": 0.2,
+            "devel": 0.2,
+            "defence": 1.5,
             "storm": 0.5,
-            "shot": 0.3
+            "shot": 0.25
         },
-        "usage": {
-            "move": (0.66, 0.0),
-            "defence": (0.75, 0.5),
-            "storm": (1.25, 1.1),
+        "order-cost": {
+            "move": (0.66, 0.1),
+            "supply": (1.0, 0.2),
+            "devel": (0.66, 0.5),
+            "defence": (0.75, 0.66),
+            "storm": (1.0, 1.0),
             "shot": (0.25, 0.5)
         }
     },
     "mechanized": {
         "char": "M",
         "cost": 72.0,
-        "stock": "mech",
+        "stock-form": "heavy",
+        "stock-reserve": "heavy",
         "shot-range": 5,
         "efficiency": {
-            "move": 0.9,
-            "defence": 1.0,
+            "move": 0.8,
+            "supply": 0.1,
+            "defence": 1.25,
             "storm": 0.75,
             "shot": 0.5
         },
         "usage": {
-            "move": (0.72, 0.0),
-            "defence": (0.85, 0.6),
+            "move": (0.72, 0.1),
+            "supply": (1.2, 0.2),
+            "defence": (0.85, 0.66),
             "storm": (1.35, 1.5),
-            "shot": (0.35, 0.7)
+            "shot": (0.35, 0.7),
         }
-    }    
+    },
+    "armored": {
+        "char": "T",
+        "cost": 100.0,
+        "stock-form": "heavy",
+        "stock-reserve": "heavy",
+        "shot-range": 5,
+        "efficiency": {
+            "move": 0.4,
+            "defence": 1.2,
+            "storm": 1.25,
+            "shot": 0.5
+        },
+        "usage": {
+            "move": (1.2, 0.05),
+            "defence": (1.5, 0.88),
+            "storm": (2.25, 1.75),
+            "shot": (0.4, 0.8),
+        }
+    },
+    "artillery": {
+        "char": "A",
+        "cost": 80.0,
+        "stock-form": "heavy",
+        "stock-reserve": "heavy",
+        "shot-range": 16,
+        "efficiency": {
+            "move": 0.5,
+            "defence": 0.15,
+            "storm": 0.1,
+            "shot": 1.5,
+        },
+        "usage": {
+            "move": (0.8, 0.05),
+            "defence": (0.5, 0.88),
+            "storm": (0.75, 0.75),
+            "shot": (0.5, 1.2),
+        }
+    }
 }
 
 ###
@@ -233,8 +329,21 @@ units_0 = {
         {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (-1, 2)},
         {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
     ],
+    (-3, 0): [
+        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (-1, 2)},
+        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
+    ],
+    (-3, -1): [
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+    ],
     (0, 1): [
-        {"own": "Bbb", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+    ],
+    (-1, 1): [
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+    ],
+    (-3, 2): [
+        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
     ],
     (-1, 0): [
         {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.5, 0.0), "order": "supply", "source": [(-3, 2), (-3, 1), (-2, 1)], "target": [(0, 0), (0, 1)]}

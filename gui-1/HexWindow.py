@@ -31,7 +31,9 @@ class HexWindow(NaviWindow):
         self.saver = saver
         self.settings = saver.settings
         NextTurn(self.saver).init_stats()
-        self.selected_vex = tuple(saver.get_selected_vex())
+        vex = saver.get_selected_vex()
+        if vex is None: self.selected_vex = vex
+        else: self.selected_vex = tuple(vex)
         self.selected_infra = None
         self.selected_unit = None
         self.selected_own = None
@@ -118,6 +120,10 @@ class HexWindow(NaviWindow):
             print("to", self.window_mode)
         elif key_name == "E":
             print("##> exit")
+            b = self.settings_backup["current-turn"]
+            if self.settings["current-turn"] - b > 0:
+                dir_name = self.saver.save_on_drive()
+                print(f"save on drive in {dir_name}")
             Gtk.main_quit()
         elif key_name == "q":
             print("##> unselect vexes & redraw")
@@ -216,8 +222,10 @@ class HexWindow(NaviWindow):
             self.control_panel.forward_display()
         elif key_name == "comma":
             self.control_panel.backward_display()
-        elif key_name == "Home":
-            self.control_panel.home_display()
+        elif key_name == "Page_Up":
+            self.control_panel.up_display()
+        elif key_name == "Page_Down":
+            self.control_panel.down_display()
         elif key_name == "t":
             print("##> show terr list")
             self.control_panel.terrains_view()

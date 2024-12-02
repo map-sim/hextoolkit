@@ -88,9 +88,10 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "<<", "Home")
+        self.make_button(vbox, "<<", "Page_Up")
         self.make_button(vbox, "<", "comma")
         self.make_button(vbox, ">", "period")
+        self.make_button(vbox, ">>", "Page_Down")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
         
         vbox = Gtk.VBox(spacing=3)
@@ -115,16 +116,31 @@ class HexControl(Gtk.Window):
         if self.__display_offset + w < n: 
             self.__display_offset += 1
         display_data = self.get_display_data()
-        self.info.set_text(display_data)
-        
+        self.info.set_text(display_data)        
     def backward_display(self):
         if self.__display_offset > 0: 
             self.__display_offset -= 1
         display_data = self.get_display_data()
         self.info.set_text(display_data)
 
-    def home_display(self):
-        self.__display_offset = 0
+    def down_display(self):
+        w = self.main_window.saver.settings["display-length"]
+        n = self.display_content.count("\n")
+        if n <= w:
+            self.__display_offset = 0
+        elif self.__display_offset + w + w < n: 
+            self.__display_offset += w
+        else: self.__display_offset = n - w 
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)        
+    def up_display(self):
+        w = self.main_window.saver.settings["display-length"]
+        n = self.display_content.count("\n")
+        if n <= w:
+            self.__display_offset = 0
+        elif self.__display_offset > w:
+            self.__display_offset -= w
+        else: self.__display_offset = 0
         display_data = self.get_display_data()
         self.info.set_text(display_data)
 

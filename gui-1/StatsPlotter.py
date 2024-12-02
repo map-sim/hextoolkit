@@ -17,7 +17,7 @@ class StatsPlotter:
             print(n, key, nums)
             if n == 0: dline = f"'{self.datafile}' u 1:{n+2}"
             else: dline += f", '' u 1:{n+2}"
-            dline += f" w lp title '{key}'"
+            dline += f" w lines lw 2 title '{key}'"
             if length:
                 info = f"{label}.{key}: {len(nums)} =/= {length}"
                 assert len(nums) == length, info 
@@ -52,8 +52,8 @@ class StatsPlotter:
         script = f"""
         set terminal x11
         set grid
-        set key out horiz
-        set title '{label}'
+        set key out horiz font ',18' spacing 3 width 13
+        set title '{label}' font ',18'
         plot {dline}
         pause mouse keypress
         """

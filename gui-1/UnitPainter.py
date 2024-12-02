@@ -13,13 +13,15 @@ class UnitPainter(AbstractPainter):
         if own:
             fown = lambda unit: unit["own"] == own
             units = list(filter(fown, units))
-        size = 0; letters = []        
+        size = 0; letters = []; backend = True
         for unit in units:
             size += unit["size"]
             letter = self.saver.xsystem[unit["type"]]["char"]
             letters.extend(unit["size"] * [letter])
+            if letter != "S" and letter != "E": backend = False
         if len(set(letters)) == 0: return None, None, 0
         elif len(set(letters)) == 1: letter = letters[0]
+        elif backend: letter = "B"
         else: letter = "X"
         own = units[0]["own"]
         color = self.saver.controls[own]["unit-color"] 
@@ -30,8 +32,8 @@ class UnitPainter(AbstractPainter):
         zoom = self.saver.settings["window-zoom"]
         loc = AbstractPainter.vex_to_loc(vex, r)                
         xo, yo = self.translate_xy(*loc)
-        if size < 10: context.move_to(xo-0.45*zoom, yo+0.35*zoom)
-        else: context.move_to(xo-0.7*zoom, yo+0.35*zoom)
+        if size < 10: context.move_to(xo-0.45*zoom, yo+0.25*zoom)
+        else: context.move_to(xo-0.7*zoom, yo+0.25*zoom)
         context.set_font_size(0.66*zoom)
         context.set_source_rgba(0, 0, 0)
         context.show_text(f"{symbol}{size}")
