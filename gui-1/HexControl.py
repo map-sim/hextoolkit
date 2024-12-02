@@ -68,6 +68,7 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Control (c)", "c")
         self.make_button(vbox, "Unit (u)", "u")
         self.make_button(vbox, "Infra (i)", "i")
+        self.make_button(vbox, "Area Control (a)", "a")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
@@ -76,8 +77,8 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Next turn (n)", "n")
         self.make_button(vbox, "Un-Select (q)", "q")
         self.make_button(vbox, "S/H Markers (m)", "m")
-        self.make_button(vbox, "Area Control (a)", "a")
         self.make_button(vbox, "Mode (tab)", "Tab")
+        self.make_button(vbox, "Remove Hex (R)", "R")
         self.make_button(vbox, "Change Terrain (T)", "T")
         self.make_button(vbox, "Terrain Dilation (D)", "D")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)

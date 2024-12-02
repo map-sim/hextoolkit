@@ -136,6 +136,19 @@ class HexWindow(NaviWindow):
             self.unselect_all()
             self.saver.area_control_markers()
             self.draw_content()
+        elif key_name == "R":
+            print("##> remove hex control (try to)")
+            if self.window_mode == "edit" and self.selected_vex is not None:
+                self.saver.remove_markers(self.selected_vex)
+                if self.selected_vex in self.saver.units:
+                    del self.saver.units[self.selected_vex]
+                if self.selected_vex in self.saver.infra:
+                    del self.saver.infra[self.selected_vex]                    
+                self.draw_content()
+            elif self.window_mode != "edit":
+                print("No edit mode!")
+            elif self.selected_vex is None:
+                print("No selexted hex!")
         elif key_name == "T":
             print("##> change terrain (try to)")
             if self.window_mode == "edit" and self.selected_vex is not None:

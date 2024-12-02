@@ -78,7 +78,6 @@ class SaveHandler:
         valid.MapValidate(self)
 
     def remove_markers(self, vex, name=None):
-        # Not used...
         for n, marker in reversed(list(enumerate(self.markers))):
             if (marker[0] == name or name is None) and vex in marker:
                 del self.markers[n]
