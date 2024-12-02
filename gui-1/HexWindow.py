@@ -189,6 +189,20 @@ class HexWindow(NaviWindow):
                 print("No edit mode!")
             elif self.selected_vex is None:
                 print("No selexted hex!")
+        elif key_name == "O":
+            if self.window_mode == "edit" and self.selected_infra is not None:
+                print("todo...")
+                print(self.selected_vex)                
+                print(self.selected_infra)
+                infra = self.saver.infra[self.selected_vex][self.selected_infra]
+                n = list(sorted(self.saver.controls.keys())).index(infra["own"])
+                n = (n+1) % len(self.saver.controls)
+                infra["own"] = list(sorted(self.saver.controls.keys()))[n]
+                self.draw_content()
+            elif self.window_mode != "edit":
+                print("No edit mode!")
+            elif self.selected_infra is None:
+                print("No selexted infra!")
         elif key_name == "s":
             print("##> save on drive ... ", end="")
             dir_name = self.saver.save_on_drive()

@@ -81,6 +81,7 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Remove Hex (R)", "R")
         self.make_button(vbox, "Change Terrain (T)", "T")
         self.make_button(vbox, "Terrain Dilation (D)", "D")
+        self.make_button(vbox, "Toogle Infra Own (O)", "O")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
 
         vbox = Gtk.VBox(spacing=3)
