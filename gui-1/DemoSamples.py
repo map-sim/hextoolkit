@@ -239,6 +239,19 @@ landform_0 = [
     ('vex', 'steppe-0', (1, 1)),
     ('vex', 'steppe-0', (2, 2)),
     ('vex', 'steppe-0', (2, 3)),
+    ('vex', 'steppe-0', (1, -1)),
+    ('vex', 'steppe-0', (1, -2)),
+    ('vex', 'steppe-0', (2, -1)),
+    ('vex', 'steppe-0', (2, -2)),
+    ('vex', 'steppe-0', (3, 0)),
+    ('vex', 'steppe-0', (3, 1)),
+    ('vex', 'steppe-0', (4, 2)),
+    ('vex', 'steppe-0', (4, 3)),
+    ('vex', 'steppe-0', (5, 2)),
+    ('vex', 'steppe-0', (4, 1)),
+    ('vex', 'steppe-0', (4, 0)),
+    ('vex', 'steppe-0', (3, -1)),
+    ('vex', 'steppe-0', (3, -2)),
     ('vex', 'shallows-0', (3, 3)),
     ('vex', 'shallows-0', (3, 2)),
     ('vex', 'shallows-0', (1, 4)),
@@ -386,6 +399,10 @@ infra_0 = {
     ],
     (1, 2): [
         {"type": "plant", "own": "Bbb", "state": 1.0}
+    ],
+    (2, 1): [
+        {"type": "link", "own": "Aaa", "state": 1.0},
+        {"type": "link", "own": "Aaa", "state": 1.0}
     ],
     (-3, 2): [
         {"type": "seahub", "own": "Bbb", "state": 1.0}
