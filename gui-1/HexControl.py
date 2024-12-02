@@ -5,7 +5,7 @@ from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
 
-from HexPlotter import HexPlotter
+from StatsPlotter import StatsPlotter
 
 class HexControl(Gtk.Window):
     def on_press(self, widget, event):
@@ -34,7 +34,7 @@ class HexControl(Gtk.Window):
         mode = self.main_window.window_mode
         self.set_title(f"control ({mode})")
         
-        self.plotter = HexPlotter(main_window.saver)
+        self.plotter = StatsPlotter(main_window.saver)
         self.__control_counter = 0
         self.__display_offset = 0
         
@@ -73,11 +73,11 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "Mode (tab)", "Tab")
+        self.make_button(vbox, "Next turn (n)", "n")
         self.make_button(vbox, "Un-Select (q)", "q")
         self.make_button(vbox, "S/H Markers (m)", "m")
         self.make_button(vbox, "Area Control (a)", "a")
-        self.make_button(vbox, "Del Markers (d)", "d")
+        self.make_button(vbox, "Mode (tab)", "Tab")
         self.make_button(vbox, "Change Terrain (T)", "T")
         self.make_button(vbox, "Terrain Dilation (D)", "D")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
@@ -108,7 +108,7 @@ class HexControl(Gtk.Window):
         self.show_all()
 
     def forward_display(self):
-        w = self.main_window.saver.settings["display_length"]
+        w = self.main_window.saver.settings["display-length"]
         n = self.display_content.count("\n")
         if self.__display_offset + w < n: 
             self.__display_offset += 1
@@ -127,7 +127,7 @@ class HexControl(Gtk.Window):
         self.info.set_text(display_data)
 
     def get_display_data(self):
-        w = self.main_window.saver.settings["display_length"]
+        w = self.main_window.saver.settings["display-length"]
         lines = self.display_content.split("\n")
         o = self.__display_offset
         e = self.__display_offset + w
@@ -251,10 +251,6 @@ class HexControl(Gtk.Window):
         self.__display_offset = 0
         keys = list(self.main_window.saver.controls.keys())
         name = keys[self.__control_counter]
-        self.__control_counter += 1
-        n = len(self.main_window.saver.controls)
-        if self.__control_counter >= n:
-            self.__control_counter = 0
 
         cc = self.main_window.saver.controls[name]
         bcolor = ", ".join(map(str, cc["base-color"]))
@@ -267,9 +263,24 @@ class HexControl(Gtk.Window):
         cstr = f"{cstr}\nb-color: {bcolor}"
         cstr = f"{cstr}\nm-color: {mcolor}"
         cstr = f"{cstr}\nu-color: {ucolor}"
+        cstr = f"{cstr}\n{'-' * 40}"
+        u = 0; i = 0; s = 0
+        for units in self.main_window.saver.units.values():
+            for unit in units:
+                if unit["own"] == name: u += 1; s += unit["size"]
+        cstr = f"{cstr}\nunits: {u}\narmy: {s}"
+        for infra in self.main_window.saver.infra.values():
+            for build in infra:
+                if build["own"] == name: i += 1
+        cstr = f"{cstr}\ninfra: {i}"
         self.display_content = cstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
+
+        self.__control_counter += 1
+        n = len(self.main_window.saver.controls)
+        if self.__control_counter >= n:
+            self.__control_counter = 0
         return name
 
     def welcome_view(self):

@@ -3,16 +3,17 @@
 ###
 
 settings_0 = {
+    'current-turn': 0,
     'window-title': 'main-window',
-    'window-size': (1220, 1020),
-    'window-offset': (840, 125),
+    'window-size': (1100, 1000),
+    'window-offset': (740, 225),
     'window-zoom': 15.0,
     'move-sensitive': 50,
     'hex-radius': 2.2,
     'base-thickness': 0.08,
     'marker-color': (1.0, 1.0, 0.3),
     'show-markers': False,
-    'display_length': 14
+    'display-length': 14
 }
 
 isystem_0 = {
@@ -187,21 +188,21 @@ controls_0 = {
 }
 
 stats_0 = {
-    "group-0": {
-        "qwerty": [1.4, 2.1, 9.2, 8.8, 0.4, 0.8],
-        "abc": [2.2, 3.1, 12.2, 13.2, 1.2, 3.2]
-    },
-    "group-1": {
-        "Aaa": [0.0, 1.4, 2.1, 9.2, 8.8],
-        "Bbb": [0.0, 2.2, 3.1, 12.2, 13.2]
-    }
+    # "group-0": {
+    #     "qwerty": [1.4, 2.1, 9.2, 8.8, 0.4, 0.8],
+    #     "abc": [2.2, 3.1, 12.2, 13.2, 1.2, 3.2]
+    # },
+    # "group-1": {
+    #     "Aaa": [0.0, 1.4, 2.1, 9.2, 8.8],
+    #     "Bbb": [0.0, 2.2, 3.1, 12.2, 13.2]
+    # }
 }
 
 ###
 ### stock
 ###
 
-# basic, devel, infantry
+# basic, devel, mech, heavy, aviation, seatech
 
 ###
 ### units
@@ -209,6 +210,7 @@ stats_0 = {
 
 # orders: defense
 #         move (target: hex)
+#         supply (source: hex, target: hex)
 #         storm (target: hex | index)
 #         shot (target: hex | index | hex + index)
 
@@ -220,9 +222,11 @@ units_0 = {
         {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (2, 2): [
-        {"own": "Aaa", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.6, 0.0), "order": "defence"},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (-1, 2): [
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"},
         {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (-2, 2): [

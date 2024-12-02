@@ -12,6 +12,7 @@ from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
+from NextTurn import NextTurn
 
 from ObjPainter import ObjPainter
 from UnitPainter import UnitPainter
@@ -28,10 +29,12 @@ class HexWindow(NaviWindow):
         self.settings_backup = copy.deepcopy(saver.settings)
 
         self.saver = saver
-        self.settings = saver.settings        
+        self.settings = saver.settings
+        NextTurn(self.saver).init_stats()
         self.selected_vex = tuple(saver.get_selected_vex())
         self.selected_infra = None
         self.selected_unit = None
+        self.selected_own = None
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -43,7 +46,7 @@ class HexWindow(NaviWindow):
     def draw_content(self, context):
         self.terr_painter.draw(context)
         self.infra_painter.draw(context)
-        self.unit_painter.draw(context)
+        self.unit_painter.draw(context, self.selected_own)
         self.obj_painter.draw(context)
         context.stroke()
 
@@ -68,11 +71,9 @@ class HexWindow(NaviWindow):
             print(f"hex-location: {hex_index_xy}")
             print(f"hex-terrain: {hex_terr}")
             ## hex selection
+            self.unselect_all()
             self.selected_vex = tuple(hex_index_xy)
-            self.selected_infra = None
-            self.selected_unit = None
-
-            self.saver.select_only_one_vex(hex_index_xy)
+            self.saver.mark_only_one_vex(hex_index_xy)
             self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
             self.draw_content()                
         return True
@@ -98,6 +99,12 @@ class HexWindow(NaviWindow):
             self.terr_graph.vex_dict[vex] = terr
         self.reset_vex(vex)
 
+    def unselect_all(self):
+        self.selected_own = None
+        self.selected_infra = None
+        self.selected_unit = None
+        self.selected_vex = None
+        
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
@@ -113,24 +120,20 @@ class HexWindow(NaviWindow):
             print("##> unselect vexes & redraw")
             self.control_panel.info.set_text("")
             self.saver.settings["show-markers"] = False
-            self.saver.unselect_all()
-            self.selected_infra = None
-            self.selected_unit = None
-            self.selected_vex = None
+            self.saver.unmark_all()
+            self.unselect_all()
             self.draw_content()
         elif key_name == "m":
             print("##> show / hide markers")
-            self.saver.orders_to_markers(self.selected_vex)
+            self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             state = not self.saver.settings["show-markers"]
             self.saver.settings["show-markers"] = state
             self.draw_content()
         elif key_name == "a":
             print("##> area control markers")
-            self.saver.unselect_all_vexes()
+            self.saver.unmark_all_vexes()
             self.control_panel.info.set_text("")
-            self.selected_infra = None
-            self.selected_unit = None
-            self.selected_vex = None
+            self.unselect_all()
             self.saver.area_control_markers()
             self.draw_content()
         elif key_name == "T":
@@ -173,15 +176,6 @@ class HexWindow(NaviWindow):
                 print("No edit mode!")
             elif self.selected_vex is None:
                 print("No selexted hex!")
-        elif key_name == "d":
-            print("##> delete links/vectors (try to)")
-            if self.window_mode == "edit":
-                if self.selected_vex is not None:
-                    self.saver.remove_markers(self.selected_vex, "a1")
-                    self.saver.remove_markers(self.selected_vex, "l1")
-                    self.saver.remove_markers(self.selected_vex, "a2")
-                    self.draw_content()
-            else: print("No edit mode!")
         elif key_name == "s":
             print("##> save on drive ... ", end="")
             dir_name = self.saver.save_on_drive()
@@ -203,16 +197,17 @@ class HexWindow(NaviWindow):
         elif key_name == "c":
             print("##> show control")
             owner = self.control_panel.control_view()
-            self.saver.unselect_all_vexes()
-            self.selected_infra = None
-            self.selected_unit = None
-            self.selected_vex = None
+            self.unselect_all()
+            self.selected_own = owner
+            self.saver.unmark_all_vexes()
             self.saver.area_control_markers(owner)
+            self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             self.draw_content()
         elif key_name == "p":
             print("##> show stat plot")
-            self.control_panel.plotter.plot()
-
+            if self.settings["current-turn"]:
+                self.control_panel.plotter.plot()
+            else: print("no data to plot")
         elif key_name == "u":
             print("##> show/select next unit")
             if self.selected_vex is None:
@@ -245,6 +240,10 @@ class HexWindow(NaviWindow):
                 self.selected_infra = i                
             else: self.selected_infra = 0
             self.control_panel.selected_infra_view()
+        elif key_name == "n":
+            print("##> next turn")
+            text = NextTurn(self.saver).execute()
+            self.control_panel.info.set_text(text)
         else: NaviWindow.on_press(self, widget, event)
         return True
 

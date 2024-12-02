@@ -78,6 +78,7 @@ class SaveHandler:
         valid.MapValidate(self)
 
     def remove_markers(self, vex, name=None):
+        # Not used...
         for n, marker in reversed(list(enumerate(self.markers))):
             if (marker[0] == name or name is None) and vex in marker:
                 del self.markers[n]
@@ -87,16 +88,23 @@ class SaveHandler:
             if marker[0] == "vex" and marker[1] is None:
                 return marker[2]
         return None
-    def unselect_all(self):
+    def unmark_all(self):
         self.markers = []
-    def unselect_all_vexes(self):
+    def unmark_all_vexes(self):
         for n, marker in reversed(list(enumerate(self.markers))):
             if marker[0] == "vex": del self.markers[n]        
-    def select_only_one_vex(self, vex):
-        self.unselect_all_vexes()
+    def mark_only_one_vex(self, vex):
+        self.unmark_all_vexes()
         self.markers.append(("vex", None, vex))
         
-    def orders_to_markers(self, seleced_vex=None):
+    def orders_to_markers(self, seleced_vex=None, seleced_own=None):
+        def inner(vex, own):
+            if seleced_vex is not None:
+                if seleced_vex != vex: return True
+            if seleced_own is not None:
+                if seleced_own != unit["own"]: return True
+            return False
+
         to_remove = []
         for m, marker in enumerate(self.markers):
             if marker[0] in ["a1", "l1", "a2"]:
@@ -105,23 +113,20 @@ class SaveHandler:
             del self.markers[m]
     
         for vex, units in self.units.items():
-            if seleced_vex is not None:
-                if seleced_vex != vex: continue
             for unit in units:
+                if inner(vex, unit["own"]): continue
                 if unit["order"] != "move": continue                        
                 marker = ["a1", unit["own"], vex, *unit["target"]]
                 self.markers.append(marker)
         for vex, units in self.units.items():
-            if seleced_vex is not None:
-                if seleced_vex != vex: continue
             for unit in units:
+                if inner(vex, unit["own"]): continue
                 if unit["order"] != "supply": continue                        
                 marker = ["a1", unit["own"], *unit["source"], vex, *unit["target"]]
                 self.markers.append(marker)
         for vex, units in self.units.items():
-            if seleced_vex is not None:
-                if seleced_vex != vex: continue
             for unit in units:
+                if inner(vex, unit["own"]): continue
                 if unit["order"] != "storm": continue
                 if isinstance(unit["target"], tuple):
                     vex2 = tuple(unit["target"][:2])
@@ -129,9 +134,8 @@ class SaveHandler:
                     self.markers.append(marker)
                 else: print(f"TODO: storm infra in", unit["target"])
         for vex, units in self.units.items():
-            if seleced_vex is not None:
-                if seleced_vex != vex: continue
             for unit in units:
+                if inner(vex, unit["own"]): continue
                 if unit["order"] != "shot": continue
                 if isinstance(unit["target"], tuple):
                     vex2 = tuple(unit["target"][:2])

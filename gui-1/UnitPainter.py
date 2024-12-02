@@ -2,22 +2,28 @@ from ObjPainter import AbstractPainter
 
 
 class UnitPainter(AbstractPainter):        
-    def draw(self, context):
+    def draw(self, context, own):
         for vex, units in self.saver.units.items():
-            own, symbol, size = self.estimate_unit(units)
-            self.draw_unit_envelop(context, vex, own)
+            color, symbol, size = self.estimate_unit(units, own)
+            if size == 0: continue
+            self.draw_unit_envelop(context, vex, color)
             self.draw_unit_label(context, vex, symbol, size)
             
-    def estimate_unit(self, units):
-        size = 0; letters = []
+    def estimate_unit(self, units, own=None):
+        if own:
+            fown = lambda unit: unit["own"] == own
+            units = list(filter(fown, units))
+        size = 0; letters = []        
         for unit in units:
             size += unit["size"]
             letter = self.saver.xsystem[unit["type"]]["char"]
             letters.extend(unit["size"] * [letter])
-        if len(set(letters)) == 1:
-            letter = letters[0]
+        if len(set(letters)) == 0: return None, None, 0
+        elif len(set(letters)) == 1: letter = letters[0]
         else: letter = "X"
-        return units[0]["own"], letter, size
+        own = units[0]["own"]
+        color = self.saver.controls[own]["unit-color"] 
+        return color, letter, size
 
     def draw_unit_label(self, context, vex, symbol, size):
         r = self.saver.settings.get("hex-radius", 1.0)
@@ -31,10 +37,9 @@ class UnitPainter(AbstractPainter):
         context.show_text(f"{symbol}{size}")
         context.fill()
 
-    def draw_unit_envelop(self, context, vex, own):
+    def draw_unit_envelop(self, context, vex, color):
         r = self.saver.settings.get("hex-radius", 1.0)
         zoom = self.saver.settings["window-zoom"]
-        color = self.saver.controls[own]["unit-color"]
         loc = AbstractPainter.vex_to_loc(vex, r)                
         xo, yo = self.translate_xy(*loc)
 

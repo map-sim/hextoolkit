@@ -4,7 +4,7 @@ from subprocess import PIPE
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
-class HexPlotter:
+class StatsPlotter:
     datafile = "data.txt"
     def __init__(self, saver):
         self.__next_plot_id = 0
@@ -14,10 +14,13 @@ class HexPlotter:
         length, keys = None, []
         data = self.saver.stats[label]
         for n, (key, nums) in enumerate(data.items()):
+            print(n, key, nums)
             if n == 0: dline = f"'{self.datafile}' u 1:{n+2}"
             else: dline += f", '' u 1:{n+2}"
-            dline += f" w lines title '{key}'"
-            if length: assert len(nums) == length
+            dline += f" w lp title '{key}'"
+            if length:
+                info = f"{label}.{key}: {len(nums)} =/= {length}"
+                assert len(nums) == length, info 
             else: length = len(nums)
             keys.append(key)
         with open(self.datafile, "w") as fd:
