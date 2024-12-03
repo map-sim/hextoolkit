@@ -247,6 +247,10 @@ class HexControl(Gtk.Window):
                     for p, v in vs.items():
                         setstr += f"{u}.{k}.{p}: {v}\n"
                 else: setstr += f"{u}.{k}: {vs}\n"
+        setstr += "-" * 40 + "\n"
+        for u, data in self.main_window.saver.xsystem.items():
+            for k, v in data.items():
+                setstr += f"{u}.{k}: {v}\n"                
         self.display_content = setstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)

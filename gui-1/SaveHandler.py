@@ -11,6 +11,7 @@ class SaveHandler:
         self.controls = {}
         self.settings = {}
         self.terrains = {}
+        self.xsystem = []
         self.landform = []
         self.markers = []
         self.units = {}
@@ -24,6 +25,7 @@ class SaveHandler:
         self.markers = demo.markers_0
         self.builds = demo.builds_0
         self.units = demo.units_0
+        self.xsystem = demo.xsystem_0
         self.landform = demo.landform_0
         self.military = demo.military_0
         self.infra = demo.infra_0
@@ -47,6 +49,7 @@ class SaveHandler:
         inner("terrains.json", self.terrains)
         inner("controls.json", self.controls)
         inner("landform.json", self.landform)
+        inner("xsystem.json", self.xsystem)
         inner("markers.json", self.markers)
         inner("units.json", self.units)
         inner("builds.json", self.builds)
@@ -69,6 +72,7 @@ class SaveHandler:
         self.terrains = inner("terrains.json")
         self.controls = inner("controls.json")
         self.landform = inner("landform.json")
+        self.xsystem = inner("xsystem.json")
         self.markers = inner("markers.json")
         self.builds = inner("builds.json")
         self.units = inner("units.json")
@@ -144,22 +148,31 @@ class SaveHandler:
                         print(f"TODO: shot infra in", unit["target"])
                 else: print(f"TODO: shot infra in", unit["target"])
     def area_control_markers(self, control=None):
-        vex_to_own = {}
+        vex_to_own = {}; counters = {k: set() for k in self.controls}
         for vex, units in self.military.items():
             for unit in units:
                 if control and control != unit["own"]: continue
-                if vex not in vex_to_own: vex_to_own[vex] = unit["own"]
+                counters[unit["own"]].add(vex)                    
+                if vex not in vex_to_own:
+                    vex_to_own[vex] = unit["own"]
                 elif vex_to_own[vex] == unit["own"]: pass
                 else: vex_to_own[vex] = None
         for vex, infra in self.infra.items():
             for build in infra:
                 if control and control != build["own"]: continue
-                if vex not in vex_to_own: vex_to_own[vex] = build["own"]
+                counters[build["own"]].add(vex)
+                if vex not in vex_to_own:
+                    vex_to_own[vex] = build["own"]
                 elif vex_to_own[vex] == build["own"]: pass
                 else: vex_to_own[vex] = None
         for vex, own in vex_to_own.items():
             self.markers.append(["vex", own, vex])
-    
+        output = "area control:\n"
+        for own in counters.keys():
+            cnt = len(counters[own])
+            output += f"{own} ... {cnt}\n"
+        return output
+
 if __name__ == "__main__":
     saver = Saver()
     saver.load_demo_0()

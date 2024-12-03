@@ -13,7 +13,11 @@ settings_0 = {
     'base-thickness': 0.08,
     'marker-color': (1.0, 1.0, 0.3),
     'show-markers': False,
-    'display-length': 16
+    'display-length': 16,
+    'devel-free-impact': 0.1,
+    'devel-unit-impact': 0.08,
+    'devel-stock': 'devel',
+    'basic-stock': 'basic',
 }
 
 builds_0 = {
@@ -62,7 +66,7 @@ builds_0 = {
 units_0 = {
     "supplying": {
         "char": "S",
-        "cost": 20.5,
+        "cost": 20.0,
         "speed": 1.5,
         "shot-range": 0,
         "stock-form": "mech",
@@ -77,85 +81,59 @@ units_0 = {
     },
     "engineering": {
         "char": "E",
-        "cost": 30.5,
-        "stock-form": "mech",
-        "stock-reserve": "devel",
+        "cost": 30.0,
+        "speed": 0.5,
         "shot-range": 0,
-        "order-effect": {
-            "move": 0.5,
-            "supply": 0.1,
-            "devel": 1.0,
-            "defence": 0.2,
-            "storm": 0.1,
-        },
-        "order-cost": {
+        "stock-form": "mech",
+        "stock-2nd": "devel",
+        "action-cost": {
             "move": (0.5, 0.0),
             "supply": (1.0, 0.0),
-            "devel": (1.0, 1.0),
             "defence": (1.0, 0.0),
             "storm": (1.5, 0.0),
+            "devel": (1.0, 1.0),
         }
     },
     "special": {
         "char": "Q",
-        "cost": 50.5,
-        "stock-form": "special",
-        "stock-reserve": "special",
+        "cost": 50.0,
+        "speed": 2.0,
         "shot-range": 6,
-        "order-effect": {
-            "move": 1.75,
-            "supply": 0.3,
-            "devel": 0.1,
-            "defence": 1.0,
-            "storm": 0.9,
-            "shot": 0.33
-        },
-        "order-cost": {
+        "stock-form": "special",
+        "stock-2nd": "special",
+        "action-cost": {
             "move": (0.5, 0.0),
             "supply": (1.0, 0.0),
-            "devel": (1.0, 0.5),
             "defence": (1.0, 1.0),
             "storm": (1.5, 1.0),
-            "shot": (0.2, 1.0)
+            "shot": (0.2, 1.0),
+            "devel": (1.0, 0.5),
         }
     },
     "motorized": {
         "char": "K",
-        "cost": 28.5,
+        "cost": 27.5,
+        "speed": 1.0,
+        "shot-range": 4,
         "stock-form": "mech",
-        "stock-reserve": "mech",
-        "shot-range": 2,
-        "order-effect": {
-            "move": 1.0,
-            "supply": 0.2,
-            "devel": 0.2,
-            "defence": 1.5,
-            "storm": 0.5,
-            "shot": 0.25
-        },
-        "order-cost": {
+        "stock-2nd": "mech",
+        "action-cost": {
             "move": (0.66, 0.1),
             "supply": (1.0, 0.2),
-            "devel": (0.66, 0.5),
             "defence": (0.75, 0.66),
             "storm": (1.0, 1.0),
-            "shot": (0.25, 0.5)
+            "shot": (0.25, 0.5),
+            "devel": (0.66, 0.5),
         }
     },
     "mechanized": {
         "char": "M",
         "cost": 72.0,
-        "stock-form": "heavy",
-        "stock-reserve": "heavy",
+        "speed": 0.9,
         "shot-range": 5,
-        "efficiency": {
-            "move": 0.8,
-            "supply": 0.1,
-            "defence": 1.25,
-            "storm": 0.75,
-            "shot": 0.5
-        },
-        "usage": {
+        "stock-form": "heavy",
+        "stock-2nd": "heavy",
+        "action-cost": {
             "move": (0.72, 0.1),
             "supply": (1.2, 0.2),
             "defence": (0.85, 0.66),
@@ -166,16 +144,11 @@ units_0 = {
     "armored": {
         "char": "T",
         "cost": 100.0,
-        "stock-form": "heavy",
-        "stock-reserve": "heavy",
+        "speed": 0.4,
         "shot-range": 5,
-        "efficiency": {
-            "move": 0.4,
-            "defence": 1.2,
-            "storm": 1.25,
-            "shot": 0.5
-        },
-        "usage": {
+        "stock-form": "heavy",
+        "stock-2nd": "heavy",
+        "action-cost": {
             "move": (1.2, 0.05),
             "defence": (1.5, 0.88),
             "storm": (2.25, 1.75),
@@ -185,16 +158,11 @@ units_0 = {
     "artillery": {
         "char": "A",
         "cost": 80.0,
+        "speed": 0.5,
+        "shot-range": 12,
         "stock-form": "heavy",
-        "stock-reserve": "heavy",
-        "shot-range": 16,
-        "efficiency": {
-            "move": 0.5,
-            "defence": 0.15,
-            "storm": 0.1,
-            "shot": 1.5,
-        },
-        "usage": {
+        "stock-2nd": "heavy",
+        "action-cost": {
             "move": (0.8, 0.05),
             "defence": (0.5, 0.88),
             "storm": (0.75, 0.75),
@@ -207,7 +175,12 @@ units_0 = {
 ### xsystem
 ###
 
-xsystem_0 = {}
+xsystem_0 = {
+    "artillery": {
+        "building": 1.5,
+        "artillery": 0.5,
+    }
+}
 
 ###
 ### landform

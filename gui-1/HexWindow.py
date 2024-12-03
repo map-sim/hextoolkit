@@ -141,9 +141,10 @@ class HexWindow(NaviWindow):
         elif key_name == "a":
             print("##> area control markers")
             self.saver.unmark_all_vexes()
-            self.control_panel.info.set_text("")
             self.unselect_all()
-            self.saver.area_control_markers()
+            out = self.saver.area_control_markers()
+            self.control_panel.info.set_text(out)
+            self.control_panel.display_content = out
             self.draw_content()
         elif key_name == "R":
             print("##> remove hex control (try to)")
