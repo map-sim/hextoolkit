@@ -4,7 +4,7 @@ class MapValidate:
         self.validate_landform()
         self.validate_markers()
         self.validate_infra()
-        self.validate_units()
+        self.validate_military()
         self.validate_stats()
         
     def validate_landform(self):
@@ -27,11 +27,11 @@ class MapValidate:
             counter += 1
         print(f"markers ({counter})... OK")
 
-    def validate_units(self):
+    def validate_military(self):
         counter = 0
-        for units in self.handler.units.values():
+        for units in self.handler.military.values():
             for unit in units:
-                assert unit["type"] in self.handler.xsystem, unit["type"]
+                assert unit["type"] in self.handler.units, unit["type"]
                 assert unit["own"] in self.handler.controls, unit["own"] 
                 counter += 1
         print(f"units ({counter})... OK")
@@ -40,7 +40,7 @@ class MapValidate:
         counter = 0
         for builds in self.handler.infra.values():
             for build in builds:
-                assert build["type"] in self.handler.isystem, build["type"]
+                assert build["type"] in self.handler.builds, build["type"]
                 assert build["own"] in self.handler.controls, build["own"] 
                 counter += 1
         print(f"infra ({counter})... OK")

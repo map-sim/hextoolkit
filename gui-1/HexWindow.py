@@ -83,8 +83,8 @@ class HexWindow(NaviWindow):
     def reset_vex(self, vex):
         if vex in self.saver.infra:
             del self.saver.infra[vex]
-        if vex in self.saver.units:
-            del self.saver.units[vex]
+        if vex in self.saver.military:
+            del self.saver.military[vex]
         self.saver.remove_markers(vex)
 
     def set_vex_terrain(self, vex, terr):
@@ -149,8 +149,8 @@ class HexWindow(NaviWindow):
             print("##> remove hex control (try to)")
             if self.window_mode == "edit" and self.selected_vex is not None:
                 self.saver.remove_markers(self.selected_vex)
-                if self.selected_vex in self.saver.units:
-                    del self.saver.units[self.selected_vex]
+                if self.selected_vex in self.saver.military:
+                    del self.saver.military[self.selected_vex]
                 if self.selected_vex in self.saver.infra:
                     del self.saver.infra[self.selected_vex]                    
                 self.draw_content()
@@ -252,7 +252,7 @@ class HexWindow(NaviWindow):
                 self.control_panel.info.set_text("no selection...")
                 print("no selection...")
                 return True
-            units = self.saver.units.get(self.selected_vex)
+            units = self.saver.military.get(self.selected_vex)
             if units is None:
                 self.control_panel.info.set_text("no units...")
                 print("no units...")

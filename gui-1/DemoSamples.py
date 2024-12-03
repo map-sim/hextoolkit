@@ -13,10 +13,10 @@ settings_0 = {
     'base-thickness': 0.08,
     'marker-color': (1.0, 1.0, 0.3),
     'show-markers': False,
-    'display-length': 16,
+    'display-length': 16
 }
 
-isystem_0 = {
+builds_0 = {
     "plant": {
         "cost": 100,
         "strength": 80,
@@ -59,27 +59,20 @@ isystem_0 = {
     }
 }
 
-
-xsystem_0 = {
+units_0 = {
     "supplying": {
         "char": "S",
         "cost": 20.5,
-        "stock-form": "mech",
-        "stock-reserve": "mech",
+        "speed": 1.5,
         "shot-range": 0,
-        "order-effect": {
-            "move": 1.5,
-            "supply": 1.0,
-            "devel": 0.1,
-            "defence": 0.33,
-            "storm": 0.1,
-        },
-        "order-cost": {
-            "move": (0.5, 0.1),
-            "supply": (1.0, 0.2),
-            "devel": (1.0, 1.0),
+        "stock-form": "mech",
+        "stock-2nd": "mech",
+        "action-cost": {
+            "move": (0.5, 0.01),
+            "supply": (1.0, 0.02),
             "defence": (0.75, 0.5),
             "storm": (0.75, 0.5),
+            "devel": (1.0, 1.0),
         }
     },
     "engineering": {
@@ -211,6 +204,12 @@ xsystem_0 = {
 }
 
 ###
+### xsystem
+###
+
+xsystem_0 = {}
+
+###
 ### landform
 ###
 
@@ -249,9 +248,10 @@ landform_0 = [
     ('vex', 'steppe-0', (4, 3)),
     ('vex', 'steppe-0', (5, 2)),
     ('vex', 'steppe-0', (4, 1)),
-    ('vex', 'steppe-0', (4, 0)),
     ('vex', 'steppe-0', (3, -1)),
     ('vex', 'steppe-0', (3, -2)),
+    ('vex', 'steppe-0', (4, -1)),
+    ('vex', 'steppe-0', (5, 0)),
     ('vex', 'shallows-0', (3, 3)),
     ('vex', 'shallows-0', (3, 2)),
     ('vex', 'shallows-0', (1, 4)),
@@ -269,10 +269,11 @@ landform_0 = [
     ('vex', 'shallows-0', (-3, -2)),
     ('vex', 'shallows-0', (-4, -1)),
     ('vex', 'shallows-0', (-4, 0)),
-    ('vex', 'mountains-0', (-2, 0)),
-    ('vex', 'mountains-0', (-1, 2)),
-    ('vex', 'mountains-0', (-1, 1)),
-    ('vex', 'mountains-0', (0, 2)),
+    ('vex', 'hills-0', (4, 0)),
+    ('vex', 'hills-0', (-2, 0)),
+    ('vex', 'hills-0', (-1, 2)),
+    ('vex', 'hills-0', (-1, 1)),
+    ('vex', 'hills-0', (0, 2)),
     ('grid', (0.9, 0.9, 0.9), 0.16),
     ('grid', (0.6, 0.6, 0.6), 0.08)
 ]
@@ -297,6 +298,7 @@ controls_0 = {
 }
 
 stats_0 = {
+    # example
     # "group-0": {
     #     "qwerty": [1.4, 2.1, 9.2, 8.8, 0.4, 0.8],
     #     "abc": [2.2, 3.1, 12.2, 13.2, 1.2, 3.2]
@@ -323,7 +325,7 @@ stats_0 = {
 #         storm (target: hex | index)
 #         shot (target: hex | index | hex + index)
 
-units_0 = {
+military_0 = {
     (2, 3): [
         {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (0, 2)},
         {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (1, 2, 0)},
@@ -404,6 +406,9 @@ infra_0 = {
         {"type": "link", "own": "Aaa", "state": 1.0},
         {"type": "link", "own": "Aaa", "state": 1.0}
     ],
+    (-1, 6): [
+        {"type": "link", "own": "Bbb", "state": 1.0}
+    ],
     (-3, 2): [
         {"type": "seahub", "own": "Bbb", "state": 1.0}
     ]
@@ -464,8 +469,8 @@ terrains_0 = {
         'mobile': 100.0,
         'slots': 0
     },
-    'mountains-0': {
-        'desc': 'mountains',
+    'hills-0': {
+        'desc': 'hills',
         'color': [0.88, 0.85, 0.85],
         'navigable': False,
         'buildable': True,        

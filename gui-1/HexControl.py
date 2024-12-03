@@ -172,7 +172,7 @@ class HexControl(Gtk.Window):
             it = f"{item['type']} ({item['own']})"
             it += f" --> {100 * round(item['state'], 1)}%"
             info += f"\n {i}. {it}"
-        units = self.main_window.saver.units.get(hex_xy, [])
+        units = self.main_window.saver.military.get(hex_xy, [])
         if units: info += "\nunits:"
         for i, item in enumerate(units):
             if item['type'] == "motorized": t = "motor"
@@ -191,7 +191,7 @@ class HexControl(Gtk.Window):
             info = "selected unit:"
             hex_xy = self.main_window.selected_vex
             index = self.main_window.selected_unit
-            units = self.main_window.saver.units.get(hex_xy)
+            units = self.main_window.saver.military.get(hex_xy)
             if units is not None:
                 unit = units[index]
                 info = f"unit ({index}) from {len(units)}"
@@ -236,11 +236,11 @@ class HexControl(Gtk.Window):
         for p, v in self.main_window.saver.settings.items():
             setstr += f"{p}: {v}\n"
         setstr += "-" * 40 + "\n"
-        for i, data in self.main_window.saver.isystem.items():
+        for i, data in self.main_window.saver.builds.items():
             for k, v in data.items():                
                 setstr += f"{i}.{k}: {v}\n"
         setstr += "-" * 40 + "\n"
-        for u, data in self.main_window.saver.xsystem.items():
+        for u, data in self.main_window.saver.units.items():
             for k, vs in data.items():
                 if vs is None: vs = "-"
                 if not isinstance(vs, (int, float, str)):
@@ -283,7 +283,7 @@ class HexControl(Gtk.Window):
         cstr = f"{cstr}\nu-color: {ucolor}"
         cstr = f"{cstr}\n{'-' * 40}"
         u = 0; i = 0; s = 0
-        for units in self.main_window.saver.units.values():
+        for units in self.main_window.saver.military.values():
             for unit in units:
                 if unit["own"] == name: u += 1; s += unit["size"]
         cstr = f"{cstr}\nunits: {u}\narmy: {s}"

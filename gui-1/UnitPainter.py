@@ -3,7 +3,7 @@ from ObjPainter import AbstractPainter
 
 class UnitPainter(AbstractPainter):        
     def draw(self, context, own):
-        for vex, units in self.saver.units.items():
+        for vex, units in self.saver.military.items():
             color, symbol, size = self.estimate_unit(units, own)
             if size == 0: continue
             self.draw_unit_envelop(context, vex, color)
@@ -16,7 +16,7 @@ class UnitPainter(AbstractPainter):
         size = 0; letters = []; backend = True
         for unit in units:
             size += unit["size"]
-            letter = self.saver.xsystem[unit["type"]]["char"]
+            letter = self.saver.units[unit["type"]]["char"]
             letters.extend(unit["size"] * [letter])
             if letter != "S" and letter != "E": backend = False
         if len(set(letters)) == 0: return None, None, 0

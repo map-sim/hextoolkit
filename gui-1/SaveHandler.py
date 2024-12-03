@@ -7,27 +7,27 @@ class SaveHandler:
     def __init__(self):
         self.stats = {}
         self.infra = {}
-        self.units = {}
+        self.military = {}
         self.controls = {}
         self.settings = {}
         self.terrains = {}
         self.landform = []
         self.markers = []
-        self.xsystem = {}
-        self.isystem = {}
+        self.units = {}
+        self.builds = {}
 
     def load_demo_0(self):
         print("load demo_0")
         self.settings = demo.settings_0
         self.terrains = demo.terrains_0
         self.controls = demo.controls_0
-        self.landform = demo.landform_0
         self.markers = demo.markers_0
-        self.xsystem = demo.xsystem_0
-        self.isystem = demo.isystem_0
-        self.stats = demo.stats_0
-        self.infra = demo.infra_0
+        self.builds = demo.builds_0
         self.units = demo.units_0
+        self.landform = demo.landform_0
+        self.military = demo.military_0
+        self.infra = demo.infra_0
+        self.stats = demo.stats_0
         valid.MapValidate(self)
         
     def save_on_drive(self, prefix="save."):
@@ -48,11 +48,11 @@ class SaveHandler:
         inner("controls.json", self.controls)
         inner("landform.json", self.landform)
         inner("markers.json", self.markers)
-        inner("xsystem.json", self.xsystem)
-        inner("isystem.json", self.isystem)
+        inner("units.json", self.units)
+        inner("builds.json", self.builds)
         inner("stats.json", self.stats)
         inner2("infra.json", self.infra)
-        inner2("units.json", self.units)
+        inner2("military.json", self.military)
         return dir_name
     def load_from_drive(self, save_name):
         print(f"load from drive {save_name}")
@@ -70,11 +70,11 @@ class SaveHandler:
         self.controls = inner("controls.json")
         self.landform = inner("landform.json")
         self.markers = inner("markers.json")
-        self.xsystem = inner("xsystem.json")
-        self.isystem = inner("isystem.json")
+        self.builds = inner("builds.json")
+        self.units = inner("units.json")
         self.stats = inner("stats.json")
         self.infra = inner2("infra.json")
-        self.units = inner2("units.json")
+        self.military = inner2("military.json")
         valid.MapValidate(self)
 
     def remove_markers(self, vex, name=None):
@@ -111,19 +111,19 @@ class SaveHandler:
         for m in reversed(to_remove):
             del self.markers[m]
     
-        for vex, units in self.units.items():
+        for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "move": continue                        
                 marker = ["a1", unit["own"], vex, *unit["target"]]
                 self.markers.append(marker)
-        for vex, units in self.units.items():
+        for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "supply": continue                        
                 marker = ["a1", unit["own"], *unit["source"], vex, *unit["target"]]
                 self.markers.append(marker)
-        for vex, units in self.units.items():
+        for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "storm": continue
@@ -132,7 +132,7 @@ class SaveHandler:
                     marker = ["a1", unit["own"], vex, vex2]
                     self.markers.append(marker)
                 else: print(f"TODO: storm infra in", unit["target"])
-        for vex, units in self.units.items():
+        for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "shot": continue
@@ -145,7 +145,7 @@ class SaveHandler:
                 else: print(f"TODO: shot infra in", unit["target"])
     def area_control_markers(self, control=None):
         vex_to_own = {}
-        for vex, units in self.units.items():
+        for vex, units in self.military.items():
             for unit in units:
                 if control and control != unit["own"]: continue
                 if vex not in vex_to_own: vex_to_own[vex] = unit["own"]

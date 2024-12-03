@@ -20,7 +20,7 @@ class NextTurn:
         for control in self.handler.controls:
             u = 0; i = 0; s = 0; aset=set()
             ua = 0; ia = 0; sa = 0
-            for vex, units in self.handler.units.items():
+            for vex, units in self.handler.military.items():
                 for unit in units:
                     if unit["own"] == control:
                         u += 1; s += unit["size"]; aset.add(vex)
