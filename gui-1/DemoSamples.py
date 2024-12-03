@@ -18,6 +18,8 @@ settings_0 = {
     'devel-unit-impact': 0.08,
     'devel-stock': 'devel',
     'basic-stock': 'basic',
+    'xsystem-build': "building",
+    'xsystem-rest': "another",
 }
 
 builds_0 = {
@@ -68,7 +70,8 @@ units_0 = {
         "char": "S",
         "cost": 20.0,
         "speed": 1.5,
-        "shot-range": 0,
+        "supply": 1.0,
+        "shot-range": 0.0,
         "stock-form": "mech",
         "stock-2nd": "mech",
         "action-cost": {
@@ -83,7 +86,8 @@ units_0 = {
         "char": "E",
         "cost": 30.0,
         "speed": 0.5,
-        "shot-range": 0,
+        "supply": 0.05,
+        "shot-range": 0.0,
         "stock-form": "mech",
         "stock-2nd": "devel",
         "action-cost": {
@@ -98,7 +102,8 @@ units_0 = {
         "char": "Q",
         "cost": 50.0,
         "speed": 2.0,
-        "shot-range": 6,
+        "supply": 0.03,
+        "shot-range": 6.0,
         "stock-form": "special",
         "stock-2nd": "special",
         "action-cost": {
@@ -114,7 +119,8 @@ units_0 = {
         "char": "K",
         "cost": 27.5,
         "speed": 1.0,
-        "shot-range": 4,
+        "supply": 0.2,
+        "shot-range": 4.0,
         "stock-form": "mech",
         "stock-2nd": "mech",
         "action-cost": {
@@ -130,7 +136,8 @@ units_0 = {
         "char": "M",
         "cost": 72.0,
         "speed": 0.9,
-        "shot-range": 5,
+        "supply": 0.1,
+        "shot-range": 5.0,
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -145,7 +152,8 @@ units_0 = {
         "char": "T",
         "cost": 100.0,
         "speed": 0.4,
-        "shot-range": 5,
+        "supply": 0.0,
+        "shot-range": 5.33,
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -159,7 +167,8 @@ units_0 = {
         "char": "A",
         "cost": 80.0,
         "speed": 0.5,
-        "shot-range": 12,
+        "supply": 0.0,
+        "shot-range": 12.0,
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -176,8 +185,29 @@ units_0 = {
 ###
 
 xsystem_0 = {
+    "supplying": {},
+    "engineering": {},
+    "special": {},
+    "motorized": {},
+    "mechanized": {},
+    "armored": {
+        "building": 1.5,
+        "supplying": 1.1,
+        "engineering": 0.99,
+        "motorized": 0.95,
+        "special": 0.9,
+        "mechanized": 0.75,
+        "armored": 0.6,
+        "artillery": 1.0,
+    },
     "artillery": {
         "building": 1.5,
+        "supplying": 1.0,
+        "engineering": 0.92,
+        "motorized": 0.9,
+        "special": 0.85,
+        "mechanized": 0.8,
+        "armored": 0.75,
         "artillery": 0.5,
     }
 }

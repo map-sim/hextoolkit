@@ -5,6 +5,7 @@ class MapValidate:
         self.validate_markers()
         self.validate_infra()
         self.validate_military()
+        self.validate_xsystem()
         self.validate_stats()
         
     def validate_landform(self):
@@ -35,6 +36,13 @@ class MapValidate:
                 assert unit["own"] in self.handler.controls, unit["own"] 
                 counter += 1
         print(f"units ({counter})... OK")
+
+    def validate_xsystem(self):
+        counter = 0
+        for unit_name in self.handler.units.keys():
+            assert unit_name in self.handler.xsystem, unit_name
+            counter += 1
+        print(f"xsystem ({counter})... OK")
 
     def validate_infra(self):
         counter = 0
