@@ -72,6 +72,8 @@ units_0 = {
         "speed": 1.5,
         "supply": 1.0,
         "shot-range": 0.0,
+        "max-size": 8,
+        "type": "light",
         "stock-form": "mech",
         "stock-2nd": "mech",
         "action-cost": {
@@ -88,6 +90,8 @@ units_0 = {
         "speed": 0.5,
         "supply": 0.05,
         "shot-range": 0.0,
+        "max-size": 2,
+        "type": "light",
         "stock-form": "mech",
         "stock-2nd": "devel",
         "action-cost": {
@@ -104,6 +108,8 @@ units_0 = {
         "speed": 2.0,
         "supply": 0.03,
         "shot-range": 6.0,
+        "max-size": 2,
+        "type": "light",
         "stock-form": "special",
         "stock-2nd": "special",
         "action-cost": {
@@ -121,6 +127,8 @@ units_0 = {
         "speed": 1.0,
         "supply": 0.2,
         "shot-range": 4.0,
+        "max-size": 8,
+        "type": "light",
         "stock-form": "mech",
         "stock-2nd": "mech",
         "action-cost": {
@@ -138,6 +146,8 @@ units_0 = {
         "speed": 0.9,
         "supply": 0.1,
         "shot-range": 5.0,
+        "max-size": 8,
+        "type": "heavy",
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -154,6 +164,8 @@ units_0 = {
         "speed": 0.4,
         "supply": 0.0,
         "shot-range": 5.33,
+        "max-size": 8,
+        "type": "heavy",
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -169,11 +181,33 @@ units_0 = {
         "speed": 0.5,
         "supply": 0.0,
         "shot-range": 12.0,
+        "max-size": 4,
+        "type": "heavy",
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
             "move": (0.8, 0.05),
             "defence": (0.5, 0.88),
+            "storm": (0.75, 0.75),
+            "shot": (0.5, 1.2),
+        }
+    },
+    "cutter": {
+        "char": "C",
+        "cost": 280.0,
+        "speed": 0.1,
+        "supply": 5.0,
+        "shot-range": 4.0,
+        "max-size": 1,
+        "type": "navigable",
+        "stock-form": "seatech",
+        "stock-2nd": "seatech",
+        "transport": ["light"],
+        "action-cost": {
+            "move": (0.8, 0.05),
+            "supply": (1.0, 0.02),
+            "defence": (0.5, 0.88),
+            "transport": (0.66, 0.2),
             "storm": (0.75, 0.75),
             "shot": (0.5, 1.2),
         }
@@ -199,6 +233,7 @@ xsystem_0 = {
         "mechanized": 0.75,
         "armored": 0.6,
         "artillery": 1.0,
+        "cutter": 0.75,
     },
     "artillery": {
         "building": 1.5,
@@ -209,7 +244,9 @@ xsystem_0 = {
         "mechanized": 0.8,
         "armored": 0.75,
         "artillery": 0.5,
-    }
+        "cutter": 1.0,
+    },
+    "cutter": {},
 }
 
 ###
@@ -365,6 +402,9 @@ military_0 = {
     ],
     (-1, 0): [
         {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.5, 0.0), "order": "supply", "source": [(-3, 2), (-3, 1), (-2, 1)], "target": [(0, 0), (0, 1)]}
+    ],
+    (-5, 3): [
+        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "stock": (0.5, 0.5), "order": "defence"}
     ]
 }
 

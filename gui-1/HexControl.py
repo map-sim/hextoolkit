@@ -243,9 +243,11 @@ class HexControl(Gtk.Window):
         for u, data in self.main_window.saver.units.items():
             for k, vs in data.items():
                 if vs is None: vs = "-"
-                if not isinstance(vs, (int, float, str)):
+                if isinstance(vs, dict):
                     for p, v in vs.items():
                         setstr += f"{u}.{k}.{p}: {v}\n"
+                elif isinstance(vs, (list, tuple)):
+                    setstr += f"{u}.{k}: {' ,'.join(vs)}\n"
                 else: setstr += f"{u}.{k}: {vs}\n"
         setstr += "-" * 40 + "\n"
         for u, data in self.main_window.saver.xsystem.items():
