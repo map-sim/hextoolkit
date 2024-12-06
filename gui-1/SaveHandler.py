@@ -147,6 +147,12 @@ class SaveHandler:
                     if len(unit["target"]) != 2:
                         print(f"TODO: shot infra in", unit["target"])
                 else: print(f"TODO: shot infra in", unit["target"])
+        for vex, units in self.military.items():
+            for unit in units:
+                if inner(vex, unit["own"]): continue
+                if unit["order"] != "transport": continue
+                marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
+                self.markers.append(marker)
     def area_control_markers(self, control=None):
         vex_to_own = {}; counters = {k: set() for k in self.controls}
         for vex, units in self.military.items():

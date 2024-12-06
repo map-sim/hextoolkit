@@ -404,7 +404,7 @@ military_0 = {
         {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.5, 0.0), "order": "supply", "source": [(-3, 2), (-3, 1), (-2, 1)], "target": [(0, 0), (0, 1)]}
     ],
     (-5, 3): [
-        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "stock": (0.5, 0.5), "order": "defence"}
+        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "stock": (0.5, 0.5), "order": "transport", "unit": 0, "from": [(-3, 2), (-4, 2)], "to": [(-4, 2), (-4, 1)]}
     ]
 }
 
