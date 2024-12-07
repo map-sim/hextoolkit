@@ -29,6 +29,7 @@ class NextTurn:
             self.handler.stats["Units"][control].append(u)
             for vex, infra in self.handler.infra.items():
                 for build in infra:
+                    if build is None: continue
                     if build["own"] == control:
                         i += 1; aset.add(vex)
                     ia += 1

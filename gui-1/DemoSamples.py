@@ -367,52 +367,52 @@ stats_0 = {
 
 military_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (0, 2)},
-        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (1, 2, 0)},
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": 3},
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (0, 2)},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (1, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": 3},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (2, 2): [
-        {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.6, 0.0), "order": "defence"},
-        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.0), "order": "defence"},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (-1, 2): [
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"},
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "defence"},
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9}
     ],
     (-2, 2): [
-        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (-1, 2)},
-        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "exp": 0.0, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "storm", "to": 2}
     ],
     (-3, 0): [
-        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "stock": (0.66, 0.66), "order": "storm", "target": (-1, 2)},
-        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
+        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "exp": 0.0, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
+        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "storm", "to": 2}
     ],
     (-3, -1): [
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 0)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 1)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 2)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 3)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 4)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 5)}
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 0)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 1)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 2)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 3)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 4)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 5)}
     ],
     (0, 1): [
-        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
     ],
     (-1, 1): [
-        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
     ],
     (-1, 6): [
-        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "defence"}
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "defence"}
     ],
     (-3, 2): [
-        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
     ],
     (-1, 0): [
-        {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "stock": (0.5, 0.0), "order": "supply", "source": [(-3, 2), (-3, 1), (-2, 1)], "target": [(0, 0), (0, 1)]}
+        {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.5, 0.0), "order": "supply", "from": [(-3, 2), (-3, 1), (-2, 1)], "to": [(0, 0), (0, 1)]}
     ],
     (-5, 3): [
-        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "stock": (0.5, 0.5), "order": "transport", "unit": 0, "from": [(-3, 2), (-4, 2)], "to": [(-4, 2), (-4, 1)]}
+        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.5, 0.5), "order": "transport", "progress": 0.5, "unit": 0, "from": [(-3, 2), (-4, 2)], "to": [(-4, 2), (-4, 1)]}
     ]
 }
 

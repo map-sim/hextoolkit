@@ -119,21 +119,21 @@ class SaveHandler:
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "move": continue                        
-                marker = ["a1", unit["own"], vex, *unit["target"]]
+                marker = ["a1", unit["own"], vex, *unit["to"]]
                 self.markers.append(marker)
         for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "supply": continue                        
-                marker = ["a1", unit["own"], *unit["source"], vex, *unit["target"]]
+                marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
                 self.markers.append(marker)
         for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "storm": continue
-                if isinstance(unit["target"], int):
-                    marker = ["a1", unit["own"], vex, (*vex, unit["target"])]
-                else: marker = ["a1", unit["own"], vex, unit["target"]]
+                if isinstance(unit["to"], int):
+                    marker = ["a1", unit["own"], vex, (*vex, unit["to"])]
+                else: marker = ["a1", unit["own"], vex, unit["to"]]
                 self.markers.append(marker)
         for vex, units in self.military.items():
             for unit in units:
@@ -145,9 +145,9 @@ class SaveHandler:
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "shot": continue
-                if isinstance(unit["target"], int):
-                    marker = ["a2", unit["own"], vex, (*vex, unit["target"])]
-                else: marker = ["a2", unit["own"], vex, unit["target"]]
+                if isinstance(unit["to"], int):
+                    marker = ["a2", unit["own"], vex, (*vex, unit["to"])]
+                else: marker = ["a2", unit["own"], vex, unit["to"]]
                 self.markers.append(marker)
     def area_control_markers(self, control=None):
         vex_to_own = {}; counters = {k: set() for k in self.controls}
@@ -161,6 +161,7 @@ class SaveHandler:
                 else: vex_to_own[vex] = None
         for vex, infra in self.infra.items():
             for build in infra:
+                if build is None: continue
                 if control and control != build["own"]: continue
                 counters[build["own"]].add(vex)
                 if vex not in vex_to_own:

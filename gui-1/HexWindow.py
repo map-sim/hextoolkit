@@ -201,9 +201,6 @@ class HexWindow(NaviWindow):
                 print("No selexted hex!")
         elif key_name == "O":
             if self.window_mode == "edit" and self.selected_infra is not None:
-                print("todo...")
-                print(self.selected_vex)                
-                print(self.selected_infra)
                 infra = self.saver.infra[self.selected_vex][self.selected_infra]
                 n = list(sorted(self.saver.controls.keys())).index(infra["own"])
                 n = (n+1) % len(self.saver.controls)
@@ -276,7 +273,10 @@ class HexWindow(NaviWindow):
                 return True
             if self.selected_infra is not None:
                 i = (self.selected_infra + 1) % len(infra)
-                self.selected_infra = i                
+                self.selected_infra = i
+                while infra[self.selected_infra] is None:
+                    i = (self.selected_infra + 1) % len(infra)
+                    self.selected_infra = i                    
             else: self.selected_infra = 0
             self.control_panel.selected_infra_view()
         elif key_name == "n":

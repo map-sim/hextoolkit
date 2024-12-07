@@ -169,6 +169,7 @@ class HexControl(Gtk.Window):
         infra = self.main_window.saver.infra.get(hex_xy, [])
         if infra: info += "\ninfrastructure:"
         for i, item in enumerate(infra):
+            if item is None: continue
             it = f"{item['type']} ({item['own']})"
             it += f" --> {100 * round(item['state'], 1)}%"
             info += f"\n {i}. {it}"
@@ -178,6 +179,10 @@ class HexControl(Gtk.Window):
             if item['type'] == "motorized": t = "motor"
             elif item['type'] == "mechanized": t = "mech"
             elif item['type'] == "supplying": t = "supp"
+            elif item['type'] == "engineering": t = "eng"
+            elif item['type'] == "artillery": t = "art"
+            elif item['type'] == "armored": t = "armor"
+            elif item['type'] == "special": t = "spec"
             else: t = item['type']
             it = f"{t}-{item['size']} ({item['own']})"
             it += f" --> {100 * round(item['state'], 1)}"
@@ -199,15 +204,20 @@ class HexControl(Gtk.Window):
                 info += f"\nowner: {unit['own']}"
                 info += f"\ntype: {unit['type']}"
                 info += f"\nsize: {unit['size']}"
+                info += f"\nexp: {round(unit['exp'], 2)}"
                 info += f"\nstate: {round(100*unit['state'], 2)}%"
                 info += f"\nstock 1: {round(100*unit['stock'][0], 2)}%"
                 info += f"\nstock 2: {round(100*unit['stock'][1], 2)}%"
                 info += f"\norder: {unit['order']}"
-                if "source" in unit:
-                    source = " > ".join(map(str, unit['source']))
+                if "progress" in unit:
+                    info += f"\nprogress: {round(unit['progress'], 2)}"
+                if "unit" in unit:
+                    info += f"\nunit: {unit['unit']}"
+                if "from" in unit:
+                    source = " > ".join(map(str, unit['from']))
                     info += f"\nsource: {source}"
-                if "target" in unit:
-                    if isinstance(unit['target'], list):
+                if "to" in unit:
+                    if isinstance(unit['to'], list):
                         target = " > ".join(map(str, unit['target']))
                     else: target = str(unit['target'])
                     info += f"\ntarget: {target}"
@@ -295,6 +305,7 @@ class HexControl(Gtk.Window):
         cstr = f"{cstr}\nunits: {u}\narmy: {s}"
         for infra in self.main_window.saver.infra.values():
             for build in infra:
+                if build is None: continue
                 if build["own"] == name: i += 1
         cstr = f"{cstr}\ninfra: {i}"
         self.display_content = cstr
