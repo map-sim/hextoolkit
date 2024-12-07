@@ -389,13 +389,21 @@ military_0 = {
         {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "stock": (0.75, 0.6), "order": "storm", "target": 2}
     ],
     (-3, -1): [
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 0)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 1)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 2)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 3)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 4)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "stock": (0.6, 0.5), "order": "shot", "target": (-3, 2, 5)}
     ],
     (0, 1): [
         {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
     ],
     (-1, 1): [
         {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
+    ],
+    (-1, 6): [
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "defence"}
     ],
     (-3, 2): [
         {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "target": [(1, 2), (0, 3)]}
@@ -434,13 +442,14 @@ infra_0 = {
     (2, 2): [
         {"type": "airhub", "own": "Aaa", "state": 0.5},
         {"type": "seahub", "own": "Aaa", "state": 0.5},
-        {"type": "unit", "own": "Aaa", "state": 0.5},
+        None,
         {"type": "link", "own": "Aaa", "state": 0.5},
         {"type": "plant", "own": "Aaa", "state": 0.5}
     ],
     (-2, 2): [
         {"type": "link", "own": "Aaa", "state": 0.5},
-        {"type": "unit", "own": "Aaa", "state": 0.5}
+        {"type": "unit", "own": "Aaa", "state": 0.5},
+        {"type": "fort", "own": "Aaa", "state": 1.0}
     ],
     (1, 2): [
         {"type": "plant", "own": "Bbb", "state": 1.0}
@@ -453,7 +462,12 @@ infra_0 = {
         {"type": "link", "own": "Bbb", "state": 1.0}
     ],
     (-3, 2): [
-        {"type": "seahub", "own": "Bbb", "state": 1.0}
+        {"type": "seahub", "own": "Bbb", "state": 1.0},
+        {"type": "airhub", "own": "Bbb", "state": 1.0},
+        {"type": "plant", "own": "Bbb", "state": 1.0},
+        {"type": "link", "own": "Bbb", "state": 1.0},
+        {"type": "unit", "own": "Bbb", "state": 1.0},
+        {"type": "fort", "own": "Bbb", "state": 1.0}
     ]
 }
 

@@ -48,6 +48,7 @@ class MapValidate:
         counter = 0
         for builds in self.handler.infra.values():
             for build in builds:
+                if build is None: continue
                 assert build["type"] in self.handler.builds, build["type"]
                 assert build["own"] in self.handler.controls, build["own"] 
                 counter += 1

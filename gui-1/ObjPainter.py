@@ -45,6 +45,29 @@ class AbstractPainter:
         if y % 2 == 0: xc = x * r * SQRT3
         else: xc = (x + 0.5) * r * SQRT3
         return xc, yc
+    @staticmethod
+    def infra_to_loc(xy, r):
+        x, y, i = xy
+        yc = 1.5 * y * r
+        if y % 2 == 0: xc = x * r * SQRT3
+        else: xc = (x + 0.5) * r * SQRT3
+        factor = 0.75
+        if i == 0: yc += factor * r
+        elif i == 1: yc -= factor * r
+        elif i == 2:
+            yc -= factor * 0.5 * r
+            xc += factor * 0.5 * r * SQRT3
+        elif i == 3:
+            yc -= factor * 0.5 * r
+            xc -= factor * 0.5 * r * SQRT3
+        elif i == 4:
+            yc += factor * 0.5 * r
+            xc += factor * 0.5 * r * SQRT3
+        elif i == 5:
+            yc += factor * 0.5 * r
+            xc -= factor * 0.5 * r * SQRT3
+        else: raise ValueError("too high target index")
+        return xc, yc
 
     def translate_xy(self, x, y):
         zoom = self.saver.settings["window-zoom"]
@@ -82,7 +105,9 @@ class ObjPainter(AbstractPainter):
         def inner(w, r, c):
             xe, ye = None, None
             for n, vex in enumerate(vexes):
-                loc = ObjPainter.vex_to_loc(vex, rh)
+                if len(vex) == 3:
+                    loc = ObjPainter.infra_to_loc(vex, rh)
+                else: loc = ObjPainter.vex_to_loc(vex, rh)
                 xo, yo = self.translate_xy(*loc)
                 if n == 0: xe, ye = xo, yo; continue
                 if w is not None:
@@ -112,7 +137,9 @@ class ObjPainter(AbstractPainter):
         def inner(w, r, c):
             xe, ye = None, None
             for n, vex in enumerate(vexes):
-                loc = ObjPainter.vex_to_loc(vex, rh)
+                if len(vex) == 3:
+                    loc = ObjPainter.infra_to_loc(vex, rh)
+                else: loc = ObjPainter.vex_to_loc(vex, rh)
                 xo, yo = self.translate_xy(*loc)
                 if n == 0: xe, ye = xo, yo; continue
                 inner_line(xo, yo, xe, ye, w, c)

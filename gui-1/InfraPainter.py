@@ -6,6 +6,7 @@ class InfraPainter(AbstractPainter):
     def draw(self, context):
         for vex, infra in self.saver.infra.items():
             for i, item in enumerate(infra):
+                if item is None: continue
                 if item["type"] == "airhub": self.draw_infra_airhub(context, vex, i, **item)
                 elif item["type"] == "seahub": self.draw_infra_port(context, vex, i, **item)
                 elif item["type"] == "plant": self.draw_infra_plant(context, vex, i, **item)

@@ -131,27 +131,23 @@ class SaveHandler:
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "storm": continue
-                if isinstance(unit["target"], tuple):
-                    vex2 = tuple(unit["target"][:2])
-                    marker = ["a1", unit["own"], vex, vex2]
-                    self.markers.append(marker)
-                else: print(f"TODO: storm infra in", unit["target"])
-        for vex, units in self.military.items():
-            for unit in units:
-                if inner(vex, unit["own"]): continue
-                if unit["order"] != "shot": continue
-                if isinstance(unit["target"], tuple):
-                    vex2 = tuple(unit["target"][:2])
-                    marker = ["a2", unit["own"], vex, vex2]
-                    self.markers.append(marker)
-                    if len(unit["target"]) != 2:
-                        print(f"TODO: shot infra in", unit["target"])
-                else: print(f"TODO: shot infra in", unit["target"])
+                if isinstance(unit["target"], int):
+                    marker = ["a1", unit["own"], vex, (*vex, unit["target"])]
+                else: marker = ["a1", unit["own"], vex, unit["target"]]
+                self.markers.append(marker)
         for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "transport": continue
                 marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
+                self.markers.append(marker)
+        for vex, units in self.military.items():
+            for unit in units:
+                if inner(vex, unit["own"]): continue
+                if unit["order"] != "shot": continue
+                if isinstance(unit["target"], int):
+                    marker = ["a2", unit["own"], vex, (*vex, unit["target"])]
+                else: marker = ["a2", unit["own"], vex, unit["target"]]
                 self.markers.append(marker)
     def area_control_markers(self, control=None):
         vex_to_own = {}; counters = {k: set() for k in self.controls}
