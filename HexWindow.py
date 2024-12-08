@@ -65,6 +65,8 @@ class HexWindow(NaviWindow):
         print("----")
         if event.button == 1:
             print(f"oriented-location: ({rox}, {roy})")
+            hex_index_xy, _ = self.terr_graph.transform_to_vex(ox, oy)
+            self.select_infra(hex_index_xy)
         elif event.button == 3:
             terr, terr_obj = self.terr_graph.check_terrain(ox, oy)
             hex_index_xy, _ = self.terr_graph.transform_to_vex(ox, oy)
@@ -276,33 +278,8 @@ class HexWindow(NaviWindow):
             print("##> show/select next infra")
             if self.selected_vex is None:
                 self.control_panel.info.set_text("no selection...")
-                print("no selection...")
-                return True
-            if self.selected_infra is not None:
-                vex = self.selected_infra[0], self.selected_infra[1]
-                infra = self.saver.infra.get(vex)
-                if infra is None:
-                    self.control_panel.info.set_text("no infra...")
-                    print("no infra..."); return True
-                i = (self.selected_infra[2] + 1) % len(infra)
-                self.selected_infra = *vex, i
-                while infra[self.selected_infra[2]] is None:
-                    i = (i + 1) % len(infra)
-                    self.selected_infra = *vex, i
-            else:
-                infra = self.saver.infra.get(self.selected_vex)
-                if infra is None or not infra:
-                    self.control_panel.info.set_text("no infra...")
-                    print("no infra..."); return True
-                self.selected_infra = *self.selected_vex, 0
-            self.control_panel.selected_infra_view()
-            torm = []
-            for n, marker in enumerate(self.saver.markers):
-                if marker[0] == "inf": torm.append(n)
-            for n in reversed(torm): del self.saver.markers[n]
-            marker = ["inf", None, self.selected_infra]
-            self.saver.markers.append(marker)
-            self.draw_content()
+                print("no selection..."); return True
+            self.select_infra(self.selected_vex)
         elif key_name == "n":
             print("##> next turn")
             text = NextTurn(self.saver).execute()
@@ -314,6 +291,31 @@ class HexWindow(NaviWindow):
         else: NaviWindow.on_press(self, widget, event)
         return True
 
+    def select_infra(self, hex_xy):
+        print("##> show/select next infra")
+        if self.selected_infra is not None:
+            vex = self.selected_infra[0], self.selected_infra[1]
+            if hex_xy != vex: self.selected_infra = None
+        infra = self.saver.infra.get(hex_xy)
+        if infra is None or len(infra) == 0:
+            self.control_panel.info.set_text("no infra...")
+            print("no infra..."); return True
+            
+        if self.selected_infra is not None:
+            i = (self.selected_infra[2] + 1) % len(infra)
+            self.selected_infra = *hex_xy, i
+            while infra[self.selected_infra[2]] is None:
+                i = (i + 1) % len(infra)
+                self.selected_infra = *hex_xy, i
+        else: self.selected_infra = *hex_xy, 0
+        self.control_panel.selected_infra_view()
+        
+        for n, marker in reversed(list(enumerate(self.saver.markers))):
+            if marker[0] == "inf": del self.saver.markers[n]
+        marker = ["inf", None, self.selected_infra]
+        self.saver.markers.append(marker)
+        self.draw_content()
+    
 def run_example():
     import sys
     from SaveHandler import SaveHandler
