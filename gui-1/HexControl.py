@@ -27,7 +27,7 @@ class HexControl(Gtk.Window):
         self.add_events(Gdk.EventMask.SCROLL_MASK)
         self.connect("scroll-event", self.on_scroll)
         self.connect("key-press-event",self.on_press)
-        self.set_position(Gtk.WindowPosition.CENTER_ALWAYS)
+        self.set_position(Gtk.WindowPosition.NONE)
         self.button_mapping = {}
 
         self.main_window = main_window
@@ -219,20 +219,20 @@ class HexControl(Gtk.Window):
                     info += f"\nunit: {unit['unit']}"
                 if "from" in unit:
                     source = " > ".join(map(str, unit['from']))
-                    info += f"\nsource: {source}"
+                    info += f"\nfrom: {source}"
                 if "to" in unit:
                     if isinstance(unit['to'], list):
                         target = " > ".join(map(str, unit['to']))
                     else: target = str(unit['to'])
-                    info += f"\ntarget: {target}"
+                    info += f"\nto: {target}"
             else:  info = "No units to select..."
         else: info = "No selected unit..."
         self.info.set_text(info)
     def selected_infra_view(self):
         if self.main_window.selected_infra is not None:
             info = "selected infra:"
-            hex_xy = self.main_window.selected_vex
-            index = self.main_window.selected_infra
+            hex_xy = self.main_window.selected_infra[:2]
+            index = self.main_window.selected_infra[2]
             buildings = self.main_window.saver.infra.get(hex_xy)
             if buildings is not None:
                 infra = buildings[index]
@@ -359,9 +359,15 @@ class HexControl(Gtk.Window):
 
     def welcome_view(self):
         self.__display_offset = 0
-        content = "------------------------------"
-        content += "-----------------------------"
-        content += "\nWELCOME !!!" * 20
+        content = "WELCOME !!!\n"        
+        content += "-----------------------------\n"
+        content += f"project: Hex ToolKit\n"
+        content += f"version: {self.main_window.version}\n"
+        content += "-----------------------------\n"
+        ncontrols = len(self.main_window.saver.controls)
+        cturn = self.main_window.saver.settings['current-turn']
+        content += f"controls: {ncontrols}\n"
+        content += f"current turn: {cturn}\n"
         self.display_content = content
         display_data = self.get_display_data()
         self.info.set_text(display_data)

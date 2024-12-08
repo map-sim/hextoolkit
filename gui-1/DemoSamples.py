@@ -5,7 +5,7 @@
 settings_0 = {
     'current-turn': 0,
     'window-title': 'main-window',
-    'window-size': (1100, 1000),
+    'window-size': (1100, 1050),
     'window-offset': (740, 225),
     'window-zoom': 15.0,
     'move-sensitive': 50,
@@ -488,6 +488,8 @@ markers_0 = [
     # ("a1", "Aaa", (3, 8), (8, 8)),
     # ("l1", "Aaa", (3, 9), (7, 9), (8, 10), (8, 9)),
     # ("a2", "Bbb", (3, 11), (7, 11), (8, 13), (8, 11), (9, 11), (10, 14)),
+    
+    ("inf", None, (-3, 2, 1)),
     ("vex", None, (-3, 5))
 ]
 

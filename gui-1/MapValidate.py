@@ -22,7 +22,7 @@ class MapValidate:
     def validate_markers(self):
         counter = 0
         for marker in self.handler.markers:
-            assert marker[0] in ("vex", "a1", "l1", "a2")
+            assert marker[0] in ("vex", "a1", "l1", "a2", "inf")
             if marker[1] is not None:
                 assert marker[1] in self.handler.controls, marker[1]
             counter += 1

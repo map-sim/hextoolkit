@@ -79,6 +79,7 @@ class ObjPainter(AbstractPainter):
     def draw(self, context):
         for shape, *params in self.saver.markers:
             if shape == "vex": self.draw_vex(context, *params)
+            elif shape == "inf": self.draw_infra(context, *params)
             elif shape == "cursor": self.draw_cursor(context, *params)
             elif shape == "a1":
                 if self.saver.settings["show-markers"]:
@@ -153,6 +154,22 @@ class ObjPainter(AbstractPainter):
         inner(rh*zoom/5, rh*zoom/6.5, (1.0, 1.0, 1.0))
         inner(rh*zoom/7, rh*zoom/8, (0.0, 0.0, 0.0))
         inner(rh*zoom/9, rh*zoom/9.5, color)
+        
+    def draw_infra(self, context, control, xyi):
+        def inner_point(x, y, r, c):
+            context.set_source_rgba(*c)
+            context.arc(x, y, r, 0, TWO_PI)
+            context.fill()
+            
+        color = self.saver.settings["marker-color"]
+        zoom = self.saver.settings["window-zoom"]
+        r = self.saver.settings.get("hex-radius", 1.0)
+        
+        rh = r * zoom/4
+        color2 = tuple([*color, 0.5])
+        loc = ObjPainter.infra_to_loc(xyi, r)
+        xo, yo = self.translate_xy(*loc)
+        inner_point(xo, yo, rh, color2)
         
     def draw_vex(self, context, control, xy):
         try: color = self.saver.controls[control]["marker-color"]

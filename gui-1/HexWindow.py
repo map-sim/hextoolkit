@@ -19,6 +19,7 @@ from UnitPainter import UnitPainter
 from InfraPainter import InfraPainter
 
 class HexWindow(NaviWindow):
+    version = "non-public"
     window_modes = ["view", "edit"]
     def __init__(self, saver):
         self.terr_graph = TerrGraph(saver)
@@ -140,8 +141,9 @@ class HexWindow(NaviWindow):
             self.draw_content()
         elif key_name == "a":
             print("##> area control markers")
-            self.saver.unmark_all_vexes()
+            self.saver.unmark_all()
             self.unselect_all()
+            
             out = self.saver.area_control_markers()
             self.control_panel.info.set_text(out)
             self.control_panel.display_content = out
@@ -201,7 +203,8 @@ class HexWindow(NaviWindow):
                 print("No selexted hex!")
         elif key_name == "O":
             if self.window_mode == "edit" and self.selected_infra is not None:
-                infra = self.saver.infra[self.selected_vex][self.selected_infra]
+                vex = self.selected_infra[0], self.selected_infra[1]
+                infra = self.saver.infra[vex][self.selected_infra[2]]
                 n = list(sorted(self.saver.controls.keys())).index(infra["own"])
                 n = (n+1) % len(self.saver.controls)
                 infra["own"] = list(sorted(self.saver.controls.keys()))[n]
@@ -242,9 +245,9 @@ class HexWindow(NaviWindow):
         elif key_name == "c":
             print("##> show control def")
             owner = self.control_panel.control_view()
+            self.saver.unmark_all()
             self.unselect_all()
             self.selected_own = owner
-            self.saver.unmark_all_vexes()
             self.saver.area_control_markers(owner)
             self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             self.draw_content()
@@ -275,23 +278,39 @@ class HexWindow(NaviWindow):
                 self.control_panel.info.set_text("no selection...")
                 print("no selection...")
                 return True
-            infra = self.saver.infra.get(self.selected_vex)
-            if infra is None:
-                self.control_panel.info.set_text("no infra...")
-                print("no infra...")
-                return True
             if self.selected_infra is not None:
-                i = (self.selected_infra + 1) % len(infra)
-                self.selected_infra = i
-                while infra[self.selected_infra] is None:
-                    i = (self.selected_infra + 1) % len(infra)
-                    self.selected_infra = i                    
-            else: self.selected_infra = 0
+                vex = self.selected_infra[0], self.selected_infra[1]
+                infra = self.saver.infra.get(vex)
+                if infra is None:
+                    self.control_panel.info.set_text("no infra...")
+                    print("no infra..."); return True
+                i = (self.selected_infra[2] + 1) % len(infra)
+                self.selected_infra = *vex, i
+                while infra[self.selected_infra[2]] is None:
+                    i = (i + 1) % len(infra)
+                    self.selected_infra = *vex, i
+            else:
+                infra = self.saver.infra.get(self.selected_vex)
+                if infra is None or not infra:
+                    self.control_panel.info.set_text("no infra...")
+                    print("no infra..."); return True
+                self.selected_infra = *self.selected_vex, 0
             self.control_panel.selected_infra_view()
+            torm = []
+            for n, marker in enumerate(self.saver.markers):
+                if marker[0] == "inf": torm.append(n)
+            for n in reversed(torm): del self.saver.markers[n]
+            marker = ["inf", None, self.selected_infra]
+            self.saver.markers.append(marker)
+            self.draw_content()
         elif key_name == "n":
             print("##> next turn")
             text = NextTurn(self.saver).execute()
             self.control_panel.info.set_text(text)
+
+        elif key_name == "Escape":
+            NaviWindow.on_press(self, widget, event)
+            self.control_panel.welcome_view()
         else: NaviWindow.on_press(self, widget, event)
         return True
 
