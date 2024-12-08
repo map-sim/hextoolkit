@@ -22,40 +22,47 @@ builds_0 = {
     "plant": {
         "cost": 100,
         "strength": 80,
+        "costal": False,
         "range": 30,
         "power": 20,
     },
     "supply": {
         "cost": 50,
         "strength": 20,
-        "no-power": 0.0,
+        "costal": False,
+        "off-grid": 0.0,
         "power": -3,
     },
     "unit": {
         "cost": 40,
         "strength": 10,
-        "no-power": 0.5,
+        "costal": False,
+        "off-grid": 0.5,
         "power": -1,
     },
     "link": {
         "cost": 10,
+        "costal": True,
         "strength": 60,
         "power": 0,
     },
     "seahub": {
         "cost": 50,
         "strength": 90,
-        "no-power": 0.5,
+        "costal": True,
+        "off-grid": 0.5,
         "power": -1,
     },
     "airhub": {
         "cost": 40,
         "strength": 50,
-        "no-power": 0.25,
+        "costal": False,
+        "off-grid": 0.4,
         "power": -1,
     },
     "fort": {
         "cost": 30,
+        "costal": False,
         "strength": 200,
         "power": 0,
     }
@@ -64,12 +71,13 @@ builds_0 = {
 units_0 = {
     "supplying": {
         "char": "S",
+        "costal": -1,
+        "type": "light",
+        "max-size": 8,
         "cost": 20.0,
         "speed": 1.5,
         "supply": 1.0,
         "shot-range": 0.0,
-        "max-size": 8,
-        "type": "light",
         "stock-form": "mech",
         "stock-2nd": "mech",
         "action-cost": {
@@ -82,12 +90,14 @@ units_0 = {
     },
     "engineering": {
         "char": "E",
+        "costal": 1,
+        "type": "light",
+        "max-size": 2,
         "cost": 30.0,
         "speed": 0.5,
         "supply": 0.05,
+        "costal": 1,
         "shot-range": 0.0,
-        "max-size": 2,
-        "type": "light",
         "stock-form": "mech",
         "stock-2nd": "devel",
         "action-cost": {
@@ -100,12 +110,13 @@ units_0 = {
     },
     "special": {
         "char": "Q",
+        "costal": 3,
+        "type": "super-light",
+        "max-size": 2,
         "cost": 50.0,
         "speed": 2.0,
         "supply": 0.03,
         "shot-range": 6.0,
-        "max-size": 2,
-        "type": "light",
         "stock-form": "special",
         "stock-2nd": "special",
         "action-cost": {
@@ -119,12 +130,13 @@ units_0 = {
     },
     "motorized": {
         "char": "K",
+        "costal": -1,
+        "type": "light",
+        "max-size": 8,
         "cost": 27.5,
         "speed": 1.0,
         "supply": 0.2,
         "shot-range": 4.0,
-        "max-size": 8,
-        "type": "light",
         "stock-form": "mech",
         "stock-2nd": "mech",
         "action-cost": {
@@ -138,12 +150,13 @@ units_0 = {
     },
     "mechanized": {
         "char": "M",
+        "costal": 4,
+        "type": "heavy",
+        "max-size": 8,
         "cost": 72.0,
         "speed": 0.9,
         "supply": 0.1,
         "shot-range": 5.0,
-        "max-size": 8,
-        "type": "heavy",
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -156,12 +169,13 @@ units_0 = {
     },
     "armored": {
         "char": "T",
+        "costal": 4,
+        "type": "heavy",
+        "max-size": 8,
         "cost": 100.0,
         "speed": 0.4,
         "supply": 0.0,
         "shot-range": 5.33,
-        "max-size": 8,
-        "type": "heavy",
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -173,12 +187,13 @@ units_0 = {
     },
     "artillery": {
         "char": "A",
+        "costal": -1,
+        "type": "heavy",
+        "max-size": 4,
         "cost": 80.0,
         "speed": 0.5,
         "supply": 0.0,
         "shot-range": 12.0,
-        "max-size": 4,
-        "type": "heavy",
         "stock-form": "heavy",
         "stock-2nd": "heavy",
         "action-cost": {
@@ -188,17 +203,37 @@ units_0 = {
             "shot": (0.5, 1.2),
         }
     },
+    "helicopter": {
+        "char": "H",
+        "costal": -1,
+        "type": "helicopter",
+        "max-size": 4,
+        "cost": 180.0,
+        "speed": 4.5,
+        "supply": 1.0,
+        "shot-range": 4.0,
+        "type": "navigable",
+        "stock-form": "aviate",
+        "stock-2nd": "aviate",
+        "action-cost": {
+            "move": (0.8, 0.05),
+            "supply": (1.0, 0.02),
+            "storm": (0.75, 0.75),
+            "defence": (0.5, 0.88),
+            "shot": (0.5, 1.2),
+        }
+    },
     "cutter": {
         "char": "C",
+        "costal": 0,
+        "type": "navy",
+        "max-size": 1,        
         "cost": 280.0,
         "speed": 0.1,
         "supply": 5.0,
         "shot-range": 4.0,
-        "max-size": 1,
-        "type": "navigable",
         "stock-form": "seatech",
         "stock-2nd": "seatech",
-        "transport": ["light"],
         "action-cost": {
             "move": (0.8, 0.05),
             "supply": (1.0, 0.02),
@@ -243,6 +278,7 @@ xsystem_0 = {
         "cutter": 1.0,
     },
     "cutter": {},
+    "helicopter": {}
 }
 
 ###
@@ -259,9 +295,12 @@ landform_0 = [
     ('vex', 'desert-0', (-3, -1)),
     ('vex', 'desert-0', (-2, -1)),
     ('vex', 'desert-0', (-1, -1)),
-    ('vex', 'steppe-0', (-1, -2)),
+    ('vex', 'desert-0', (-1, -2)),
     ('vex', 'steppe-0', (0, -2)),
     ('vex', 'steppe-0', (0, -1)),
+    ('vex', 'steppe-0', (0, -3)),
+    ('vex', 'steppe-0', (1, -3)),
+    ('vex', 'desert-0', (2, -3)),
     ('vex', 'desert-0', (0, 0)),
     ('vex', 'desert-0', (-1, 0)),
     ('vex', 'desert-0', (-2, 1)),
@@ -271,23 +310,24 @@ landform_0 = [
     ('vex', 'desert-0', (-1, 3)),
     ('vex', 'desert-0', (0, 1)),
     ('vex', 'desert-0', (0, 4)),
-    ('vex', 'steppe-0', (1, 1)),
+    ('vex', 'desert-0', (1, 1)),
     ('vex', 'steppe-0', (2, 2)),
     ('vex', 'steppe-0', (2, 3)),
-    ('vex', 'steppe-0', (1, -1)),
+    ('vex', 'desert-0', (1, -1)),
     ('vex', 'steppe-0', (1, -2)),
-    ('vex', 'steppe-0', (2, -1)),
-    ('vex', 'steppe-0', (2, -2)),
-    ('vex', 'steppe-0', (3, 0)),
+    ('vex', 'desert-0', (2, -1)),
+    ('vex', 'hills-0', (2, -2)),
+    ('vex', 'desert-0', (3, 0)),
     ('vex', 'steppe-0', (3, 1)),
     ('vex', 'steppe-0', (4, 2)),
     ('vex', 'steppe-0', (4, 3)),
     ('vex', 'steppe-0', (5, 2)),
     ('vex', 'steppe-0', (4, 1)),
-    ('vex', 'steppe-0', (3, -1)),
-    ('vex', 'steppe-0', (3, -2)),
-    ('vex', 'steppe-0', (4, -1)),
-    ('vex', 'steppe-0', (5, 0)),
+    ('vex', 'steppe-0', (-4, 2)),
+    ('vex', 'desert-0', (3, -1)),
+    ('vex', 'desert-0', (3, -2)),
+    ('vex', 'desert-0', (4, -1)),
+    ('vex', 'desert-0', (5, 0)),
     ('vex', 'shallows-0', (3, 3)),
     ('vex', 'shallows-0', (3, 2)),
     ('vex', 'shallows-0', (1, 4)),
@@ -354,7 +394,8 @@ goods_0 = {
     "devel": {"drag": 10.2, "type": "devel"},
     "mech": {"drag": 1.5, "type": "regular"},
     "heavy": {"drag": 2.5, "type": "regular"},
-    "seatech": {"drag": 4.5, "type": "regular"}
+    "seatech": {"drag": 4.5, "type": "regular"},
+    "aviate": {"drag": 4.2, "type": "regular"}
 }
 
 ###
@@ -435,27 +476,34 @@ military_0 = {
 # io: in out off
 
 infra_0 = {
-    (2, 3): [
+    (4, 1): [
+        {"type": "seahub", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},
         {"type": "unit", "own": "Aaa", "state": 1.0, "io": {"mech": "in"}, "stock": {"mech": 200.4}},
-        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {"devel": "in"}, "stock": {"devel": 1.5}},
         {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "devel"},
         {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "mech"},
-        {"type": "unit", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
-        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}}
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
+    ],
+    (4, 3): [
+        {"type": "airhub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "heavy"},
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
+    ],
+    (3, 2): [
+        {"type": "seahub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "link", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+    ],
+    (2, 3): [
+        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {"devel": "in"}, "stock": {"devel": 1.5}},
+        {"type": "unit", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},
     ],
     (2, 2): [
-        {"type": "airhub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
-        {"type": "seahub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "fort", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "fort", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
         None,
         {"type": "link", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
         {"type": "plant", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}}
     ],
-    (-2, 2): [
-        {"type": "link", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
-        {"type": "unit", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
-        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}}
-    ],
-    (1, 2): [
+    (-3, 0): [
         {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
     ],
     (2, 1): [
@@ -505,14 +553,16 @@ terrains_0 = {
         'color': [0.0, 0.0, 0.0],
         'navigable': False,
         'buildable': False,
+        'costal': False,
         'mobile': 0.0,
         'slots': 0
     },
     'desert-0': {
         'desc': 'desert',
-        'color': [0.95, 0.95, 0.94],
+        'color': [0.95, 0.95, 0.92],
         'navigable': False,
-        'buildable': True,        
+        'buildable': True,
+        'costal': False,
         'mobile': 1.0,
         'slots': 1
     },
@@ -520,23 +570,26 @@ terrains_0 = {
         'desc': 'shallows',
         'color': [0.8, 0.9, 1.0],
         'navigable': True,
-        'buildable': False,        
+        'buildable': False,
+        'costal': True,
         'mobile': 10.0,
-        'slots': 0
+        'slots': 1
     },
     'water-0': {
         'desc': 'water',
         'color': [0.75, 0.85, 1.0],
         'navigable': True,
         'buildable': False,        
+        'costal': False,
         'mobile': 100.0,
         'slots': 0
     },
     'hills-0': {
         'desc': 'hills',
-        'color': [0.88, 0.85, 0.85],
+        'color': [0.89, 0.84, 0.84],
         'navigable': False,
         'buildable': True,        
+        'costal': False,
         'mobile': 0.1,
         'slots': 1
     },
@@ -545,6 +598,7 @@ terrains_0 = {
         'color': [1.0, 1.0, 1.0],
         'navigable': False,
         'buildable': True,        
+        'costal': False,
         'mobile': 3.0,
         'slots': 6
     }

@@ -1,13 +1,50 @@
 class MapValidate:
     def __init__(self, handler):
         self.handler = handler
+        self.validate_terrains()
+        self.validate_units()
+        self.validate_builds()
         self.validate_landform()
         self.validate_markers()
         self.validate_infra()
         self.validate_military()
         self.validate_xsystem()
         self.validate_stats()
-        
+
+    def validate_terrains(self):
+        counter = 0
+        obligatory = ["desc", "color", "mobile", "costal",
+                      "navigable", "buildable", "slots"]
+        for name, terr in self.handler.terrains.items():
+            for key in obligatory:
+                assert key in terr, f"{key} in {name}"
+            counter += 1
+        print(f"terrains ({counter})... OK")
+
+    def validate_builds(self):
+        counter = 0
+        obligatory = ["cost", "strength", "power"]
+        for name, build in self.handler.builds.items():
+            for key in obligatory:
+                assert key in build, f"{key} in {name}"
+            if name == "plant":
+                assert "range" in build, "range"
+            if build["power"] < 0:
+                assert "off-grid" in build, "off-grid"                
+            counter += 1
+        print(f"builds ({counter})... OK")
+
+    def validate_units(self):
+        counter = 0
+        obligatory = ["char", "type", "max-size", "shot-range",
+                      "cost", "speed", "supply", "costal",
+                      "stock-form", "stock-2nd", "action-cost"]
+        for name, unit in self.handler.units.items():
+            for key in obligatory:
+                assert key in unit,  f"{key} in {name}"
+            counter += 1
+        print(f"units ({counter})... OK")
+
     def validate_landform(self):
         vexes = set(); counter = 0
         for vex in self.handler.landform:

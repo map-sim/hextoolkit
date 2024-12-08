@@ -66,13 +66,13 @@ class HexControl(Gtk.Window):
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
         self.make_button(vbox, "Settings - x", "x")
-        self.make_button(vbox, "Terr-List - r", "t")
-        self.make_button(vbox, "Goog-List - g", "g")
-        self.make_button(vbox, "Build-List - b", "b")
-        self.make_button(vbox, "Unit - u", "u")
-        self.make_button(vbox, "Control - c", "c")
-        self.make_button(vbox, "Select Unit - v", "v")
-        self.make_button(vbox, "Select Infra - i", "i")
+        self.make_button(vbox, "List-Terrs - t", "t")
+        self.make_button(vbox, "List-Goods - g", "g")
+        self.make_button(vbox, "List-Builds - b", "b")
+        self.make_button(vbox, "Switch-Unit - u", "u")
+        self.make_button(vbox, "Switch-Control - c", "c")
+        self.make_button(vbox, "Select-Unit - v", "v")
+        self.make_button(vbox, "Select-Infra - i", "i")
         self.make_button(vbox, "Area Control - a", "a")
         self.make_button(vbox, "Un-Select - q", "q")
         self.make_button(vbox, "S/H Markers - M", "M")
@@ -272,6 +272,7 @@ class HexControl(Gtk.Window):
             info = "\n\tSlots " + str(v["slots"])
             if v["navigable"]: info += "\n\t+Navigable"
             if v["buildable"]: info += "\n\t+Buildable"
+            if v["costal"]: info += "\n\t+Costal"
             info += "\n\tMobile " + str(v["mobile"])            
             terrstr += f"{n+1}. {k} {info} \n"
         self.display_content = terrstr
@@ -299,6 +300,9 @@ class HexControl(Gtk.Window):
             buildstr += f"\tpower: {v['power']}\n"
             if "no-power" in v:
                 buildstr += f"\tno-power: {v['no-power']}\n"
+            if "terrains" in v:
+                et = ', '.join(v['terrains'])
+                buildstr += f"\t+terrains: {et}\n"
         self.display_content = buildstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
