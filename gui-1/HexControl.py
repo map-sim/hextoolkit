@@ -37,6 +37,7 @@ class HexControl(Gtk.Window):
         self.plotter = StatsPlotter(main_window.saver)
         self.__control_counter = 0
         self.__display_offset = 0
+        self.__unit_counter = 0
         
         self.box = Gtk.Box(spacing=3)
         self.add(self.box)
@@ -45,43 +46,46 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
         
-        self.make_button(vbox, "Reset (ESC)", "Escape")
+        self.make_button(vbox, "Reset - ESC", "Escape")
         self.make_button(vbox, "ZOOM in", "plus")
         self.make_button(vbox, "ZOOM out", "minus")
         self.make_button(vbox, "Move Up", "Up")
         self.make_button(vbox, "Move Down", "Down")
         self.make_button(vbox, "Move --->", "Right")
         self.make_button(vbox, "Move <---", "Left")
-        self.make_button(vbox, "Exit (E)", "E")
+        self.make_button(vbox, "Next turn (n)", "n")
+        self.make_button(vbox, "Exit - E", "E")
+        self.make_button(vbox, "Save - S", "S")
+        for group in main_window.saver.stats.keys():
+            self.button_mapping[f"Plot {group} - p"] = "p"
+        plabel = self.plotter.get_next_label()
+        plot_but = self.make_button(vbox, plabel, "p")        
         
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "Settings (x)", "x")
-        self.make_button(vbox, "Terr-List (r)", "t")
-        self.make_button(vbox, "Control (c)", "c")
-        self.make_button(vbox, "Unit (u)", "u")
-        self.make_button(vbox, "Infra (i)", "i")
-        self.make_button(vbox, "Area Control (a)", "a")
-        self.make_button(vbox, "Un-Select (q)", "q")
-        self.make_button(vbox, "S/H Markers (m)", "m")
+        self.make_button(vbox, "Settings - x", "x")
+        self.make_button(vbox, "Terr-List - r", "t")
+        self.make_button(vbox, "Goog-List - g", "g")
+        self.make_button(vbox, "Build-List - b", "b")
+        self.make_button(vbox, "Unit - u", "u")
+        self.make_button(vbox, "Control - c", "c")
+        self.make_button(vbox, "Select Unit - v", "v")
+        self.make_button(vbox, "Select Infra - i", "i")
+        self.make_button(vbox, "Area Control - a", "a")
+        self.make_button(vbox, "Un-Select - q", "q")
+        self.make_button(vbox, "S/H Markers - M", "M")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        for group in main_window.saver.stats.keys():
-            self.button_mapping[f"Plot {group} (p)"] = "p"
-        plabel = self.plotter.get_next_label()
-        plot_but = self.make_button(vbox, plabel, "p")        
-        self.make_button(vbox, "Save (s)", "s")
-        self.make_button(vbox, "Next turn (n)", "n")
-        self.make_button(vbox, "Mode (tab)", "Tab")
-        self.make_button(vbox, "Remove Hex (R)", "R")
-        self.make_button(vbox, "Change Terrain (T)", "T")
-        self.make_button(vbox, "Terrain Dilation (D)", "D")
-        self.make_button(vbox, "Toogle Infra Own (O)", "O")
+        self.make_button(vbox, "Mode - TAB", "Tab")
+        self.make_button(vbox, "Remove Hex - R", "R")
+        self.make_button(vbox, "Change Terrain - T", "T")
+        self.make_button(vbox, "Terrain Dilation - D", "D")
+        self.make_button(vbox, "Toogle Infra Own - O", "O")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
 
         vbox = Gtk.VBox(spacing=3)
@@ -218,8 +222,8 @@ class HexControl(Gtk.Window):
                     info += f"\nsource: {source}"
                 if "to" in unit:
                     if isinstance(unit['to'], list):
-                        target = " > ".join(map(str, unit['target']))
-                    else: target = str(unit['target'])
+                        target = " > ".join(map(str, unit['to']))
+                    else: target = str(unit['to'])
                     info += f"\ntarget: {target}"
             else:  info = "No units to select..."
         else: info = "No selected unit..."
@@ -245,21 +249,7 @@ class HexControl(Gtk.Window):
         setstr = "settings:\n" + "-" * 40 + "\n"
         for p, v in self.main_window.saver.settings.items():
             setstr += f"{p}: {v}\n"
-        setstr += "-" * 40 + "\n"
-        for i, data in self.main_window.saver.builds.items():
-            for k, v in data.items():                
-                setstr += f"{i}.{k}: {v}\n"
-        setstr += "-" * 40 + "\n"
-        for u, data in self.main_window.saver.units.items():
-            for k, vs in data.items():
-                if vs is None: vs = "-"
-                if isinstance(vs, dict):
-                    for p, v in vs.items():
-                        setstr += f"{u}.{k}.{p}: {v}\n"
-                elif isinstance(vs, (list, tuple)):
-                    setstr += f"{u}.{k}: {' ,'.join(vs)}\n"
-                else: setstr += f"{u}.{k}: {vs}\n"
-        setstr += "-" * 40 + "\n"
+        setstr += "-" * 40 + "\nxsystem:\n" + "-" * 40 + "\n"
         for u, data in self.main_window.saver.xsystem.items():
             for k, v in data.items():
                 setstr += f"{u}.{k}: {v}\n"                
@@ -280,17 +270,66 @@ class HexControl(Gtk.Window):
         self.display_content = terrstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
-        
+    def stocks_view(self):
+        self.__display_offset = 0
+        goodstr = "good-list:\n" + "-" * 40 + "\n"
+        good_list = self.main_window.saver.stocks
+        for n, (k, v) in enumerate(good_list.items()):
+            goodstr += f"{n+1}. {k}:\n"
+            goodstr += f"\ttype: {v['type']}\n"
+            goodstr += f"\tdrag: {v['drag']}\n"
+        self.display_content = goodstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+    def builds_view(self):
+        self.__display_offset = 0
+        buildstr = "build-list:\n" + "-" * 40 + "\n"
+        build_list = self.main_window.saver.builds
+        for n, (k, v) in enumerate(build_list.items()):
+            buildstr += f"{n+1}. {k}:\n"
+            buildstr += f"\tcost: {v['cost']}\n"
+            buildstr += f"\tstrength: {v['strength']}\n"
+            buildstr += f"\tpower: {v['power']}\n"
+            if "no-power" in v:
+                buildstr += f"\tno-power: {v['no-power']}\n"
+        self.display_content = buildstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+
+    def unit_view(self):
+        self.__display_offset = 0
+        keys = list(sorted(self.main_window.saver.units.keys()))
+        name = keys[self.__unit_counter]
+
+        cc = self.main_window.saver.units[name]
+        nstr = f"{name}:" + " " * (40 - len(name))
+        cstr = f"{nstr}\n{'-' * 40}"
+        for k, v in reversed(sorted(cc.items())):
+            if k == "action-cost":
+                cstr += f"\n{k}:"
+                for kk, vv in sorted(v.items()):
+                    cstr += f"\n\t{kk}: {vv[0]} / {vv[1]}"
+            else: cstr += f"\n{k}: {v}"
+        self.display_content = cstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+
+        self.__unit_counter += 1
+        n = len(self.main_window.saver.units)
+        if self.__unit_counter >= n:
+            self.__unit_counter = 0
+        return name
+
     def control_view(self):
         self.__display_offset = 0
-        keys = list(self.main_window.saver.controls.keys())
+        keys = list(sorted(self.main_window.saver.controls.keys()))
         name = keys[self.__control_counter]
 
         cc = self.main_window.saver.controls[name]
         bcolor = ", ".join(map(str, cc["base-color"]))
         mcolor = ", ".join(map(str, cc["marker-color"]))
         ucolor = ", ".join(map(str, cc["unit-color"]))
-        nstr = name + ":" + " " * (40 - len(name))
+        nstr = f"{name}:" + " " * (40 - len(name))
         cstr = f"{nstr}\n{'-' * 40}"
         pop = cc["population"]
         cstr = f"{cstr}\npopulation: {pop}"

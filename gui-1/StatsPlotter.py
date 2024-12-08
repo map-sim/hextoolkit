@@ -40,7 +40,7 @@ class StatsPlotter:
     def get_next_label(self):
         groups = list(sorted(self.saver.stats.keys()))
         group = groups[self.__next_plot_id]
-        return f"Plot {group} (p)"
+        return f"Plot {group} - p"
 
     def plot(self):
         labels = list(sorted(self.saver.stats.keys()))

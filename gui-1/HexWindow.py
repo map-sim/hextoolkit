@@ -132,7 +132,7 @@ class HexWindow(NaviWindow):
             self.saver.unmark_all()
             self.unselect_all()
             self.draw_content()
-        elif key_name == "m":
+        elif key_name == "M":
             print("##> show / hide markers")
             self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             state = not self.saver.settings["show-markers"]
@@ -210,7 +210,7 @@ class HexWindow(NaviWindow):
                 print("No edit mode!")
             elif self.selected_infra is None:
                 print("No selexted infra!")
-        elif key_name == "s":
+        elif key_name == "S":
             print("##> save on drive ... ", end="")
             dir_name = self.saver.save_on_drive()
             info = f"save on drive in {dir_name}"
@@ -227,11 +227,20 @@ class HexWindow(NaviWindow):
         elif key_name == "t":
             print("##> show terr list")
             self.control_panel.terrains_view()
+        elif key_name == "b":
+            print("##> show build list")
+            self.control_panel.builds_view()
+        elif key_name == "g":
+            print("##> show stocks/googs list")
+            self.control_panel.stocks_view()
         elif key_name == "x":
             print("##> show settings")
             self.control_panel.settings_view()
+        elif key_name == "u":
+            print("##> show unit def")
+            owner = self.control_panel.unit_view()
         elif key_name == "c":
-            print("##> show control")
+            print("##> show control def")
             owner = self.control_panel.control_view()
             self.unselect_all()
             self.selected_own = owner
@@ -244,7 +253,7 @@ class HexWindow(NaviWindow):
             if self.settings["current-turn"]:
                 self.control_panel.plotter.plot()
             else: print("no data to plot")
-        elif key_name == "u":
+        elif key_name == "v":
             print("##> show/select next unit")
             if self.selected_vex is None:
                 self.control_panel.info.set_text("no selection...")

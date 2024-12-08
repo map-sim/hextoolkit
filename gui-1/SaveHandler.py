@@ -16,7 +16,8 @@ class SaveHandler:
         self.markers = []
         self.units = {}
         self.builds = {}
-
+        self.stocks = {}
+        
     def load_demo_0(self):
         print("load demo_0")
         self.settings = demo.settings_0
@@ -30,6 +31,7 @@ class SaveHandler:
         self.military = demo.military_0
         self.infra = demo.infra_0
         self.stats = demo.stats_0
+        self.stocks = demo.stocks_0
         valid.MapValidate(self)
         
     def save_on_drive(self, prefix="save."):
@@ -45,6 +47,8 @@ class SaveHandler:
             with open(ffname, "w") as fd:
                 data2 = {str(k): v for k, v in data.items()}
                 json.dump(data2, fd, indent=4)
+        inner2("infra.json", self.infra)
+        inner2("military.json", self.military)
         inner("settings.json", self.settings)
         inner("terrains.json", self.terrains)
         inner("controls.json", self.controls)
@@ -53,9 +57,8 @@ class SaveHandler:
         inner("markers.json", self.markers)
         inner("units.json", self.units)
         inner("builds.json", self.builds)
+        inner("stocks.json", self.stocks)
         inner("stats.json", self.stats)
-        inner2("infra.json", self.infra)
-        inner2("military.json", self.military)
         return dir_name
     def load_from_drive(self, save_name):
         print(f"load from drive {save_name}")
@@ -68,6 +71,8 @@ class SaveHandler:
             with open(ffname, "r") as fd:
                 data = json.load(fd)
                 return {literal_eval(k): v for k, v in data.items()}
+        self.infra = inner2("infra.json")
+        self.military = inner2("military.json")
         self.settings = inner("settings.json")
         self.terrains = inner("terrains.json")
         self.controls = inner("controls.json")
@@ -75,10 +80,9 @@ class SaveHandler:
         self.xsystem = inner("xsystem.json")
         self.markers = inner("markers.json")
         self.builds = inner("builds.json")
-        self.units = inner("units.json")
+        self.stocks = inner("stocks.json")
         self.stats = inner("stats.json")
-        self.infra = inner2("infra.json")
-        self.military = inner2("military.json")
+        self.units = inner("units.json")
         valid.MapValidate(self)
 
     def remove_markers(self, vex, name=None):

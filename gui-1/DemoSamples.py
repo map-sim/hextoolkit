@@ -13,13 +13,9 @@ settings_0 = {
     'base-thickness': 0.08,
     'marker-color': (1.0, 1.0, 0.3),
     'show-markers': False,
-    'display-length': 16,
+    'display-length': 22,
     'devel-free-impact': 0.1,
-    'devel-unit-impact': 0.08,
-    'devel-stock': 'devel',
-    'basic-stock': 'basic',
-    'xsystem-build': "building",
-    'xsystem-rest': "another",
+    'devel-unit-impact': 0.08
 }
 
 builds_0 = {
@@ -353,7 +349,13 @@ stats_0 = {
 ### stock
 ###
 
-# basic, devel, mech, heavy, aviation, seatech
+stocks_0 = {
+    "basic": {"drag": 0.5, "type": "basic"},
+    "devel": {"drag": 10.2, "type": "devel"},
+    "mech": {"drag": 1.5, "type": "regular"},
+    "heavy": {"drag": 2.5, "type": "regular"},
+    "seatech": {"drag": 4.5, "type": "regular"}
+}
 
 ###
 ### units
@@ -367,52 +369,52 @@ stats_0 = {
 
 military_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (0, 2)},
-        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (1, 2, 0)},
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": 3},
-        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.5), "order": "shot", "to": (0, 2)},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.5, "stock": (0.6, 0.5), "order": "shot", "to": (1, 2, 0)},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 1.9, "stock": (0.6, 0.5), "order": "shot", "to": 3},
+        {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 1.7, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (2, 2): [
-        {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.0), "order": "defence"},
-        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "defence"}
+        {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.0), "order": "defence"},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (-1, 2): [
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "defence"},
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9}
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "defence"},
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9}
     ],
     (-2, 2): [
-        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "exp": 0.0, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
-        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "storm", "to": 2}
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "exp": 1.2, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.75, 0.6), "order": "storm", "to": 2}
     ],
     (-3, 0): [
-        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "exp": 0.0, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
-        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "storm", "to": 2}
+        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "exp": 1.7, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
+        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "exp": 1.8, "stock": (0.75, 0.6), "order": "storm", "to": 2}
     ],
     (-3, -1): [
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 0)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 1)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 2)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 3)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 4)},
-        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 5)}
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.9, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 0)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.8, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 1)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.7, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 2)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 3)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.5, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 4)},
+        {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.4, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 5)}
     ],
     (0, 1): [
-        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
     ],
     (-1, 1): [
-        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
     ],
     (-1, 6): [
-        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "defence"}
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.75, 0.6), "order": "defence"}
     ],
     (-3, 2): [
-        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
     ],
     (-1, 0): [
-        {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "exp": 0.0, "stock": (0.5, 0.0), "order": "supply", "from": [(-3, 2), (-3, 1), (-2, 1)], "to": [(0, 0), (0, 1)]}
+        {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "exp": 1.1, "stock": (0.5, 0.0), "order": "supply", "from": [(-3, 2), (-3, 1), (-2, 1)], "to": [(0, 0), (0, 1)]}
     ],
     (-5, 3): [
-        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "exp": 0.0, "stock": (0.5, 0.5), "order": "transport", "progress": 0.5, "unit": 0, "from": [(-3, 2), (-4, 2)], "to": [(-4, 2), (-4, 1)]}
+        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.5, 0.5), "order": "transport", "progress": 0.5, "unit": 0, "from": [(-3, 2), (-4, 2)], "to": [(-4, 2), (-4, 1)]}
     ]
 }
 
@@ -432,42 +434,42 @@ military_0 = {
 
 infra_0 = {
     (2, 3): [
-        {"type": "unit", "own": "Aaa", "state": 1.0},
-        {"type": "fort", "own": "Aaa", "state": 1.0},
-        {"type": "unit", "own": "Bbb", "state": 1.0},
-        {"type": "fort", "own": "Aaa", "state": 1.0},
-        {"type": "supply", "own": "Aaa", "state": 1.0},
-        {"type": "supply", "own": "Aaa", "state": 1.0}
+        {"type": "unit", "own": "Aaa", "state": 1.0, "io": {"mech": "in"}, "stock": {"mech": 200.4}},
+        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {"devel": "in"}, "stock": {"devel": 1.5}},
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "devel"},
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "mech"},
+        {"type": "unit", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}}
     ],
     (2, 2): [
-        {"type": "airhub", "own": "Aaa", "state": 0.5},
-        {"type": "seahub", "own": "Aaa", "state": 0.5},
+        {"type": "airhub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "seahub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
         None,
-        {"type": "link", "own": "Aaa", "state": 0.5},
-        {"type": "plant", "own": "Aaa", "state": 0.5}
+        {"type": "link", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "plant", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}}
     ],
     (-2, 2): [
-        {"type": "link", "own": "Aaa", "state": 0.5},
-        {"type": "unit", "own": "Aaa", "state": 0.5},
-        {"type": "fort", "own": "Aaa", "state": 1.0}
+        {"type": "link", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "unit", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
+        {"type": "fort", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}}
     ],
     (1, 2): [
-        {"type": "plant", "own": "Bbb", "state": 1.0}
+        {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
     ],
     (2, 1): [
-        {"type": "link", "own": "Aaa", "state": 1.0},
-        {"type": "link", "own": "Aaa", "state": 1.0}
+        {"type": "link", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "link", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}}
     ],
     (-1, 6): [
-        {"type": "link", "own": "Bbb", "state": 1.0}
+        {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
     ],
     (-3, 2): [
-        {"type": "seahub", "own": "Bbb", "state": 1.0},
-        {"type": "airhub", "own": "Bbb", "state": 1.0},
-        {"type": "plant", "own": "Bbb", "state": 1.0},
-        {"type": "link", "own": "Bbb", "state": 1.0},
-        {"type": "unit", "own": "Bbb", "state": 1.0},
-        {"type": "fort", "own": "Bbb", "state": 1.0}
+        {"type": "seahub", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "airhub", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "unit", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "fort", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
     ]
 }
 
