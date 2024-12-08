@@ -2,17 +2,20 @@ from ObjPainter import AbstractPainter
 
 
 class UnitPainter(AbstractPainter):        
-    def draw(self, context, own):
+    def draw(self, context):
         for vex, units in self.saver.military.items():
-            color, symbol, size = self.estimate_unit(units, own)
+            color, symbol, size = self.estimate_unit(units)
             if size == 0: continue
             self.draw_unit_envelop(context, vex, color)
             self.draw_unit_label(context, vex, symbol, size)
             
-    def estimate_unit(self, units, own=None):
-        if own:
+    def estimate_unit(self, units):
+        if self.window.selected_own:
+            own = self.window.selected_own
             fown = lambda unit: unit["own"] == own
             units = list(filter(fown, units))
+        #elif self.window.selected_unit is not None:
+        #    units = [units[self.window.selected_unit]]
         size = 0; letters = []; backend = True
         for unit in units:
             size += unit["size"]

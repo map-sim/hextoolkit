@@ -19,14 +19,14 @@ from UnitPainter import UnitPainter
 from InfraPainter import InfraPainter
 
 class HexWindow(NaviWindow):
-    version = "non-public"
+    version = "09DEC24.0"
     window_modes = ["view", "edit"]
     def __init__(self, saver):
         self.terr_graph = TerrGraph(saver)
-        self.obj_painter = ObjPainter(saver)
-        self.terr_painter = TerrPainter(saver)
-        self.unit_painter = UnitPainter(saver)
-        self.infra_painter = InfraPainter(saver)
+        self.obj_painter = ObjPainter(self, saver)
+        self.unit_painter = UnitPainter(self, saver)
+        self.terr_painter = TerrPainter(self, saver)
+        self.infra_painter = InfraPainter(self, saver)
         self.settings_backup = copy.deepcopy(saver.settings)
 
         self.saver = saver
@@ -49,7 +49,7 @@ class HexWindow(NaviWindow):
     def draw_content(self, context):
         self.terr_painter.draw(context)
         self.infra_painter.draw(context)
-        self.unit_painter.draw(context, self.selected_own)
+        self.unit_painter.draw(context)
         self.obj_painter.draw(context)
         context.stroke()
 
@@ -299,6 +299,10 @@ class HexWindow(NaviWindow):
         infra = self.saver.infra.get(hex_xy)
         if infra is None or len(infra) == 0:
             self.control_panel.info.set_text("no infra...")
+            self.selected_infra = None
+            for n, marker in reversed(list(enumerate(self.saver.markers))):
+                if marker[0] == "inf": del self.saver.markers[n]
+            self.draw_content()
             print("no infra..."); return True
             
         if self.selected_infra is not None:

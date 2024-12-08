@@ -4,7 +4,8 @@ TWO_PI = 2 * math.pi
 SQRT3 = math.sqrt(3)
 
 class AbstractPainter:
-    def __init__(self, saver):
+    def __init__(self, window, saver):
+        self.window = window
         self.saver = saver
 
     def draw_base(self, context, color):
