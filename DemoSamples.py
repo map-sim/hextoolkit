@@ -419,7 +419,7 @@ military_0 = {
         {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.0), "order": "defence"},
         {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.6, 0.5), "order": "defence"}
     ],
-    (-1, 2): [
+    (1, 1): [
         {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "defence"},
         {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9}
     ],
@@ -431,7 +431,7 @@ military_0 = {
         {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "exp": 1.7, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
         {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "exp": 1.8, "stock": (0.75, 0.6), "order": "storm", "to": 2}
     ],
-    (-3, -1): [
+    (4, 1): [
         {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.9, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 0)},
         {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.8, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 1)},
         {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.7, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 2)},
@@ -481,6 +481,11 @@ infra_0 = {
         {"type": "unit", "own": "Aaa", "state": 1.0, "io": {"mech": "in"}, "stock": {"mech": 200.4}},
         {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "devel"},
         {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "mech"},
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
+    ],
+    (4, 2): [
+        {"type": "link", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "seatech"},
         {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
     ],
     (4, 3): [
