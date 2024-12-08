@@ -346,10 +346,10 @@ stats_0 = {
 }
 
 ###
-### stock
+### goods / stocks
 ###
 
-stocks_0 = {
+goods_0 = {
     "basic": {"drag": 0.5, "type": "basic"},
     "devel": {"drag": 10.2, "type": "devel"},
     "mech": {"drag": 1.5, "type": "regular"},
@@ -431,6 +431,8 @@ military_0 = {
 # seahub: stock
 # airhub: stock
 # plant: stock
+
+# io: in out off
 
 infra_0 = {
     (2, 3): [

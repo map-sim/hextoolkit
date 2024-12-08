@@ -16,7 +16,7 @@ class SaveHandler:
         self.markers = []
         self.units = {}
         self.builds = {}
-        self.stocks = {}
+        self.goods = {}
         
     def load_demo_0(self):
         print("load demo_0")
@@ -31,7 +31,7 @@ class SaveHandler:
         self.military = demo.military_0
         self.infra = demo.infra_0
         self.stats = demo.stats_0
-        self.stocks = demo.stocks_0
+        self.goods = demo.goods_0
         valid.MapValidate(self)
         
     def save_on_drive(self, prefix="save."):
@@ -57,7 +57,7 @@ class SaveHandler:
         inner("markers.json", self.markers)
         inner("units.json", self.units)
         inner("builds.json", self.builds)
-        inner("stocks.json", self.stocks)
+        inner("goods.json", self.goods)
         inner("stats.json", self.stats)
         return dir_name
     def load_from_drive(self, save_name):
@@ -80,7 +80,7 @@ class SaveHandler:
         self.xsystem = inner("xsystem.json")
         self.markers = inner("markers.json")
         self.builds = inner("builds.json")
-        self.stocks = inner("stocks.json")
+        self.goods = inner("goods.json")
         self.stats = inner("stats.json")
         self.units = inner("units.json")
         valid.MapValidate(self)

@@ -241,6 +241,13 @@ class HexControl(Gtk.Window):
                 info += f"\nowner: {infra['own']}"
                 info += f"\ntype: {infra['type']}"
                 info += f"\nstate: {round(100*infra['state'], 1)}%"
+                if "supply" in infra:
+                    info += f"\nsuplly: {infra['supply']}"
+                info += "\nstock:"
+                for good in sorted(self.main_window.saver.goods.keys()):
+                    val = infra["stock"].get(good, 0.0)
+                    io = infra["io"].get(good, "off")
+                    info += f"\n\t{good} [{io}] - {round(val, 2)}"
         else: info = "No selected infra..."
         self.info.set_text(info)
 
@@ -270,10 +277,10 @@ class HexControl(Gtk.Window):
         self.display_content = terrstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
-    def stocks_view(self):
+    def goods_view(self):
         self.__display_offset = 0
         goodstr = "good-list:\n" + "-" * 40 + "\n"
-        good_list = self.main_window.saver.stocks
+        good_list = self.main_window.saver.goods
         for n, (k, v) in enumerate(good_list.items()):
             goodstr += f"{n+1}. {k}:\n"
             goodstr += f"\ttype: {v['type']}\n"
@@ -360,7 +367,7 @@ class HexControl(Gtk.Window):
     def welcome_view(self):
         self.__display_offset = 0
         content = "WELCOME !!!\n"        
-        content += "-----------------------------\n"
+        content += 60 * "-" + "\n"
         content += f"project: Hex ToolKit\n"
         content += f"version: {self.main_window.version}\n"
         content += "-----------------------------\n"

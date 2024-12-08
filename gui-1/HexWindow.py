@@ -235,7 +235,7 @@ class HexWindow(NaviWindow):
             self.control_panel.builds_view()
         elif key_name == "g":
             print("##> show stocks/googs list")
-            self.control_panel.stocks_view()
+            self.control_panel.goods_view()
         elif key_name == "x":
             print("##> show settings")
             self.control_panel.settings_view()
