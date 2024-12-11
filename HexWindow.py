@@ -75,14 +75,17 @@ class HexWindow(NaviWindow):
             print(f"landform-object: {terr_obj}")
             print(f"hex-location: {hex_index_xy}")
             print(f"hex-terrain: {hex_terr}")
-            ## hex selection
-            self.unselect_all()
-            self.selected_vex = tuple(hex_index_xy)
-            self.saver.mark_only_one_vex(hex_index_xy)
-            self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
-            if self.saver.settings["show-markers"]:
-                self.saver.orders_to_markers(self.selected_vex, self.selected_own)
-            self.draw_content()                
+            if self.selected_vex != tuple(hex_index_xy):
+                self.unselect_all()
+                self.selected_vex = tuple(hex_index_xy)
+                self.saver.mark_only_one_vex(hex_index_xy)
+                self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
+                if self.saver.settings["show-markers"]:
+                    self.saver.orders_to_markers(self.selected_vex, self.selected_own)
+            else:
+                self.saver.unmark_all_vexes()
+                self.unselect_all()
+            self.draw_content()
         return True
 
     def reset_vex(self, vex):
