@@ -122,7 +122,7 @@ class SaveHandler:
         for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
-                if unit["order"] != "move": continue                        
+                if unit["order"] not in ["move", "landing"]: continue                        
                 marker = ["a1", unit["own"], vex, *unit["to"]]
                 self.markers.append(marker)
         for vex, units in self.military.items():
@@ -144,7 +144,7 @@ class SaveHandler:
                 if inner(vex, unit["own"]): continue
                 if unit["order"] != "transport": continue
                 marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
-                self.markers.append(marker)
+                self.markers.append(marker)        
         for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue

@@ -448,14 +448,14 @@ military_0 = {
     (-1, 6): [
         {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.75, 0.6), "order": "defence"}
     ],
-    (-3, 2): [
-        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
-    ],
     (-1, 0): [
         {"own": "Bbb", "type": "supplying", "size": 2, "state": 1.0, "exp": 1.1, "stock": (0.5, 0.0), "order": "supply", "from": [(-3, 2), (-3, 1), (-2, 1)], "to": [(0, 0), (0, 1)]}
     ],
-    (-5, 3): [
-        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.5, 0.5), "order": "transport", "progress": 0.5, "unit": 0, "from": [(-3, 2), (-4, 2)], "to": [(-4, 2), (-4, 1)]}
+    (-3, 2): [
+        {"own": "Bbb", "type": "engineering", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.75, 0.6), "order": "landing", "progress": 0.5, "to": [(-4, 3), (-4, 4), (-4, 5), (-3, 6), (-3, 7), (-2, 7), (-1, 6)]}
+    ],
+    (-4, 4): [
+        {"own": "Bbb", "type": "cutter", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.5, 0.5), "order": "transport", "progress": 0.5, "unit": 0, "from": [(-3, 2), (-4, 3)], "to": [(-4, 5), (-3, 6), (-3, 7), (-2, 7), (-1, 6)]}
     ]
 }
 
@@ -509,19 +509,32 @@ infra_0 = {
         {"type": "plant", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}}
     ],
     (-3, 0): [
-        {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
+        {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "seatech"},
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "devel"},
+        {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
     ],
     (2, 1): [
         {"type": "link", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},
         {"type": "link", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}}
     ],
+    (-2, 2): [
+        {"type": "airhub", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "heavy"},
+        {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
+    ],
+    (-3, 1): [
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
+        {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
+    ],
     (-1, 6): [
         {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
     ],
     (-3, 2): [
-        {"type": "seahub", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
-        {"type": "airhub", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
-        {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
+        {"type": "seahub", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},        
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "mech"},
+        {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
         {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
         {"type": "unit", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
         {"type": "fort", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
