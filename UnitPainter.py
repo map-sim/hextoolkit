@@ -36,15 +36,15 @@ class UnitPainter(AbstractPainter):
         zoom = self.saver.settings["window-zoom"]
         loc = AbstractPainter.vex_to_loc(vex, r)                
         xo, yo = self.translate_xy(*loc)
-        if size < 10: context.move_to(xo-0.45*zoom, yo-0.05*zoom)
-        else: context.move_to(xo-0.7*zoom, yo-0.05*zoom)
+        if size < 10: context.move_to(xo-0.34*zoom, yo-0.05*zoom)
+        else: context.move_to(xo-0.5*zoom, yo-0.05*zoom)
         context.set_font_size(0.5*zoom)
         context.set_source_rgba(0, 0, 0)
         context.show_text(f"{symbol}{size}")
         context.fill()
         
         if sstate >= 1: context.move_to(xo-0.7*zoom, yo+0.48*zoom)
-        elif sstate >= 0.1: context.move_to(xo-0.6*zoom, yo+0.48*zoom)
+        elif sstate >= 0.1: context.move_to(xo-0.57*zoom, yo+0.48*zoom)
         else: context.move_to(xo-0.42*zoom, yo+0.48*zoom)
         context.set_font_size(0.5*zoom)
         context.set_source_rgba(0, 0, 0)
