@@ -328,6 +328,8 @@ landform_0 = [
     ('vex', 'desert-0', (3, -2)),
     ('vex', 'desert-0', (4, -1)),
     ('vex', 'desert-0', (5, 0)),
+    ('vex', 'shallows-0', (3, -3)),
+    ('vex', 'shallows-0', (4, -2)),
     ('vex', 'shallows-0', (3, 3)),
     ('vex', 'shallows-0', (3, 2)),
     ('vex', 'shallows-0', (1, 4)),
@@ -402,13 +404,23 @@ goods_0 = {
 ### units
 ###
 
-# orders: defense
-#         move (target: hex)
-#         supply (source: hex, target: hex)
-#         storm (target: hex | index)
-#         shot (target: hex | index | hex + index)
+orders_0 = {
+    "defence": [],
+    "shot": ["to"],
+    "storm": ["to"],
+    "devel": ["to"],
+    "supply": ["from", "to"],
+    "move": ["to", "progress"],
+    "landing": ["to", "progress"],
+    "regroup": ["progress", "location"],
+    "transport": ["from", "to", "unit", "progress"]    
+}
 
 military_0 = {
+    (1, 1): [
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "defence"},
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9, "location": []}
+    ],
     (2, 3): [
         {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.5), "order": "shot", "to": (-2, 2)},
         {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.5, "stock": (0.6, 0.5), "order": "shot", "to": (-2, 2, 0)},
@@ -419,17 +431,16 @@ military_0 = {
         {"own": "Aaa", "type": "supplying", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.0), "order": "defence"},
         {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.6, 0.5), "order": "defence"}
     ],
-    (1, 1): [
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "defence"},
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9}
+    (-1, 2): [
+        {"own": "Aaa", "type": "motorized", "size": 1, "state": 0.04, "exp": 1.2, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)}
     ],
     (-2, 2): [
         {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "exp": 1.2, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
-        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.75, 0.6), "order": "storm", "to": 2}
+        {"own": "Bbb", "type": "motorized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.75, 0.6), "order": "storm", "to": (-1, 2)}
     ],
     (-3, 0): [
-        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "exp": 1.7, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},
-        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "exp": 1.8, "stock": (0.75, 0.6), "order": "storm", "to": 2}
+        {"own": "Bbb", "type": "engineering", "size": 1, "state": 0.4, "exp": 1.7, "stock": (0.66, 0.66), "order": "devel", "to": 3},
+        {"own": "Bbb", "type": "supplying", "size": 1, "state": 1.0, "exp": 1.8, "stock": (0.75, 0.6), "order": "defence"}
     ],
     (4, 1): [
         {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.9, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 0)},
@@ -443,7 +454,7 @@ military_0 = {
         {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "storm", "to": 0}
     ],
     (-1, 1): [
-        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(0, 0), (0, -1), (1, -1)]}
     ],
     (-1, 6): [
         {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.2, "stock": (0.75, 0.6), "order": "defence"}
@@ -517,7 +528,7 @@ infra_0 = {
         {"type": "plant", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}},
         {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "seatech"},
         {"type": "supply", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}, "supply": "devel"},
-        {"type": "link", "own": "Bbb", "state": 1.0, "io": {}, "stock":{}}
+        {"type": "link", "own": "Bbb", "state": 0.7, "io": {}, "stock":{}}
     ],
     (2, 1): [
         {"type": "link", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},

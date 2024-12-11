@@ -69,18 +69,19 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "List-Terrs - t", "t")
         self.make_button(vbox, "List-Goods - g", "g")
         self.make_button(vbox, "List-Builds - b", "b")
+        self.make_button(vbox, "List-Orders - o", "o")
         self.make_button(vbox, "Switch-Unit - u", "u")
         self.make_button(vbox, "Switch-Control - c", "c")
         self.make_button(vbox, "Select-Unit - v", "v")
         self.make_button(vbox, "Select-Infra - i", "i")
         self.make_button(vbox, "Area Control - a", "a")
         self.make_button(vbox, "Un-Select - q", "q")
-        self.make_button(vbox, "S/H Markers - M", "M")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
+        self.make_button(vbox, "S/H Markers - M", "M")
         self.make_button(vbox, "Mode - TAB", "Tab")
         self.make_button(vbox, "Remove Hex - R", "R")
         self.make_button(vbox, "Change Terrain - T", "T")
@@ -175,7 +176,7 @@ class HexControl(Gtk.Window):
         for i, item in enumerate(infra):
             if item is None: continue
             it = f"{item['type']} ({item['own']})"
-            it += f" --> {100 * round(item['state'], 1)}%"
+            it += f" --> {round(100 * item['state'])}%"
             info += f"\n {i}. {it}"
         units = self.main_window.saver.military.get(hex_xy, [])
         if units: info += "\nunits:"
@@ -183,15 +184,17 @@ class HexControl(Gtk.Window):
             if item['type'] == "motorized": t = "motor"
             elif item['type'] == "mechanized": t = "mech"
             elif item['type'] == "supplying": t = "supp"
+            elif item['type'] == "helicopter": t = "h-copter"
             elif item['type'] == "engineering": t = "eng"
             elif item['type'] == "artillery": t = "art"
             elif item['type'] == "armored": t = "armor"
             elif item['type'] == "special": t = "spec"
             else: t = item['type']
-            it = f"{t}-{item['size']} ({item['own']})"
-            it += f" --> {100 * round(item['state'], 1)}"
-            it += f" / {100 * round(item['stock'][0], 1)}"
-            it += f" / {100 * round(item['stock'][1], 1)}%"
+            o = item['order'][:5]
+            it = f"{t}-{item['size']} ({item['own']}; {o})"
+            it += f" %-> {round(100 * item['state'])}"
+            it += f" / {round(100 * item['stock'][0])}"
+            it += f" / {round(100 * item['stock'][1])}"
             info += f"\n {i}. {it}"            
         self.info.set_text(info)
 
@@ -209,12 +212,12 @@ class HexControl(Gtk.Window):
                 info += f"\ntype: {unit['type']}"
                 info += f"\nsize: {unit['size']}"
                 info += f"\nexp: {round(unit['exp'], 2)}"
-                info += f"\nstate: {round(100*unit['state'], 2)}%"
-                info += f"\nstock 1: {round(100*unit['stock'][0], 2)}%"
-                info += f"\nstock 2: {round(100*unit['stock'][1], 2)}%"
+                info += f"\nstate: {round(100*unit['state'])}%"
+                info += f"\nstock 1: {round(100*unit['stock'][0])}%"
+                info += f"\nstock 2: {round(100*unit['stock'][1])}%"
                 info += f"\norder: {unit['order']}"
                 if "progress" in unit:
-                    info += f"\nprogress: {round(unit['progress'], 2)}"
+                    info += f"\nprogress: {round(100*unit['progress'])}"
                 if "unit" in unit:
                     info += f"\nunit: {unit['unit']}"
                 if "from" in unit:
@@ -240,7 +243,7 @@ class HexControl(Gtk.Window):
                 info += f"\nhex: {hex_xy}"
                 info += f"\nowner: {infra['own']}"
                 info += f"\ntype: {infra['type']}"
-                info += f"\nstate: {round(100*infra['state'], 1)}%"
+                info += f"\nstate: {round(100*infra['state'])}%"
                 if "supply" in infra:
                     info += f"\nsuplly: {infra['supply']}"
                 info += "\nstock:"
@@ -287,6 +290,16 @@ class HexControl(Gtk.Window):
             goodstr += f"\ttype: {v['type']}\n"
             goodstr += f"\tdrag: {v['drag']}\n"
         self.display_content = goodstr
+        display_data = self.get_display_data()
+        self.info.set_text(display_data)
+    def orders_view(self):
+        self.__display_offset = 0
+        orderstr = "order-list:\n" + "-" * 40 + "\n"
+        order_list = self.main_window.saver.orders
+        for n, (k, vs) in enumerate(order_list.items()):
+            orderstr += f"{n+1}. {k}:\n"
+            orderstr += f"\t{', '.join(vs)}\n"
+        self.display_content = orderstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
     def builds_view(self):
@@ -348,11 +361,12 @@ class HexControl(Gtk.Window):
         cstr = f"{cstr}\nm-color: {mcolor}"
         cstr = f"{cstr}\nu-color: {ucolor}"
         cstr = f"{cstr}\n{'-' * 40}"
-        u = 0; i = 0; s = 0
+        u = 0; i = 0; s = 0; sf = 0
         for units in self.main_window.saver.military.values():
             for unit in units:
                 if unit["own"] == name: u += 1; s += unit["size"]
-        cstr = f"{cstr}\nunits: {u}\narmy: {s}"
+                if unit["own"] == name: sf += unit["size"] * unit["state"]
+        cstr = f"{cstr}\nunits: {u}\narmy: {s}\nfiling: {round(100*sf/s)}%"
         for infra in self.main_window.saver.infra.values():
             for build in infra:
                 if build is None: continue

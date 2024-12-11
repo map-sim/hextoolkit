@@ -69,8 +69,12 @@ class MapValidate:
         counter = 0
         for units in self.handler.military.values():
             for unit in units:
+                assert isinstance(unit["size"], int), unit["size"]
                 assert unit["type"] in self.handler.units, unit["type"]
                 assert unit["own"] in self.handler.controls, unit["own"] 
+                assert unit["order"] in self.handler.orders, unit["order"]
+                for key in self.handler.orders[unit["order"]]:
+                    assert key in unit, f"no {key}"
                 counter += 1
         print(f"units ({counter})... OK")
 

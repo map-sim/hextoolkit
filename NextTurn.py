@@ -4,7 +4,7 @@ class NextTurn:
         self.handler = handler
         
     def init_stats(self):
-        groups = ["Units", "Infra", "Army"]
+        groups = ["Units", "Infra", "Army", "Filing"]
         for group in groups + ["Area"]:
             if group not in self.handler.stats:
                 self.handler.stats[group] = {}
@@ -18,15 +18,18 @@ class NextTurn:
 
     def stats_update(self):
         for control in self.handler.controls:
-            u = 0; i = 0; s = 0; aset=set()
-            ua = 0; ia = 0; sa = 0
+            u = 0; i = 0; s = 0; sf=0; aset=set()
+            ua = 0; ia = 0; sa = 0; sfa = 0;
             for vex, units in self.handler.military.items():
                 for unit in units:
                     if unit["own"] == control:
                         u += 1; s += unit["size"]; aset.add(vex)
+                        sf += unit["size"] * unit["state"]
                     ua += 1; sa += unit["size"]
+                    sfa += unit["size"] * unit["state"]
             self.handler.stats["Army"][control].append(s)
             self.handler.stats["Units"][control].append(u)
+            self.handler.stats["Filing"][control].append(sf / s)
             for vex, infra in self.handler.infra.items():
                 for build in infra:
                     if build is None: continue
@@ -38,7 +41,8 @@ class NextTurn:
         self.handler.stats["Units"]["All"].append(ua)
         self.handler.stats["Army"]["All"].append(sa)
         self.handler.stats["Infra"]["All"].append(ia)
-        
+        self.handler.stats["Filing"]["All"].append(sfa / sa)
+
     def execute(self):
         self.stats_update()
 

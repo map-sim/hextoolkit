@@ -240,6 +240,9 @@ class HexWindow(NaviWindow):
         elif key_name == "b":
             print("##> show build list")
             self.control_panel.builds_view()
+        elif key_name == "o":
+            print("##> show order list")
+            self.control_panel.orders_view()
         elif key_name == "g":
             print("##> show stocks/googs list")
             self.control_panel.goods_view()
