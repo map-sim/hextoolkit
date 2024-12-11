@@ -410,8 +410,8 @@ goods_0 = {
 
 military_0 = {
     (2, 3): [
-        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.5), "order": "shot", "to": (0, 2)},
-        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.5, "stock": (0.6, 0.5), "order": "shot", "to": (1, 2, 0)},
+        {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.5), "order": "shot", "to": (-2, 2)},
+        {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.5, "stock": (0.6, 0.5), "order": "shot", "to": (-2, 2, 0)},
         {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 1.9, "stock": (0.6, 0.5), "order": "shot", "to": 3},
         {"own": "Aaa", "type": "motorized", "size": 3, "state": 1.0, "exp": 1.7, "stock": (0.6, 0.5), "order": "defence"}
     ],
@@ -440,7 +440,7 @@ military_0 = {
         {"own": "Aaa", "type": "special", "size": 1, "state": 1.0, "exp": 1.4, "stock": (0.6, 0.5), "order": "shot", "to": (-3, 2, 5)}
     ],
     (0, 1): [
-        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
+        {"own": "Bbb", "type": "armored", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "storm", "to": 0}
     ],
     (-1, 1): [
         {"own": "Bbb", "type": "artillery", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.75, 0.6), "order": "move", "progress": 0.0, "to": [(1, 2), (0, 3)]}
@@ -500,6 +500,11 @@ infra_0 = {
     (2, 3): [
         {"type": "fort", "own": "Aaa", "state": 1.0, "io": {"devel": "in"}, "stock": {"devel": 1.5}},
         {"type": "unit", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}},
+        None,
+        {"type": "fort", "own": "Bbb", "state": 1.0, "io": {"devel": "in"}, "stock": {"devel": 1.5}},
+    ],
+    (0, 1): [
+        {"type": "fort", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
     ],
     (2, 2): [
         {"type": "fort", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},

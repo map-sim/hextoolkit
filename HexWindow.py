@@ -80,6 +80,8 @@ class HexWindow(NaviWindow):
             self.selected_vex = tuple(hex_index_xy)
             self.saver.mark_only_one_vex(hex_index_xy)
             self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
+            if self.saver.settings["show-markers"]:
+                self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             self.draw_content()                
         return True
 
