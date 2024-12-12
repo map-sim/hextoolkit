@@ -19,7 +19,6 @@ from UnitPainter import UnitPainter
 from InfraPainter import InfraPainter
 
 class HexWindow(NaviWindow):
-    version = "09DEC24.0"
     window_modes = ["view", "edit"]
     def __init__(self, saver):
         self.terr_graph = TerrGraph(saver)

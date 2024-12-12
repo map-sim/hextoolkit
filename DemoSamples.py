@@ -3,6 +3,7 @@
 ###
 
 settings_0 = {
+    'version': '12DEC24.0',
     'current-turn': 0,
     'window-title': 'main-window',
     'window-size': (1100, 1050),

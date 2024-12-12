@@ -53,9 +53,9 @@ class HexControl(Gtk.Window):
         self.make_button(vbox, "Move Down", "Down")
         self.make_button(vbox, "Move --->", "Right")
         self.make_button(vbox, "Move <---", "Left")
-        self.make_button(vbox, "Next turn (n)", "n")
         self.make_button(vbox, "Exit - E", "E")
         self.make_button(vbox, "Save - S", "S")
+        self.make_button(vbox, "S/H Markers - M", "M")
         for group in main_window.saver.stats.keys():
             self.button_mapping[f"Plot {group} - p"] = "p"
         plabel = self.plotter.get_next_label()
@@ -81,7 +81,7 @@ class HexControl(Gtk.Window):
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
-        self.make_button(vbox, "S/H Markers - M", "M")
+        self.make_button(vbox, "Next turn (n)", "n")
         self.make_button(vbox, "Mode - TAB", "Tab")
         self.make_button(vbox, "Remove Hex - R", "R")
         self.make_button(vbox, "Change Terrain - T", "T")
@@ -387,7 +387,7 @@ class HexControl(Gtk.Window):
         content = "WELCOME !!!\n"        
         content += 60 * "-" + "\n"
         content += f"project: Hex ToolKit\n"
-        content += f"version: {self.main_window.version}\n"
+        content += f"version: {self.main_window.saver.settings['version']}\n"
         content += "-----------------------------\n"
         ncontrols = len(self.main_window.saver.controls)
         cturn = self.main_window.saver.settings['current-turn']

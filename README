@@ -1,3 +1,9 @@
 try to by:
 
 python3 HexWindow.py
+
+or
+
+broadwayd :5
+GDK_BACKEND=broadway BROADWAY_DISPLAY=:5 python3 HexWindow.py
+http://127.0.0.1:8085/
