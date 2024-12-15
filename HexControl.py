@@ -189,6 +189,7 @@ class HexControl(Gtk.Window):
             elif item['type'] == "artillery": t = "art"
             elif item['type'] == "armored": t = "armor"
             elif item['type'] == "special": t = "spec"
+            elif item['type'] == "cutter": t = "cut"
             else: t = item['type']
             o = item['order'][:5]
             it = f"{t}-{item['size']} ({item['own']}; {o})"
@@ -329,7 +330,10 @@ class HexControl(Gtk.Window):
         nstr = f"{name}:" + " " * (40 - len(name))
         cstr = f"{nstr}\n{'-' * 40}"
         for k, v in reversed(sorted(cc.items())):
-            if k == "action-cost":
+            if isinstance(v, (list, tuple)):
+                vv = ", ".join(map(str, v))
+                cstr += f"\n{k}: {vv}"
+            elif k == "action-cost":
                 cstr += f"\n{k}:"
                 for kk, vv in sorted(v.items()):
                     cstr += f"\n\t{kk}: {vv[0]} / {vv[1]}"
