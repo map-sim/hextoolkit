@@ -1,4 +1,4 @@
-class MapValidate:
+class SaveValidate:
     def __init__(self, handler):
         self.handler = handler
         self.validate_terrains()
@@ -38,7 +38,7 @@ class MapValidate:
         counter = 0
         obligatory = ["char", "type", "max-size", "shot-range",
                       "cost", "speed", "supply", "costal",
-                      "stock-form", "stock-2nd", "action-cost"]
+                      "stock-form", "stock-use", "action-cost"]
         for name, unit in self.handler.units.items():
             for key in obligatory:
                 assert key in unit,  f"{key} in {name}"

@@ -1,5 +1,5 @@
 import DemoSamples as demo
-import MapValidate as valid
+import SaveValidate as valid
 from ast import literal_eval
 import os, json
 
@@ -34,7 +34,7 @@ class SaveHandler:
         self.stats = demo.stats_0
         self.goods = demo.goods_0
         self.orders = demo.orders_0
-        valid.MapValidate(self)
+        valid.SaveValidate(self)
         
     def save_on_drive(self, prefix="save."):
         fname = lambda c: f"{prefix}{c}"; counter = 0
@@ -87,7 +87,7 @@ class SaveHandler:
         self.stats = inner("stats.json")
         self.units = inner("units.json")
         self.orders = inner("orders.json")
-        valid.MapValidate(self)
+        valid.SaveValidate(self)
 
     def remove_markers(self, vex, name=None):
         for n, marker in reversed(list(enumerate(self.markers))):

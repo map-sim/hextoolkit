@@ -291,7 +291,6 @@ class HexWindow(NaviWindow):
             print("##> next turn")
             text = NextTurn(self.saver).execute()
             self.control_panel.info.set_text(text)
-
         elif key_name == "Escape":
             NaviWindow.on_press(self, widget, event)
             self.control_panel.welcome_view()

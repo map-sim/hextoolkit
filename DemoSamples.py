@@ -50,7 +50,7 @@ builds_0 = {
     "seahub": {
         "cost": 50,
         "strength": 90,
-        "costal": True,
+        "costal": False,
         "off-grid": 0.5,
         "power": -1,
     },
@@ -71,16 +71,12 @@ builds_0 = {
 
 units_0 = {
     "supplying": {
-        "char": "S",
-        "costal": -1,
-        "type": "light",
-        "max-size": 8,
-        "cost": 20.0,
-        "speed": 1.5,
+        "char": "S", "type": "light",
+        "costal": -1, "max-size": 8,
+        "cost": 20.0, "speed": 1.5,
+        "shot-acc": "1/d2", "shot-range": 2.0,
+        "stock-form": "mech", "stock-use": "mech",
         "supply": 1.0,
-        "shot-range": 0.0,
-        "stock-form": "mech",
-        "stock-2nd": "mech",
         "action-cost": {
             "move": (0.5, 0.01),
             "supply": (1.0, 0.02),
@@ -90,17 +86,12 @@ units_0 = {
         }
     },
     "engineering": {
-        "char": "E",
-        "costal": 1,
-        "type": "light",
-        "max-size": 2,
-        "cost": 30.0,
-        "speed": 0.5,
+        "char": "E", "type": "light",
+        "costal": 1, "max-size": 2,
+        "cost": 30.0, "speed": 0.5,
+        "shot-acc": "1/d2", "shot-range": 2.0,
+        "stock-form": "mech", "stock-use": "devel",
         "supply": 0.05,
-        "costal": 1,
-        "shot-range": 0.0,
-        "stock-form": "mech",
-        "stock-2nd": "devel",
         "action-cost": {
             "move": (0.5, 0.0),
             "supply": (1.0, 0.0),
@@ -109,37 +100,13 @@ units_0 = {
             "devel": (1.0, 1.0),
         }
     },
-    "special": {
-        "char": "Q",
-        "costal": 3,
-        "type": "super-light",
-        "max-size": 2,
-        "cost": 50.0,
-        "speed": 2.0,
-        "supply": 0.03,
-        "shot-range": 6.0,
-        "stock-form": "special",
-        "stock-2nd": "special",
-        "action-cost": {
-            "move": (0.5, 0.0),
-            "supply": (1.0, 0.0),
-            "defence": (1.0, 1.0),
-            "storm": (1.5, 1.0),
-            "shot": (0.2, 1.0),
-            "devel": (1.0, 0.5),
-        }
-    },
     "motorized": {
-        "char": "K",
-        "costal": -1,
-        "type": "light",
-        "max-size": 8,
-        "cost": 27.5,
-        "speed": 1.0,
+        "char": "K", "type": "light",
+        "costal": -1, "max-size": 8,
+        "cost": 27.5, "speed": 1.0,
+        "shot-acc": "1/d2", "shot-range": 4.0,
+        "stock-form": "mech", "stock-use": "mech",
         "supply": 0.2,
-        "shot-range": 4.0,
-        "stock-form": "mech",
-        "stock-2nd": "mech",
         "action-cost": {
             "move": (0.66, 0.1),
             "supply": (1.0, 0.2),
@@ -150,16 +117,12 @@ units_0 = {
         }
     },
     "mechanized": {
-        "char": "M",
-        "costal": 4,
-        "type": "heavy",
-        "max-size": 8,
-        "cost": 72.0,
-        "speed": 0.9,
+        "char": "M", "type": "heavy",
+        "costal": 4, "max-size": 8,
+        "cost": 72.0, "speed": 0.9,
+        "shot-acc": "1/d2", "shot-range": 5.0,
+        "stock-form": "heavy", "stock-use": "heavy",
         "supply": 0.1,
-        "shot-range": 5.0,
-        "stock-form": "heavy",
-        "stock-2nd": "heavy",
         "action-cost": {
             "move": (0.72, 0.1),
             "supply": (1.2, 0.2),
@@ -169,16 +132,12 @@ units_0 = {
         }
     },
     "armored": {
-        "char": "T",
-        "costal": 4,
-        "type": "heavy",
-        "max-size": 8,
-        "cost": 100.0,
-        "speed": 0.4,
+        "char": "T", "type": "heavy",
+        "costal": 4, "max-size": 8,
+        "cost": 100.0, "speed": 0.4,
+        "shot-acc": "1/d2", "shot-range": 5.33,
+        "stock-form": "heavy", "stock-use": "heavy",
         "supply": 0.0,
-        "shot-range": 5.33,
-        "stock-form": "heavy",
-        "stock-2nd": "heavy",
         "action-cost": {
             "move": (1.2, 0.05),
             "defence": (1.5, 0.88),
@@ -187,16 +146,12 @@ units_0 = {
         }
     },
     "artillery": {
-        "char": "A",
-        "costal": -1,
-        "type": "heavy",
-        "max-size": 4,
-        "cost": 80.0,
-        "speed": 0.5,
+        "char": "A", "type": "heavy",
+        "costal": -1, "max-size": 4,
+        "cost": 80.0, "speed": 0.5,
+        "shot-acc": "1/d", "shot-range": 12.0,
+        "stock-form": "heavy", "stock-use": "heavy",
         "supply": 0.0,
-        "shot-range": 12.0,
-        "stock-form": "heavy",
-        "stock-2nd": "heavy",
         "action-cost": {
             "move": (0.8, 0.05),
             "defence": (0.5, 0.88),
@@ -204,18 +159,29 @@ units_0 = {
             "shot": (0.5, 1.2),
         }
     },
+    "special": {
+        "char": "Q", "type": "super-light",  
+        "costal": 3, "max-size": 2,
+        "cost": 50.0, "speed": 2.0,
+        "shot-acc": "1/d", "shot-range": 6.0,
+        "stock-form": "special", "stock-use": "special",
+        "supply": 0.03,
+        "action-cost": {
+            "move": (0.5, 0.0),
+            "supply": (1.0, 0.0),
+            "defence": (1.0, 1.0),
+            "storm": (1.5, 1.0),
+            "shot": (0.2, 1.0),
+            "devel": (1.0, 0.5),
+        }
+    },
     "helicopter": {
-        "char": "H",
-        "costal": -1,
-        "type": "helicopter",
-        "max-size": 4,
-        "cost": 180.0,
-        "speed": 4.5,
+        "char": "H", "type": "helicopter",
+        "costal": -1, "max-size": 4,
+        "cost": 180.0, "speed": 4.5,
+        "shot-acc": "1/d", "shot-range": 6.0,        
+        "stock-form": "aviate", "stock-use": "aviate",
         "supply": 1.0,
-        "shot-range": 4.0,
-        "type": "navigable",
-        "stock-form": "aviate",
-        "stock-2nd": "aviate",
         "action-cost": {
             "move": (0.8, 0.05),
             "supply": (1.0, 0.02),
@@ -225,16 +191,12 @@ units_0 = {
         }
     },
     "cutter": {
-        "char": "C",
-        "costal": 0,
-        "type": "navy",
-        "max-size": 1,        
-        "cost": 280.0,
-        "speed": 0.1,
+        "char": "C", "type": "navy",
+        "costal": 0, "max-size": 1,        
+        "cost": 280.0, "speed": 0.1,
+        "shot-acc": "1/d", "shot-range": 6.0,
+        "stock-form": "seatech", "stock-use": "seatech",
         "supply": 5.0,
-        "shot-range": 4.0,
-        "stock-form": "seatech",
-        "stock-2nd": "seatech",
         "action-cost": {
             "move": (0.8, 0.05),
             "supply": (1.0, 0.02),
@@ -251,9 +213,19 @@ units_0 = {
 ###
 
 xsystem_0 = {
-    "supplying": {},
+    "supplying": {
+        "building": 0.5,
+        "supplying": 0.75,
+        "engineering": 0.75,
+        "motorized": 0.5,
+        "special": 0.2,
+        "mechanized": 0.3,
+        "armored": 0.25,
+        "artillery": 0.3,
+        "cutter": 0.15,
+        "helicopter": 0.05
+    },
     "engineering": {},
-    "special": {},
     "motorized": {},
     "mechanized": {},
     "armored": {
@@ -266,6 +238,7 @@ xsystem_0 = {
         "armored": 0.6,
         "artillery": 1.0,
         "cutter": 0.75,
+        "helicopter": 0.4
     },
     "artillery": {
         "building": 1.5,
@@ -277,7 +250,9 @@ xsystem_0 = {
         "armored": 0.75,
         "artillery": 0.5,
         "cutter": 1.0,
+        "helicopter": 0.9
     },
+    "special": {},
     "cutter": {},
     "helicopter": {}
 }
@@ -474,16 +449,6 @@ military_0 = {
 ###
 ### infrastructure
 ###
-# common: type, own, build
-# --------------- no slot needed:
-# fort: stock, state(in, out, io)
-# link: stock, state(in, out, io)
-# --------------- slot limit:
-# unit: stock, index
-# supply: stock, what
-# seahub: stock
-# airhub: stock
-# plant: stock
 
 # io: in out off
 
@@ -506,7 +471,6 @@ infra_0 = {
         {"type": "supply", "own": "Aaa", "state": 1.0, "io": {}, "stock":{}, "supply": "basic"},
     ],
     (3, 2): [
-        {"type": "seahub", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
         {"type": "link", "own": "Aaa", "state": 0.5, "io": {}, "stock":{}},
     ],
     (2, 3): [
