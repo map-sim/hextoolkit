@@ -330,13 +330,17 @@ class HexControl(Gtk.Window):
         nstr = f"{name}:" + " " * (40 - len(name))
         cstr = f"{nstr}\n{'-' * 40}"
         for k, v in reversed(sorted(cc.items())):
-            if isinstance(v, (list, tuple)):
-                vv = ", ".join(map(str, v))
-                cstr += f"\n{k}: {vv}"
-            elif k == "action-cost":
+            # if isinstance(v, (list, tuple)):
+            #     vv = ", ".join(map(str, v))
+            #     cstr += f"\n{k}: {vv}"
+            # el
+            if k in ("action-cost", "action-perf"):
                 cstr += f"\n{k}:"
                 for kk, vv in sorted(v.items()):
-                    cstr += f"\n\t{kk}: {vv[0]} / {vv[1]}"
+                    if isinstance(vv, (list, tuple)):
+                        vs = ", ".join(map(str, vv))
+                        cstr += f"\n\t{kk}: {vs}"
+                    else: cstr += f"\n\t{kk}: {vv}"
             else: cstr += f"\n{k}: {v}"
         self.display_content = cstr
         display_data = self.get_display_data()

@@ -36,9 +36,9 @@ class SaveValidate:
 
     def validate_units(self):
         counter = 0
-        obligatory = ["char", "type", "max-size", "shot",
-                      "cost", "speed", "supply", "costal",
-                      "stock", "action-cost"]
+        obligatory = ["char", "type", "max-size",
+                      "cost", "costal", "stock",
+                      "action-cost", "action-perf"]
         for name, unit in self.handler.units.items():
             for key in obligatory:
                 assert key in unit,  f"{key} in {name}"
