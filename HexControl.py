@@ -264,10 +264,11 @@ class HexControl(Gtk.Window):
         for u, data in self.main_window.saver.xsystem.items():
             for k, v in data.items():
                 setstr += f"{u}.{k}: {v}\n"                
+            setstr += "-" * 40 + "\n"
         self.display_content = setstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
-        
+
     def terrains_view(self):
         self.__display_offset = 0
         terrstr = "terr-list:\n" + "-" * 40 + "\n"
@@ -330,10 +331,6 @@ class HexControl(Gtk.Window):
         nstr = f"{name}:" + " " * (40 - len(name))
         cstr = f"{nstr}\n{'-' * 40}"
         for k, v in reversed(sorted(cc.items())):
-            # if isinstance(v, (list, tuple)):
-            #     vv = ", ".join(map(str, v))
-            #     cstr += f"\n{k}: {vv}"
-            # el
             if k in ("action-cost", "action-perf"):
                 cstr += f"\n{k}:"
                 for kk, vv in sorted(v.items()):

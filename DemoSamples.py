@@ -3,7 +3,7 @@
 ###
 
 settings_0 = {
-    'version': '12DEC24.0',
+    'version': '18DEC24.0',
     'current-turn': 0,
     'window-title': 'main-window',
     'window-size': (1100, 1050),
@@ -305,46 +305,112 @@ units_0 = {
 xsystem_0 = {
     "supplying": {
         "building": 0.5,
-        "supplying": 0.75,
-        "engineering": 0.75,
-        "motorized": 0.5,
-        "special": 0.2,
-        "mechanized": 0.3,
-        "armored": 0.25,
+        "supplying": 0.5,
+        "engineering": 0.6,
+        "motorized": 0.4,
+        "special": 0.15,
+        "mechanized": 0.2,
+        "armored": 0.15,
         "artillery": 0.3,
-        "cutter": 0.15,
-        "helicopter": 0.05
+        "helicopter": 0.05,
+        "cutter": 0.1
     },
-    "engineering": {},
-    "motorized": {},
-    "mechanized": {},
+    "engineering": {
+        "building": 2.5,
+        "supplying": 0.2,
+        "engineering": 0.5,
+        "motorized": 0.1,
+        "special": 0.05,
+        "mechanized": 0.1,
+        "armored": 0.05,
+        "artillery": 0.3,
+        "helicopter": 0.02,
+        "cutter": 0.03
+    },
+    "motorized": {
+        "building": 0.5,
+        "supplying": 1.5,
+        "engineering": 1.4,
+        "motorized": 0.9,
+        "special": 0.35,
+        "mechanized": 0.5,
+        "armored": 0.2,
+        "artillery": 0.9,
+        "helicopter": 0.15,
+        "cutter": 0.2
+    },
+    "mechanized": {
+        "building": 0.75,
+        "supplying": 1.9,
+        "engineering": 1.8,
+        "motorized": 1.1,
+        "special": 0.7,
+        "mechanized": 0.7,
+        "armored": 0.5,
+        "artillery": 1.4,
+        "helicopter": 0.15,
+        "cutter": 0.2
+    },
     "armored": {
-        "building": 1.5,
-        "supplying": 1.1,
-        "engineering": 0.99,
-        "motorized": 0.95,
-        "special": 0.9,
-        "mechanized": 0.75,
+        "building": 0.85,
+        "supplying": 2.1,
+        "engineering": 2.0,
+        "motorized": 1.1,
+        "special": 0.7,
+        "mechanized": 0.8,
         "armored": 0.6,
-        "artillery": 1.0,
-        "cutter": 0.75,
-        "helicopter": 0.4
+        "artillery": 1.7,
+        "helicopter": 0.12,
+        "cutter": 0.2
     },
     "artillery": {
-        "building": 1.5,
-        "supplying": 1.0,
-        "engineering": 0.92,
-        "motorized": 0.9,
-        "special": 0.85,
-        "mechanized": 0.8,
-        "armored": 0.75,
-        "artillery": 0.5,
-        "cutter": 1.0,
-        "helicopter": 0.9
+        "building": 2.8,
+        "supplying": 2.2,
+        "engineering": 2.1,
+        "motorized": 1.5,
+        "special": 1.5,
+        "mechanized": 1.0,
+        "armored": 0.7,
+        "artillery": 1.1,
+        "helicopter": 0.6,
+        "cutter": 1.8
     },
-    "special": {},
-    "cutter": {},
-    "helicopter": {}
+    "special": {
+        "building": 0.6,
+        "supplying": 1.9,
+        "engineering": 1.9,
+        "motorized": 1.2,
+        "special": 0.55,
+        "mechanized": 0.9,
+        "armored": 0.3,
+        "artillery": 1.1,
+        "helicopter": 0.75,
+        "cutter": 0.3
+    },
+    "cutter": {
+        "building": 1.6,
+        "supplying": 0.9,
+        "engineering": 0.9,
+        "motorized": 0.7,
+        "special": 0.45,
+        "mechanized": 0.5,
+        "armored": 0.25,
+        "artillery": 0.9,
+        "helicopter": 0.1,
+        "cutter": 0.333
+    },
+    "helicopter": {
+        "building": 0.6,
+        "supplying": 1.5,
+        "engineering": 1.5,
+        "motorized": 1.2,
+        "special": 1.0,
+        "mechanized": 0.9,
+        "armored": 0.55,
+        "artillery": 1.3,
+        "helicopter": 0.3,
+        "cutter": 0.2
+    }
 }
 
 ###

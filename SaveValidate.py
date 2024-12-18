@@ -82,6 +82,9 @@ class SaveValidate:
         counter = 0
         for unit_name in self.handler.units.keys():
             assert unit_name in self.handler.xsystem, unit_name
+            for unit_n in self.handler.units.keys():
+                assert unit_n in self.handler.xsystem[unit_name], unit_n
+            assert "building" in self.handler.xsystem[unit_name], "building"
             counter += 1
         print(f"xsystem ({counter})... OK")
 
