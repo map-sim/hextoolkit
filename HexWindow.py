@@ -329,13 +329,13 @@ class HexWindow(NaviWindow):
 def run_example():
     import sys
     from SaveHandler import SaveHandler
-    from HexControl import HexControl
+    from ControlWindow import ControlWindow
 
     saver = SaveHandler()
     if len(sys.argv) == 1: saver.load_demo_0()
     else: saver.load_from_drive(sys.argv[1])
     win = HexWindow(saver)
-    win.control_panel = HexControl(win)
+    win.control_panel = ControlWindow(win)
 
     try: Gtk.main()
     except KeyboardInterrupt:

@@ -7,7 +7,7 @@ from gi.repository import Gdk
 
 from StatsPlotter import StatsPlotter
 
-class HexControl(Gtk.Window):
+class ControlWindow(Gtk.Window):
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
     def on_scroll(self, widget, event):
