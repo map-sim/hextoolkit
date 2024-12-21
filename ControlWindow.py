@@ -1,4 +1,4 @@
-import gi, json
+import gi
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
@@ -87,6 +87,7 @@ class ControlWindow(Gtk.Window):
         self.make_button(vbox, "Change Terrain - T", "T")
         self.make_button(vbox, "Terrain Dilation - D", "D")
         self.make_button(vbox, "Toogle Infra Own - O", "O")
+        self.make_button(vbox, "Edit Unit - U", "U")
         self.box.pack_start(Gtk.VSeparator(), False, True, 0)
 
         vbox = Gtk.VBox(spacing=3)
@@ -199,7 +200,7 @@ class ControlWindow(Gtk.Window):
             info += f"\n {i}. {it}"            
         self.info.set_text(info)
 
-    def selected_unit_view(self):
+    def selected_military_view(self):
         if self.main_window.selected_unit is not None:
             info = "selected unit:"
             hex_xy = self.main_window.selected_vex
@@ -214,24 +215,28 @@ class ControlWindow(Gtk.Window):
                 info += f"\nsize: {unit['size']}"
                 info += f"\nexp: {round(unit['exp'], 2)}"
                 info += f"\nstate: {round(100*unit['state'])}%"
-                info += f"\nstock 1: {round(100*unit['stock'][0])}%"
-                info += f"\nstock 2: {round(100*unit['stock'][1])}%"
+                info += f"\nstock basic: {round(100*unit['stock'][0])}%"
+                info += f"\nstock main: {round(100*unit['stock'][1])}%"
                 info += f"\norder: {unit['order']}"
                 if "progress" in unit:
                     info += f"\nprogress: {round(100*unit['progress'])}"
                 if "unit" in unit:
                     info += f"\nunit: {unit['unit']}"
                 if "from" in unit:
-                    source = " > ".join(map(str, unit['from']))
+                    source = "\n  > ".join(map(str, unit['from']))
                     info += f"\nfrom: {source}"
                 if "to" in unit:
                     if isinstance(unit['to'], list):
-                        target = " > ".join(map(str, unit['to']))
+                        target = "\n  > ".join(map(str, unit['to']))
                     else: target = str(unit['to'])
                     info += f"\nto: {target}"
+                if "location" in unit:
+                    location = "\n  < ".join(map(str, unit['location']))
+                    info += f"\nlocation: {location}"
             else:  info = "No units to select..."
         else: info = "No selected unit..."
         self.info.set_text(info)
+        return info
     def selected_infra_view(self):
         if self.main_window.selected_infra is not None:
             info = "selected infra:"
@@ -254,7 +259,7 @@ class ControlWindow(Gtk.Window):
                     info += f"\n\t{good} [{io}] - {round(val, 2)}"
         else: info = "No selected infra..."
         self.info.set_text(info)
-
+    
     def settings_view(self):
         self.__display_offset = 0
         setstr = "settings:\n" + "-" * 40 + "\n"

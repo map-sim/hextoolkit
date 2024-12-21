@@ -10,6 +10,7 @@ from gi.repository import Gdk
 
 from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
+from UnitWindow import UnitWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
 from NextTurn import NextTurn
@@ -17,6 +18,7 @@ from NextTurn import NextTurn
 from ObjPainter import ObjPainter
 from UnitPainter import UnitPainter
 from InfraPainter import InfraPainter
+
 
 class HexWindow(NaviWindow):
     window_modes = ["view", "edit"]
@@ -37,6 +39,7 @@ class HexWindow(NaviWindow):
         self.selected_infra = None
         self.selected_unit = None
         self.selected_own = None
+        self.unit_panel = None
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -280,7 +283,7 @@ class HexWindow(NaviWindow):
                 i = (self.selected_unit + 1) % len(units)
                 self.selected_unit = i                
             else: self.selected_unit = 0
-            self.control_panel.selected_unit_view()            
+            self.control_panel.selected_military_view()            
         elif key_name == "i":
             print("##> show/select next infra")
             if self.selected_vex is None:
@@ -294,6 +297,14 @@ class HexWindow(NaviWindow):
         elif key_name == "Escape":
             NaviWindow.on_press(self, widget, event)
             self.control_panel.welcome_view()
+        elif key_name == "U":
+            print("##> unit panel")
+            if self.unit_panel is None:
+                if self.selected_unit is not None:
+                    print(" ... open")
+                    self.unit_panel = UnitWindow(self)
+                else: print(" ... no unit selected")
+            else: print(" ... already open")
         else: NaviWindow.on_press(self, widget, event)
         return True
 

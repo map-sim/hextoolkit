@@ -551,7 +551,7 @@ orders_0 = {
 military_0 = {
     (1, 1): [
         {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "defence"},
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9, "location": []}
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9, "location": [(1, 2), (0, 3)]}
     ],
     (2, 3): [
         {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.5), "order": "shot", "to": (-2, 2)},
