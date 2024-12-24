@@ -5,19 +5,16 @@ class UnitPainter(AbstractPainter):
     def draw(self, context):
         for vex, units in self.saver.military.items():
             color, symbol, size, sstate = self.estimate_unit(units)
-            if size == 0: continue
+            if size == 0: continue # o units in area hex
             self.draw_unit_envelop(context, vex, color)
             self.draw_unit_label(context, vex, symbol, size, sstate)
             
     def estimate_unit(self, units):
-        if self.window.selected_own:
-            own = self.window.selected_own
-            fown = lambda unit: unit["own"] == own
-            units = list(filter(fown, units))
-        #elif self.window.selected_unit is not None:
-        #    units = [units[self.window.selected_unit]]
-        size = 0; ssum = 0; letters = []; backend = True
+        size = 0; ssum = 0; letters = []
+        backend = True; own = None
         for unit in units:
+            if own is None: own = unit["own"]
+            elif own != unit["own"]: raise ValueError("own mismatch")
             size += unit["size"]
             ssum += unit["size"] * unit["state"]
             letter = self.saver.units[unit["type"]]["char"]

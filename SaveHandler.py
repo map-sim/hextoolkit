@@ -157,6 +157,7 @@ class SaveHandler:
                     marker = ["a2", unit["own"], vex, (*vex, unit["to"])]
                 else: marker = ["a2", unit["own"], vex, unit["to"]]
                 self.markers.append(marker)
+
     def area_control_markers(self, control=None):
         vex_to_own = {}; counters = {k: set() for k in self.controls}
         for vex, units in self.military.items():

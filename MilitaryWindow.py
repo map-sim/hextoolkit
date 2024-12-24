@@ -57,7 +57,8 @@ class MilitaryWindow(Gtk.Window):
         self.info = Gtk.Label(label="")
         self.box.pack_start(self.info, False, True, 0)        
         display_data = self.selected_military_view()
-        
+        self.info.set_yalign(0.0)
+
         self.set_title(f"unit-window")
         self.add_events(Gdk.EventMask.SCROLL_MASK)
         print("unit-window...")
@@ -67,8 +68,7 @@ class MilitaryWindow(Gtk.Window):
         vex = self.main_window.selected_vex
         uid = self.main_window.selected_unit
         info = f"selected unit: {uid}\n"
-        info += f"selected vex: {vex}\n"
-        info += "-" * 60 + "\n"
+        info += f"selected vex: {vex}\n\n"
         if uid is not None:
             units = self.main_window.saver.military.get(vex)
             if units is not None:
