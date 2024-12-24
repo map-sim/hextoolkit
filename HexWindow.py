@@ -39,7 +39,7 @@ class HexWindow(NaviWindow):
         self.selected_infra = None
         self.selected_unit = None
         self.selected_own = None
-        self.military_panel = None
+        self.military_window = None
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -81,7 +81,7 @@ class HexWindow(NaviWindow):
                 self.unselect_all()
                 self.selected_vex = tuple(hex_index_xy)
                 self.saver.mark_only_one_vex(hex_index_xy)
-                self.control_panel.selected_hex_view(hex_index_xy, hex_terr)
+                self.control_window.selected_hex_view(hex_index_xy, hex_terr)
                 if self.saver.settings["show-markers"]:
                     self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             else:
@@ -116,8 +116,8 @@ class HexWindow(NaviWindow):
         self.selected_infra = None
         self.selected_unit = None
         self.selected_vex = None
-        if self.military_panel is not None:
-            self.military_panel.destroy()
+        if self.military_window is not None:
+            self.military_window.destroy()
             
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -128,7 +128,7 @@ class HexWindow(NaviWindow):
             m = m + 1 if m < len(self.window_modes) - 1 else 0
             self.window_mode = self.window_modes[m]
             self.set_title(f"main-window ({self.window_mode})")
-            self.control_panel.set_title(f"control ({self.window_mode})")
+            self.control_window.set_title(f"control ({self.window_mode})")
             print("to", self.window_mode)
         elif key_name == "E":
             print("##> exit")
@@ -139,7 +139,7 @@ class HexWindow(NaviWindow):
             Gtk.main_quit()
         elif key_name == "q":
             print("##> unselect vexes & redraw")
-            self.control_panel.info.set_text("")
+            self.control_window.info.set_text("")
             self.saver.settings["show-markers"] = False
             self.saver.unmark_all()
             self.unselect_all()
@@ -156,8 +156,8 @@ class HexWindow(NaviWindow):
             self.unselect_all()
             
             out = self.saver.area_control_markers()
-            self.control_panel.info.set_text(out)
-            self.control_panel.display_content = out
+            self.control_window.info.set_text(out)
+            self.control_window.display_content = out
             self.draw_content()
         elif key_name == "R":
             print("##> remove hex control (try to)")
@@ -228,37 +228,37 @@ class HexWindow(NaviWindow):
             print("##> save on drive ... ", end="")
             dir_name = self.saver.save_on_drive()
             info = f"save on drive in {dir_name}"
-            self.control_panel.info.set_text(info)
+            self.control_window.info.set_text(info)
             print(dir_name)
         elif key_name == "period":
-            self.control_panel.forward_display()
+            self.control_window.forward_display()
         elif key_name == "comma":
-            self.control_panel.backward_display()
+            self.control_window.backward_display()
         elif key_name == "Page_Up":
-            self.control_panel.up_display()
+            self.control_window.up_display()
         elif key_name == "Page_Down":
-            self.control_panel.down_display()
+            self.control_window.down_display()
         elif key_name == "t":
             print("##> show terr list")
-            self.control_panel.terrains_view()
+            self.control_window.terrains_view()
         elif key_name == "b":
             print("##> show build list")
-            self.control_panel.builds_view()
+            self.control_window.builds_view()
         elif key_name == "o":
             print("##> show order list")
-            self.control_panel.orders_view()
+            self.control_window.orders_view()
         elif key_name == "g":
             print("##> show stocks/googs list")
-            self.control_panel.goods_view()
+            self.control_window.goods_view()
         elif key_name == "x":
             print("##> show settings")
-            self.control_panel.settings_view()
+            self.control_window.settings_view()
         elif key_name == "u":
             print("##> show unit def")
-            owner = self.control_panel.unit_view()
+            owner = self.control_window.unit_view()
         elif key_name == "c":
             print("##> show control def")
-            owner = self.control_panel.control_view()
+            owner = self.control_window.control_view()
             self.saver.unmark_all()
             self.unselect_all()
             self.selected_own = owner
@@ -268,45 +268,45 @@ class HexWindow(NaviWindow):
         elif key_name == "p":
             print("##> show stat plot")
             if self.settings["current-turn"]:
-                self.control_panel.plotter.plot()
+                self.control_window.plotter.plot()
             else: print("no data to plot")
         elif key_name == "v":
             print("##> show/select next unit")
             if self.selected_vex is None:
-                self.control_panel.info.set_text("no selection...")
+                self.control_window.info.set_text("no selection...")
                 print("no selection...")
                 return True            
             units = self.saver.military.get(self.selected_vex)
             if units is None:
-                self.control_panel.info.set_text("no units...")
+                self.control_window.info.set_text("no units...")
                 print("no units...")
                 return True
             if self.selected_unit is not None:
                 i = (self.selected_unit + 1) % len(units)
                 self.selected_unit = i                
             else: self.selected_unit = 0
-            if self.military_panel is None:
+            if self.military_window is None:
                 if self.selected_unit is not None:                    
-                    self.military_panel = MilitaryWindow(self)
+                    self.military_window = MilitaryWindow(self)
                 else: print(" ... no unit selected")
-            else: self.military_panel.selected_military_view()
+            else: self.military_window.selected_military_view()
             out = "select military... "
             out += f"\nhex ... {self.selected_vex}"
             out += f"\nunit ... {self.selected_unit}"            
-            self.control_panel.info.set_text(out)
+            self.control_window.info.set_text(out)
         elif key_name == "i":
             print("##> show/select next infra")
             if self.selected_vex is None:
-                self.control_panel.info.set_text("no selection...")
+                self.control_window.info.set_text("no selection...")
                 print("no selection..."); return True
             self.select_infra(self.selected_vex)
         elif key_name == "n":
             print("##> next turn")
             text = NextTurn(self.saver).execute()
-            self.control_panel.info.set_text(text)
+            self.control_window.info.set_text(text)
         elif key_name == "Escape":
             NaviWindow.on_press(self, widget, event)
-            self.control_panel.welcome_view()
+            self.control_window.welcome_view()
         else: NaviWindow.on_press(self, widget, event)
         return True
 
@@ -317,7 +317,7 @@ class HexWindow(NaviWindow):
             if hex_xy != vex: self.selected_infra = None
         infra = self.saver.infra.get(hex_xy)
         if infra is None or len(infra) == 0:
-            self.control_panel.info.set_text("no infra...")
+            self.control_window.info.set_text("no infra...")
             self.selected_infra = None
             for n, marker in reversed(list(enumerate(self.saver.markers))):
                 if marker[0] == "inf": del self.saver.markers[n]
@@ -331,7 +331,7 @@ class HexWindow(NaviWindow):
                 i = (i + 1) % len(infra)
                 self.selected_infra = *hex_xy, i
         else: self.selected_infra = *hex_xy, 0
-        self.control_panel.selected_infra_view()
+        self.control_window.selected_infra_view()
         
         for n, marker in reversed(list(enumerate(self.saver.markers))):
             if marker[0] == "inf": del self.saver.markers[n]
@@ -348,7 +348,7 @@ def run_example():
     if len(sys.argv) == 1: saver.load_demo_0()
     else: saver.load_from_drive(sys.argv[1])
     win = HexWindow(saver)
-    win.control_panel = ControlWindow(win)
+    win.control_window = ControlWindow(win)
 
     try: Gtk.main()
     except KeyboardInterrupt:

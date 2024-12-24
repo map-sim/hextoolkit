@@ -8,28 +8,54 @@ from gi.repository import Gdk
 class MilitaryWindow(Gtk.Window):
 
     def on_destroy(self, widget):
-        self.main_window.military_panel = None
+        self.main_window.military_window = None
         print("destroy")
 
     def on_clicked_delete(self, widget):
-        print("--")
+        vex = self.main_window.selected_vex
+        uid = self.main_window.selected_unit
+        units = self.main_window.saver.military.get(vex)
+        if units[uid]["order"] == "transport":
+            fvex = units[uid]["from"][0]
+            funits = self.main_window.saver.military.get(fvex)
+            tunit = funits[units[uid]["unit"]]
+            if tunit["order"] == "landing":
+                tunit["order"] = "defence"
+                del tunit["progress"]
+                del tunit["to"]
+            else: print("warning: not expected order")
+        del units[uid]
+        units = self.main_window.draw_content()
+        self.destroy()
         
+    def on_clicked_next(self, widget):
+        self.main_window.on_press(widget, "v")
+
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="unit-window")
         self.connect("destroy", self.on_destroy)
         self.main_window = main_window
-        self.control_panel = self.main_window.control_panel
+        self.control_window = self.main_window.control_window
 
-        self.fix = Gtk.Fixed()
-        self.add(self.fix)
+        self.box = Gtk.VBox(spacing=3)
+        self.add(self.box)
         
+        hbox = Gtk.HBox(spacing=3) 
+        self.box.pack_start(hbox, False, True, 0)
+
         button = Gtk.Button(label="Delete-Unit")
         button.connect("clicked", self.on_clicked_delete)
-        self.fix.put(button, 0, 3)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Next-Unit")
+        button.connect("clicked", self.on_clicked_next)
+        hbox.pack_start(button, False, True, 0)
+
+        self.box.pack_start(Gtk.Separator(), False, True, 0)
+        self.box.pack_start(Gtk.Separator(), False, True, 0)
 
         self.info = Gtk.Label(label="")
-        self.info.set_yalign(0.0)
-        self.fix.put(self.info, 0, 40)
+        self.box.pack_start(self.info, False, True, 0)        
         display_data = self.selected_military_view()
         
         self.set_title(f"unit-window")
