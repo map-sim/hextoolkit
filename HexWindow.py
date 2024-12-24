@@ -10,7 +10,7 @@ from gi.repository import Gdk
 
 from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
-from UnitWindow import UnitWindow
+from MilitaryWindow import MilitaryWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
 from NextTurn import NextTurn
@@ -39,7 +39,7 @@ class HexWindow(NaviWindow):
         self.selected_infra = None
         self.selected_unit = None
         self.selected_own = None
-        self.unit_panel = None
+        self.military_panel = None
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -116,7 +116,9 @@ class HexWindow(NaviWindow):
         self.selected_infra = None
         self.selected_unit = None
         self.selected_vex = None
-        
+        if self.military_panel is not None:
+            self.military_panel.destroy()
+            
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
@@ -273,7 +275,7 @@ class HexWindow(NaviWindow):
             if self.selected_vex is None:
                 self.control_panel.info.set_text("no selection...")
                 print("no selection...")
-                return True
+                return True            
             units = self.saver.military.get(self.selected_vex)
             if units is None:
                 self.control_panel.info.set_text("no units...")
@@ -283,7 +285,15 @@ class HexWindow(NaviWindow):
                 i = (self.selected_unit + 1) % len(units)
                 self.selected_unit = i                
             else: self.selected_unit = 0
-            self.control_panel.selected_military_view()            
+            if self.military_panel is None:
+                if self.selected_unit is not None:                    
+                    self.military_panel = MilitaryWindow(self)
+                else: print(" ... no unit selected")
+            else: self.military_panel.selected_military_view()
+            out = "select military... "
+            out += f"\nhex ... {self.selected_vex}"
+            out += f"\nunit ... {self.selected_unit}"            
+            self.control_panel.info.set_text(out)
         elif key_name == "i":
             print("##> show/select next infra")
             if self.selected_vex is None:
@@ -297,14 +307,6 @@ class HexWindow(NaviWindow):
         elif key_name == "Escape":
             NaviWindow.on_press(self, widget, event)
             self.control_panel.welcome_view()
-        elif key_name == "U":
-            print("##> unit panel")
-            if self.unit_panel is None:
-                if self.selected_unit is not None:
-                    print(" ... open")
-                    self.unit_panel = UnitWindow(self)
-                else: print(" ... no unit selected")
-            else: print(" ... already open")
         else: NaviWindow.on_press(self, widget, event)
         return True
 
