@@ -27,6 +27,7 @@ class ControlWindow(Gtk.Window):
         self.add_events(Gdk.EventMask.SCROLL_MASK)
         self.connect("scroll-event", self.on_scroll)
         self.connect("key-press-event",self.on_press)
+        self.connect("destroy", Gtk.main_quit)
         self.set_position(Gtk.WindowPosition.NONE)
         self.button_mapping = {}
 

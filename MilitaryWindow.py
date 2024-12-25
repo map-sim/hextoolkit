@@ -12,6 +12,21 @@ class MilitaryWindow(Gtk.Window):
     def on_destroy(self, widget):
         self.main_window.military_window = None
         print("destroy")
+    def on_press(self, widget, event):
+        if isinstance(event, str): key_name = event
+        else: key_name = Gdk.keyval_name(event.keyval)
+        if key_name == "v":
+            self.main_window.on_press(widget, "v")
+        elif key_name == "q":
+            self.main_window.on_press(widget, "q")
+            self.destroy()
+        else:
+            print("not supported key:")
+            if not isinstance(event, str):
+                print("\tkey name:", Gdk.keyval_name(event.keyval))
+                print("\tkey value:", event.keyval)
+            else: print("\tkey name:", event)
+        return True
 
     def on_clicked_delete(self, widget):
         vex = self.main_window.selected_vex
@@ -27,7 +42,7 @@ class MilitaryWindow(Gtk.Window):
                 del tunit["to"]
             else: print("warning: not expected order")
         del units[uid]
-        self.main_window.draw_content()
+        self.main_window.on_press(widget, "q")
         self.destroy()
         
     def on_clicked_next(self, widget):
@@ -36,6 +51,7 @@ class MilitaryWindow(Gtk.Window):
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="unit-window")
         self.connect("destroy", self.on_destroy)
+        self.connect("key-press-event",self.on_press)
         self.main_window = main_window
         self.control_window = self.main_window.control_window
 
@@ -100,20 +116,22 @@ class MilitaryWindow(Gtk.Window):
                 if "location" in unit:
                     location = "\n  < ".join(map(str, unit['location']))
                     info += f"\nlocation: {location}"
-
-                unitdef = self.main_window.saver.units[unit['type']]
-                radius = unitdef["action-perf"]["range"]
-                self.mark_range(unit['own'], vex, radius)
+                self.mark_range(unit)
+                self.mark_order(unit)
+                self.main_window.draw_content()
             else:  info += "No units to select..."
         else: info += "No selected unit..."
         self.info.set_text(info)
         return info
         
-    def mark_range(self, own, vex, radius):        
+    def mark_range(self, unit):
+        unitdef = self.main_window.saver.units[unit['type']]
+        radius = unitdef["action-perf"]["range"]
+        vex = self.main_window.selected_vex
         if radius < 1: return
+
         r = self.main_window.saver.settings.get("hex-radius", 1.0)
-        xo, yo = AbstractPainter.vex_to_loc(vex, r)
-        
+        xo, yo = AbstractPainter.vex_to_loc(vex, r)        
         self.main_window.saver.unmark_all_vexes()
         self.main_window.saver.markers.append(["vex", None, vex])
         for x in range(int(vex[0]-radius-3), int(vex[0]+radius+2)):
@@ -123,5 +141,8 @@ class MilitaryWindow(Gtk.Window):
                 xe, ye = AbstractPainter.vex_to_loc(vex2, r)                
                 d = math.sqrt((xo-xe)**2 + (yo-ye)**2)
                 if d > r * radius: continue
-                self.main_window.saver.markers.append(["vex", own, vex2])
-        self.main_window.draw_content()
+                marker = ["vex", unit['own'], vex2]
+                self.main_window.saver.markers.append(marker)
+
+    def mark_order(self, unit):
+        pass

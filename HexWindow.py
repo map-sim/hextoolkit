@@ -44,8 +44,11 @@ class HexWindow(NaviWindow):
         size = self.settings["window-size"]
         title = self.settings["window-title"]
         BaseWindow.__init__(self, title, *size)
+        self.connect("destroy", Gtk.main_quit)
         self.window_mode = self.window_modes[0]
-        self.set_title(f"main-window ({self.window_mode})")
+        title = f"main ({self.window_mode})"
+        print(f"Start main window: {title}")
+        self.set_title(title)
 
     @BaseWindow.double_buffering
     def draw_content(self, context):
@@ -123,13 +126,13 @@ class HexWindow(NaviWindow):
         if isinstance(event, str): key_name = event
         else: key_name = Gdk.keyval_name(event.keyval)
         if key_name == "Tab":
-            print("##> change mode from", self.window_mode, end="")
+            print(f"##> change mode from {self.window_mode}", end="")
             m = self.window_modes.index(self.window_mode)
             m = m + 1 if m < len(self.window_modes) - 1 else 0
             self.window_mode = self.window_modes[m]
             self.set_title(f"main-window ({self.window_mode})")
             self.control_window.set_title(f"control ({self.window_mode})")
-            print("to", self.window_mode)
+            print(f" to { self.window_mode}")
         elif key_name == "E":
             print("##> exit")
             b = self.settings_backup["current-turn"]
