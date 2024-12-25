@@ -74,7 +74,14 @@ class SaveValidate:
                 assert unit["own"] in self.handler.controls, unit["own"] 
                 assert unit["order"] in self.handler.orders, unit["order"]
                 for key in self.handler.orders[unit["order"]]:
-                    assert key in unit, f"no {key}"
+                    if isinstance(key, (list, tuple)):
+                        only_one = False
+                        for k in key:
+                            if only_one:
+                                assert k not in unit, f"only one key from {key}"
+                            elif k in unit: only_one = True
+                        assert only_one, f"no one key from {key}"
+                    else: assert key in unit, f"no {key}"
                 counter += 1
         print(f"units ({counter})... OK")
 

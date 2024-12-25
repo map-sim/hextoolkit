@@ -284,6 +284,7 @@ class HexWindow(NaviWindow):
                 self.control_window.info.set_text("no units...")
                 print("no units...")
                 return True
+            self.saver.settings["show-markers"] = True
             if self.selected_unit is not None:
                 i = (self.selected_unit + 1) % len(units)
                 self.selected_unit = i                

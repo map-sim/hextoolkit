@@ -1,11 +1,9 @@
-import gi, math
+import gi
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gdk
-
-from ObjPainter import AbstractPainter
 
 class MilitaryWindow(Gtk.Window):
 
@@ -83,6 +81,7 @@ class MilitaryWindow(Gtk.Window):
         self.show_all()
 
     def selected_military_view(self):
+        self.main_window.saver.unmark_all_orders()    
         vex = self.main_window.selected_vex
         uid = self.main_window.selected_unit
         info = f"selected unit: {uid}\n"
@@ -116,33 +115,11 @@ class MilitaryWindow(Gtk.Window):
                 if "location" in unit:
                     location = "\n  < ".join(map(str, unit['location']))
                     info += f"\nlocation: {location}"
-                self.mark_range(unit)
-                self.mark_order(unit)
+                self.main_window.saver.mark_range(unit, vex)
+                self.main_window.saver.mark_order(unit, vex)
                 self.main_window.draw_content()
             else:  info += "No units to select..."
         else: info += "No selected unit..."
         self.info.set_text(info)
         return info
         
-    def mark_range(self, unit):
-        unitdef = self.main_window.saver.units[unit['type']]
-        radius = unitdef["action-perf"]["range"]
-        vex = self.main_window.selected_vex
-        if radius < 1: return
-
-        r = self.main_window.saver.settings.get("hex-radius", 1.0)
-        xo, yo = AbstractPainter.vex_to_loc(vex, r)        
-        self.main_window.saver.unmark_all_vexes()
-        self.main_window.saver.markers.append(["vex", None, vex])
-        for x in range(int(vex[0]-radius-3), int(vex[0]+radius+2)):
-            for y in range(int(vex[1]-radius-3), int(vex[1]+radius+2)):
-                if x == 0 and y == 0: continue 
-                vex2 = vex[0] + x, vex[1] + y 
-                xe, ye = AbstractPainter.vex_to_loc(vex2, r)                
-                d = math.sqrt((xo-xe)**2 + (yo-ye)**2)
-                if d > r * radius: continue
-                marker = ["vex", unit['own'], vex2]
-                self.main_window.saver.markers.append(marker)
-
-    def mark_order(self, unit):
-        pass

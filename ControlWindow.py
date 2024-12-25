@@ -7,6 +7,14 @@ from gi.repository import Gdk
 
 from StatsPlotter import StatsPlotter
 
+def as_str(vs):
+    out = []
+    for v in vs:
+        if isinstance(v, (list, tuple)):
+            out.append("-".join(map(str, v)))
+        else: out.append(str(v))
+    return out
+
 class ControlWindow(Gtk.Window):
     def on_press(self, widget, event):
         self.main_window.on_press(widget, event)
@@ -268,7 +276,7 @@ class ControlWindow(Gtk.Window):
         order_list = self.main_window.saver.orders
         for n, (k, vs) in enumerate(order_list.items()):
             orderstr += f"{n+1}. {k}:\n"
-            orderstr += f"\t{', '.join(vs)}\n"
+            orderstr += f"\t{', '.join(as_str(vs))}\n"
         self.display_content = orderstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)

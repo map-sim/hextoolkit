@@ -3,7 +3,7 @@
 ###
 
 settings_0 = {
-    'version': '18DEC24.0',
+    'version': '25DEC24.0',
     'current-turn': 0,
     'window-title': 'main-window',
     'window-size': (1100, 1050),
@@ -542,16 +542,16 @@ orders_0 = {
     "storm": ["to"],
     "devel": ["to"],
     "supply": ["from", "to"],
-    "move": ["to", "progress"],
-    "landing": ["to", "progress"],
-    "regroup": ["progress", "location"],
+    "move": [["to", "from"], "progress"],
+    "landing": [["to", "from"], "progress"],
+    "regroup": ["progress", "from"],
     "transport": ["from", "to", "unit", "progress"]    
 }
 
 military_0 = {
     (1, 1): [
         {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.6, "stock": (0.6, 0.5), "order": "defence"},
-        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9, "location": [(1, 2), (0, 3)]}
+        {"own": "Aaa", "type": "mechanized", "size": 1, "state": 1.0, "exp": 1.1, "stock": (0.6, 0.5), "order": "regroup", "progress": 0.9, "from": [(1, 2), (0, 3)]}
     ],
     (2, 3): [
         {"own": "Aaa", "type": "mechanized", "size": 3, "state": 1.0, "exp": 1.2, "stock": (0.6, 0.5), "order": "shot", "to": (-2, 2)},
@@ -564,7 +564,7 @@ military_0 = {
         {"own": "Aaa", "type": "motorized", "size": 2, "state": 1.0, "exp": 1.3, "stock": (0.6, 0.5), "order": "defence"}
     ],
     (-1, 2): [
-        {"own": "Aaa", "type": "motorized", "size": 1, "state": 0.04, "exp": 1.2, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)}
+        {"own": "Aaa", "type": "motorized", "size": 1, "state": 0.04, "exp": 1.2, "stock": (0.66, 0.66), "order": "defence"}
     ],
     (-2, 2): [
         {"own": "Bbb", "type": "motorized", "size": 1, "state": 0.4, "exp": 1.2, "stock": (0.66, 0.66), "order": "storm", "to": (-1, 2)},

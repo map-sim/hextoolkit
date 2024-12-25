@@ -1,7 +1,10 @@
 import DemoSamples as demo
 import SaveValidate as valid
+
+from ObjPainter import AbstractPainter
+
 from ast import literal_eval
-import os, json
+import os, json, math
 
 class SaveHandler:
     def __init__(self):
@@ -107,7 +110,64 @@ class SaveHandler:
     def mark_only_one_vex(self, vex):
         self.unmark_all_vexes()
         self.markers.append(("vex", None, vex))
+
+    def unmark_all_orders(self):
+        to_remove = []
+        for m, marker in enumerate(self.markers):
+            if marker[0] in ["a1", "l1", "a2"]:
+                to_remove.append(m)
+        for m in reversed(to_remove):
+            del self.markers[m]
         
+    def mark_range(self, unit, vex):
+        unitdef = self.units[unit['type']]
+        radius = unitdef["action-perf"]["range"]
+        if radius < 1: return
+
+        r = self.settings.get("hex-radius", 1.0)
+        xo, yo = AbstractPainter.vex_to_loc(vex, r)        
+        self.unmark_all_vexes()
+        self.markers.append(["vex", None, vex])
+        for x in range(int(vex[0]-radius-3), int(vex[0]+radius+2)):
+            for y in range(int(vex[1]-radius-3), int(vex[1]+radius+2)):
+                if x == 0 and y == 0: continue 
+                vex2 = vex[0] + x, vex[1] + y 
+                xe, ye = AbstractPainter.vex_to_loc(vex2, r)                
+                d = math.sqrt((xo-xe)**2 + (yo-ye)**2)
+                if d > r * radius: continue
+                marker = ["vex", unit['own'], vex2]
+                self.markers.append(marker)
+
+    def mark_order(self, unit, vex):
+        if unit["order"] in ["move", "landing"]:
+            if "from" in unit:
+                marker = ["a1", unit["own"], *unit["from"], vex]
+                self.markers.append(marker)
+            if "to" in unit:
+                marker = ["a1", unit["own"], vex, *unit["to"]]
+                self.markers.append(marker)
+        elif unit["order"] in ["supply", "transport"]: 
+            marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
+            self.markers.append(marker)
+        elif unit["order"] == "storm":
+            if isinstance(unit["to"], int):
+                marker = ["a1", unit["own"], vex, (*vex, unit["to"])]
+            else: marker = ["a1", unit["own"], vex, unit["to"]]
+            self.markers.append(marker)
+        elif unit["order"] == "shot":
+            if isinstance(unit["to"], int):
+                marker = ["a2", unit["own"], vex, (*vex, unit["to"])]
+            else: marker = ["a2", unit["own"], vex, unit["to"]]
+            self.markers.append(marker)
+        elif unit["order"] == "regroup":
+            marker = ["a2", unit["own"], *unit["from"], vex]
+            self.markers.append(marker)
+        elif unit["order"] == "devel":
+            marker = ["a2", unit["own"], vex, (*vex, unit["to"])]
+            self.markers.append(marker)
+        elif unit["order"] == "defence": pass
+        else: raise ValueError(f"unknown order: {unit['order']}")
+
     def orders_to_markers(self, seleced_vex=None, seleced_own=None):
         def inner(vex, own):
             if seleced_vex is not None:
@@ -116,47 +176,11 @@ class SaveHandler:
                 if seleced_own != unit["own"]: return True
             return False
 
-        to_remove = []
-        for m, marker in enumerate(self.markers):
-            if marker[0] in ["a1", "l1", "a2"]:
-                to_remove.append(m)
-        for m in reversed(to_remove):
-            del self.markers[m]
-    
+        self.unmark_all_orders()    
         for vex, units in self.military.items():
             for unit in units:
                 if inner(vex, unit["own"]): continue
-                if unit["order"] not in ["move", "landing"]: continue                        
-                marker = ["a1", unit["own"], vex, *unit["to"]]
-                self.markers.append(marker)
-        for vex, units in self.military.items():
-            for unit in units:
-                if inner(vex, unit["own"]): continue
-                if unit["order"] != "supply": continue                        
-                marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
-                self.markers.append(marker)
-        for vex, units in self.military.items():
-            for unit in units:
-                if inner(vex, unit["own"]): continue
-                if unit["order"] != "storm": continue
-                if isinstance(unit["to"], int):
-                    marker = ["a1", unit["own"], vex, (*vex, unit["to"])]
-                else: marker = ["a1", unit["own"], vex, unit["to"]]
-                self.markers.append(marker)
-        for vex, units in self.military.items():
-            for unit in units:
-                if inner(vex, unit["own"]): continue
-                if unit["order"] != "transport": continue
-                marker = ["a1", unit["own"], *unit["from"], vex, *unit["to"]]
-                self.markers.append(marker)        
-        for vex, units in self.military.items():
-            for unit in units:
-                if inner(vex, unit["own"]): continue
-                if unit["order"] != "shot": continue
-                if isinstance(unit["to"], int):
-                    marker = ["a2", unit["own"], vex, (*vex, unit["to"])]
-                else: marker = ["a2", unit["own"], vex, unit["to"]]
-                self.markers.append(marker)
+                self.mark_order(unit, vex)
 
     def area_control_markers(self, control=None):
         vex_to_own = {}; counters = {k: set() for k in self.controls}
