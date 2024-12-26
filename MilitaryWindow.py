@@ -45,6 +45,29 @@ class MilitaryWindow(Gtk.Window):
         
     def on_clicked_next(self, widget):
         self.main_window.on_press(widget, "v")
+    def on_clicked_order(self, widget):
+        print("new order...")
+        vex = self.main_window.selected_vex
+        uid = self.main_window.selected_unit
+        if vex is None: return
+        if uid is None: return
+
+        order_id = self.combo_order.get_active()
+        if order_id == -1: return        
+        order = self.order_list[order_id]
+
+        units = self.main_window.saver.military.get(vex)
+        if not units: return
+        unit = units[uid]
+
+        if "to" in unit: del unit["to"]
+        if "from" in unit: del unit["from"]
+        if "unit" in unit: del unit["unit"]
+        if "progress" in unit: del unit["progress"]
+
+        if order == "defence":
+            unit["order"] = order
+        else: print("not supported order")
 
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="unit-window")
@@ -67,13 +90,53 @@ class MilitaryWindow(Gtk.Window):
         button.connect("clicked", self.on_clicked_next)
         hbox.pack_start(button, False, True, 0)
 
-        self.box.pack_start(Gtk.Separator(), False, True, 0)
-        self.box.pack_start(Gtk.Separator(), False, True, 0)
+        button = Gtk.Button(label="Set-Order")
+        button.connect("clicked", self.on_clicked_order)
+        hbox.pack_start(button, False, True, 0)
+
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+
+        hbox = Gtk.HBox(spacing=3) 
+        self.box.pack_start(hbox, False, True, 0)
 
         self.info = Gtk.Label(label="")
-        self.box.pack_start(self.info, False, True, 0)        
+        hbox.pack_start(self.info, False, True, 0)        
         display_data = self.selected_military_view()
         self.info.set_yalign(0.0)
+
+        hbox.pack_start(Gtk.VSeparator(), False, True, 0)
+        hbox.pack_start(Gtk.VSeparator(), False, True, 0)
+        vbox = Gtk.VBox(spacing=3)
+        hbox.pack_start(vbox, False, True, 0)        
+
+        self.order_list = []
+        corders = Gtk.ListStore(str)
+        for order in sorted(self.main_window.saver.orders):
+            corders.append([order]); self.order_list.append(order)
+        vbox.pack_start(Gtk.Label(label="order:"), False, True, 0)
+        self.combo_order = Gtk.ComboBox.new_with_model(corders)
+        vbox.pack_start(self.combo_order, False, True, 0)
+        renderer_text = Gtk.CellRendererText()
+        self.combo_order.pack_start(renderer_text, True)
+        self.combo_order.add_attribute(renderer_text, "text", 0)
+        vbox.pack_start(Gtk.HSeparator(), False, True, 0)
+
+        vbox.pack_start(Gtk.Label(label="from:"), False, True, 0)
+        self.from_order = Gtk.Entry()
+        vbox.pack_start(self.from_order, False, True, 0)
+        
+        vbox.pack_start(Gtk.Label(label="to:"), False, True, 0)
+        self.to_order = Gtk.Entry()
+        vbox.pack_start(self.to_order, False, True, 0)
+
+        vbox.pack_start(Gtk.Label(label="unit:"), False, True, 0)
+        self.unit_order = Gtk.Entry()
+        vbox.pack_start(self.unit_order, False, True, 0)
+
+        vbox.pack_start(Gtk.Label(label="progress:"), False, True, 0)
+        self.progress_order = Gtk.Entry()
+        vbox.pack_start(self.progress_order, False, True, 0)
 
         self.set_title(f"unit-window")
         self.add_events(Gdk.EventMask.SCROLL_MASK)
