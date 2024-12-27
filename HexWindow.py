@@ -40,6 +40,7 @@ class HexWindow(NaviWindow):
         self.selected_unit = None
         self.selected_own = None
         self.military_window = None
+        self.hex_buffer = []
 
         size = self.settings["window-size"]
         title = self.settings["window-title"]
@@ -71,7 +72,14 @@ class HexWindow(NaviWindow):
         if event.button == 1:
             print(f"oriented-location: ({rox}, {roy})")
             hex_index_xy, _ = self.terr_graph.transform_to_vex(ox, oy)
-            self.select_infra(hex_index_xy)
+            if self.window_mode == "edit":
+                info = f"add {hex_index_xy} to\n"
+                for n, vex in enumerate(self.hex_buffer):
+                    info += f" -> {vex}"
+                    if n % 4 == 3: info += "\n"
+                self.control_window.info.set_text(info)
+                self.hex_buffer.append(hex_index_xy)
+            else: self.select_infra(hex_index_xy)
         elif event.button == 3:
             terr, terr_obj = self.terr_graph.check_terrain(ox, oy)
             hex_index_xy, _ = self.terr_graph.transform_to_vex(ox, oy)
@@ -311,6 +319,15 @@ class HexWindow(NaviWindow):
         elif key_name == "Escape":
             NaviWindow.on_press(self, widget, event)
             self.control_window.welcome_view()
+        elif key_name == "B":
+            info = "BUFFER:\n"
+            for n, vex in enumerate(self.hex_buffer):
+                info += f" -> {vex}"
+                if n % 4 == 3: info += "\n"
+            self.control_window.info.set_text(info)
+        elif key_name == "C":
+            self.hex_buffer = []
+            self.control_window.info.set_text("clear...")
         else: NaviWindow.on_press(self, widget, event)
         return True
 
