@@ -60,15 +60,31 @@ class MilitaryWindow(Gtk.Window):
         if not units: return
         unit = units[uid]
 
+        new_order = {}
+        order_is_ok = False
+        if order == "defence":
+            order_is_ok = True
+            new_order["order"] = order
+        else: print("not supported order")
+
+        if not order_is_ok: return        
         if "to" in unit: del unit["to"]
         if "from" in unit: del unit["from"]
         if "unit" in unit: del unit["unit"]
         if "progress" in unit: del unit["progress"]
-
-        if order == "defence":
-            unit["order"] = order
-        else: print("not supported order")
-
+        unit.update(new_order)
+        
+    def on_clicked_copy_to(self, widget):
+        self.hex_buffer_to = self.main_window.hex_buffer[:]
+        length = len(self.hex_buffer_to)
+        self.button_to.set_label(f"TO: copy buffer ({length})")
+        print(f"BUFFER (to, {length}):", self.hex_buffer_to)
+    def on_clicked_copy_from(self, widget):
+        self.hex_buffer_from = self.main_window.hex_buffer[:]
+        length = len(self.hex_buffer_from)
+        self.button_from.set_label(f"FROM: copy buffer ({length})")
+        print(f"BUFFER (from, {length}):", self.hex_buffer_from)
+        
     def __init__(self, main_window):
         Gtk.Window.__init__(self, title="unit-window")
         self.connect("destroy", self.on_destroy)
@@ -76,6 +92,9 @@ class MilitaryWindow(Gtk.Window):
         self.main_window = main_window
         self.control_window = self.main_window.control_window
 
+        self.hex_buffer_from = []
+        self.hex_buffer_to = []
+        
         self.box = Gtk.VBox(spacing=3)
         self.add(self.box)
         
@@ -114,7 +133,7 @@ class MilitaryWindow(Gtk.Window):
         corders = Gtk.ListStore(str)
         for order in sorted(self.main_window.saver.orders):
             corders.append([order]); self.order_list.append(order)
-        vbox.pack_start(Gtk.Label(label="order:"), False, True, 0)
+        vbox.pack_start(Gtk.Label(label="new order:"), False, True, 0)
         self.combo_order = Gtk.ComboBox.new_with_model(corders)
         vbox.pack_start(self.combo_order, False, True, 0)
         renderer_text = Gtk.CellRendererText()
@@ -122,22 +141,21 @@ class MilitaryWindow(Gtk.Window):
         self.combo_order.add_attribute(renderer_text, "text", 0)
         vbox.pack_start(Gtk.HSeparator(), False, True, 0)
 
-        vbox.pack_start(Gtk.Label(label="from:"), False, True, 0)
-        self.from_order = Gtk.Entry()
-        vbox.pack_start(self.from_order, False, True, 0)
+        self.button_from = Gtk.Button(label="FROM: copy buffer")
+        self.button_from.connect("clicked", self.on_clicked_copy_from)
+        vbox.pack_start(self.button_from, False, True, 0)
         
-        vbox.pack_start(Gtk.Label(label="to:"), False, True, 0)
-        self.to_order = Gtk.Entry()
-        vbox.pack_start(self.to_order, False, True, 0)
+        self.button_to = Gtk.Button(label="TO: copy buffer")
+        self.button_to.connect("clicked", self.on_clicked_copy_to)
+        vbox.pack_start(self.button_to, False, True, 0)
 
-        vbox.pack_start(Gtk.Label(label="unit:"), False, True, 0)
-        self.unit_order = Gtk.Entry()
-        vbox.pack_start(self.unit_order, False, True, 0)
-
-        vbox.pack_start(Gtk.Label(label="progress:"), False, True, 0)
-        self.progress_order = Gtk.Entry()
-        vbox.pack_start(self.progress_order, False, True, 0)
-
+        maxunit = 16
+        tbox = Gtk.HBox(spacing=3) 
+        tbox.pack_start(Gtk.Label(label="U/I index:"), False, True, 0)
+        self.counter_to_order = Gtk.SpinButton.new_with_range(0, maxunit, 1)
+        tbox.pack_start(self.counter_to_order, False, True, 0)
+        vbox.pack_start(tbox, False, True, 0)
+        
         self.set_title(f"unit-window")
         self.add_events(Gdk.EventMask.SCROLL_MASK)
         print("unit-window...")

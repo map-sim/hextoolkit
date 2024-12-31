@@ -73,9 +73,9 @@ class HexWindow(NaviWindow):
             print(f"oriented-location: ({rox}, {roy})")
             hex_index_xy, _ = self.terr_graph.transform_to_vex(ox, oy)
             if self.window_mode == "edit":
-                info = f"add {hex_index_xy} to\n"
+                info = f"add => {hex_index_xy[0]},{hex_index_xy[1]} to\n"
                 for n, vex in enumerate(self.hex_buffer):
-                    info += f" -> {vex}"
+                    info += f" => {vex[0]},{vex[1]}"
                     if n % 4 == 3: info += "\n"
                 self.control_window.info.set_text(info)
                 self.hex_buffer.append(hex_index_xy)
@@ -320,14 +320,19 @@ class HexWindow(NaviWindow):
             NaviWindow.on_press(self, widget, event)
             self.control_window.welcome_view()
         elif key_name == "B":
-            info = "BUFFER:\n"
+            length = len(self.hex_buffer)
+            info = f"BUFFER ({length}):\n"
             for n, vex in enumerate(self.hex_buffer):
-                info += f" -> {vex}"
+                info += f" => {vex[0]},{vex[1]}"
                 if n % 4 == 3: info += "\n"
+            if length == 0: info += "buffer is empty"
             self.control_window.info.set_text(info)
         elif key_name == "C":
+            length = len(self.hex_buffer)
+            info = f"BUFFER ({length}):\n"
+            info += "clear buffer..."
             self.hex_buffer = []
-            self.control_window.info.set_text("clear...")
+            self.control_window.info.set_text(info)
         else: NaviWindow.on_press(self, widget, event)
         return True
 

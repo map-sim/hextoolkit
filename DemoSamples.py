@@ -3,7 +3,7 @@
 ###
 
 settings_0 = {
-    'version': '25DEC24.0',
+    'version': '31-DEC-2024-0',
     'current-turn': 0,
     'window-title': 'main-window',
     'window-size': (1100, 1050),
@@ -544,7 +544,8 @@ orders_0 = {
     "supply": ["from", "to"],
     "move": [["to", "from"], "progress"],
     "landing": [["to", "from"], "progress"],
-    "regroup": ["progress", "from"],
+    "regroup": ["progress", ["from", "to"]],
+    "merge": ["to", "unit", "progress"],
     "transport": ["from", "to", "unit", "progress"]    
 }
 
