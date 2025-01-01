@@ -3,7 +3,7 @@
 ###
 
 settings_0 = {
-    'version': '31-DEC-2024-0',
+    'version': '01-JAN-2025-0',
     'current-turn': 0,
     'window-title': 'main-window',
     'window-size': (1100, 1050),

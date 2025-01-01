@@ -166,7 +166,7 @@ class ObjPainter(AbstractPainter):
         zoom = self.saver.settings["window-zoom"]
         r = self.saver.settings.get("hex-radius", 1.0)
         
-        rh = r * zoom/4
+        rh = r * zoom/3
         color2 = tuple([*color, 0.5])
         loc = ObjPainter.infra_to_loc(xyi, r)
         xo, yo = self.translate_xy(*loc)

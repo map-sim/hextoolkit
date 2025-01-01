@@ -11,7 +11,12 @@ class InfraWindow(Gtk.Window):
         self.main_window.infra_window = None
         print("destroy")
 
-    def on_clicked_delete(self, widget): pass
+    def on_clicked_delete(self, widget):
+        infra = self.main_window.selected_infra
+        vex = infra[0], infra[1]; index = infra[2]
+        self.main_window.saver.infra[vex][index] = None        
+        self.main_window.on_press(widget, "q")
+        self.destroy()
 
     def on_clicked_next(self, widget):
         # self.info2.set_text("check order...")
@@ -54,24 +59,27 @@ class InfraWindow(Gtk.Window):
 
     def selected_infra_view(self):
         if self.main_window.selected_infra is not None:
-            info = "selected infra:"
             hex_xy = self.main_window.selected_infra[:2]
             index = self.main_window.selected_infra[2]
             buildings = self.main_window.saver.infra.get(hex_xy)
             if buildings is not None:
-                infra = buildings[index]
-                info = f"building ({index}) from {len(buildings)}"
-                info += f"\nhex: {hex_xy}"
-                info += f"\nowner: {infra['own']}"
-                info += f"\ntype: {infra['type']}"
-                info += f"\nstate: {round(100*infra['state'])}%"
-                if "supply" in infra:
-                    info += f"\nsuplly: {infra['supply']}"
-                info += "\nstock:"
-                for good in sorted(self.main_window.saver.goods.keys()):
-                    val = infra["stock"].get(good, 0.0)
-                    io = infra["io"].get(good, "off")
-                    info += f"\n\t{good} [{io}] - {round(val, 2)}"
+                try: infra = buildings[index]
+                except IndexError: infra = None
+                if infra is not None:
+                    info = f"building ({index}) from {len(buildings)}"
+                    info += f"\nhex: {hex_xy}"
+                    info += f"\nowner: {infra['own']}"
+                    info += f"\ntype: {infra['type']}"
+                    info += f"\nstate: {round(100*infra['state'])}%"
+                    if "supply" in infra:
+                        info += f"\nsupply: {infra['supply']}"
+                    info += "\nstock:"
+                    for good in sorted(self.main_window.saver.goods.keys()):
+                        val = infra["stock"].get(good, 0.0)
+                        io = infra["io"].get(good, "off")
+                        info += f"\n\t{good} [{io}] - {round(val, 2)}"
+                else: info = "Empty infra slot..."
+            else: info = "No infra in hex..."
         else: info = "No selected infra..."
         self.info.set_text(info)
         return info

@@ -354,18 +354,18 @@ class HexWindow(NaviWindow):
         infra = self.saver.infra.get(hex_xy)
         if infra is None or len(infra) == 0:
             self.control_window.info.set_text("no infra...")
-            self.selected_infra = None
+            # self.selected_infra = None
             for n, marker in reversed(list(enumerate(self.saver.markers))):
                 if marker[0] == "inf": del self.saver.markers[n]
-            self.draw_content()
-            print("no infra..."); return True
+            #self.draw_content()
+            #print("no infra..."); return True
             
         if self.selected_infra is not None:
-            i = (self.selected_infra[2] + 1) % len(infra)
+            i = (self.selected_infra[2] + 1) % 6
             self.selected_infra = *hex_xy, i
-            while infra[self.selected_infra[2]] is None:
-                i = (i + 1) % len(infra)
-                self.selected_infra = *hex_xy, i
+            #while infra[self.selected_infra[2]] is None:
+            #    i = (i + 1) % len(infra)
+            #    self.selected_infra = *hex_xy, i
         else: self.selected_infra = *hex_xy, 0
 
         if self.infra_window is None:
