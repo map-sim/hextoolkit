@@ -10,10 +10,12 @@ from gi.repository import Gdk
 
 from BaseWindow import BaseWindow
 from NaviWindow import NaviWindow
-from MilitaryWindow import MilitaryWindow
 from TerrToolbox import TerrPainter
 from TerrToolbox import TerrGraph
 from NextTurn import NextTurn
+
+from MilitaryWindow import MilitaryWindow
+from InfraWindow import InfraWindow
 
 from ObjPainter import ObjPainter
 from UnitPainter import UnitPainter
@@ -40,6 +42,7 @@ class HexWindow(NaviWindow):
         self.selected_unit = None
         self.selected_own = None
         self.military_window = None
+        self.infra_window = None
         self.hex_buffer = []
 
         size = self.settings["window-size"]
@@ -129,6 +132,8 @@ class HexWindow(NaviWindow):
         self.selected_vex = None
         if self.military_window is not None:
             self.military_window.destroy()
+        if self.infra_window is not None:
+            self.infra_window.destroy()
             
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -300,7 +305,7 @@ class HexWindow(NaviWindow):
             if self.military_window is None:
                 if self.selected_unit is not None:                    
                     self.military_window = MilitaryWindow(self)
-                else: print(" ... no unit selected")
+                else: print(" ... no military selected")
             else: self.military_window.selected_military_view()
             out = "select military... "
             out += f"\nhex ... {self.selected_vex}"
@@ -312,6 +317,11 @@ class HexWindow(NaviWindow):
                 self.control_window.info.set_text("no selection...")
                 print("no selection..."); return True
             self.select_infra(self.selected_vex)
+            out = "select infra... "
+            out += f"\nhex ... {self.selected_vex}"
+            out += f"\ninfra ... {self.selected_infra}"            
+            self.control_window.info.set_text(out)
+
         elif key_name == "n":
             print("##> next turn")
             text = NextTurn(self.saver).execute()
@@ -357,7 +367,10 @@ class HexWindow(NaviWindow):
                 i = (i + 1) % len(infra)
                 self.selected_infra = *hex_xy, i
         else: self.selected_infra = *hex_xy, 0
-        self.control_window.selected_infra_view()
+
+        if self.infra_window is None:
+            self.infra_window = InfraWindow(self)
+        self.infra_window.selected_infra_view()
         
         for n, marker in reversed(list(enumerate(self.saver.markers))):
             if marker[0] == "inf": del self.saver.markers[n]

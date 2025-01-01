@@ -44,36 +44,75 @@ class MilitaryWindow(Gtk.Window):
         self.destroy()
         
     def on_clicked_next(self, widget):
+        self.info2.set_text("check order...")
         self.main_window.on_press(widget, "v")
-    def on_clicked_order(self, widget):
-        print("new order...")
-        vex = self.main_window.selected_vex
-        uid = self.main_window.selected_unit
-        if vex is None: return
-        if uid is None: return
 
+    def check_new_order(self, unit):
+        if unit is None: return False, {"info": "no-unit"}
         order_id = self.combo_order.get_active()
-        if order_id == -1: return        
+        if order_id == -1: return False, {"info": "no-order"}
         order = self.order_list[order_id]
-
-        units = self.main_window.saver.military.get(vex)
-        if not units: return
-        unit = units[uid]
-
+        
+        unit_type = unit["type"]
+        unit_def = self.main_window.saver.units[unit_type]        
+        vex = self.main_window.selected_vex
+        
         new_order = {}
         order_is_ok = False
         if order == "defence":
             order_is_ok = True
             new_order["order"] = order
-        else: print("not supported order")
+            self.info2.set_text(f"order-ok: {order}")
 
-        if not order_is_ok: return        
-        if "to" in unit: del unit["to"]
+        elif order == "devel":
+            perf = unit_def["action-perf"].get("devel", 0.0)
+            info = f"devel-not supported-by-{unit_type}"
+            if perf <= 0.0: return False, info
+
+            # TO / BUILD
+            iindex = int(self.counter_to_order.get_value())
+            info = f"infra index: {iindex}"
+            infra = self.main_window.saver.infra.get(vex, [])
+            
+            order_is_ok = True
+            new_order["order"] = order
+            self.info2.set_text(f"order-ok: {order}")
+        else: new_order["info"] = "no-supported-order"
+        return order_is_ok, new_order
+
+    def get_unit_to_order(self):
+        vex = self.main_window.selected_vex
+        uid = self.main_window.selected_unit
+        if vex is None: return
+        if uid is None: return
+
+        units = self.main_window.saver.military.get(vex)
+        if not units: return
+        return units[uid]
+    
+    def on_clicked_check(self, widget):
+        print("check order...")
+        unit = self.get_unit_to_order()
+        status, new_order = self.check_new_order(unit)
+        if not status:
+            print("Order failed!", new_order["info"]); return
+        else: print("Order OK!")
+    def on_clicked_order(self, widget):
+        print("new order...")
+        unit = self.get_unit_to_order()
+        status, new_order = self.check_new_order(unit)
+
+        if not status:
+            print("Order failed!", new_order["info"]); return
+        else: print("Order OK!")
+
+        if "progress" in unit: del unit["progress"]
         if "from" in unit: del unit["from"]
         if "unit" in unit: del unit["unit"]
-        if "progress" in unit: del unit["progress"]
+        if "to" in unit: del unit["to"]
         unit.update(new_order)
-        
+        self.selected_military_view()
+
     def on_clicked_copy_to(self, widget):
         self.hex_buffer_to = self.main_window.hex_buffer[:]
         length = len(self.hex_buffer_to)
@@ -86,44 +125,23 @@ class MilitaryWindow(Gtk.Window):
         print(f"BUFFER (from, {length}):", self.hex_buffer_from)
         
     def __init__(self, main_window):
-        Gtk.Window.__init__(self, title="unit-window")
+        Gtk.Window.__init__(self, title="military-window")
         self.connect("destroy", self.on_destroy)
         self.connect("key-press-event",self.on_press)
-        self.main_window = main_window
-        self.control_window = self.main_window.control_window
-
         self.hex_buffer_from = []
         self.hex_buffer_to = []
+        self.main_window = main_window
+        self.control_window = self.main_window.control_window
         
         self.box = Gtk.VBox(spacing=3)
-        self.add(self.box)
-        
-        hbox = Gtk.HBox(spacing=3) 
-        self.box.pack_start(hbox, False, True, 0)
-
-        button = Gtk.Button(label="Delete-Unit")
-        button.connect("clicked", self.on_clicked_delete)
-        hbox.pack_start(button, False, True, 0)
-
-        button = Gtk.Button(label="Next-Unit")
-        button.connect("clicked", self.on_clicked_next)
-        hbox.pack_start(button, False, True, 0)
-
-        button = Gtk.Button(label="Set-Order")
-        button.connect("clicked", self.on_clicked_order)
-        hbox.pack_start(button, False, True, 0)
-
-        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
-        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.add(self.box)        
 
         hbox = Gtk.HBox(spacing=3) 
         self.box.pack_start(hbox, False, True, 0)
-
         self.info = Gtk.Label(label="")
         hbox.pack_start(self.info, False, True, 0)        
-        display_data = self.selected_military_view()
+        self.selected_military_view()
         self.info.set_yalign(0.0)
-
         hbox.pack_start(Gtk.VSeparator(), False, True, 0)
         hbox.pack_start(Gtk.VSeparator(), False, True, 0)
         vbox = Gtk.VBox(spacing=3)
@@ -149,16 +167,47 @@ class MilitaryWindow(Gtk.Window):
         self.button_to.connect("clicked", self.on_clicked_copy_to)
         vbox.pack_start(self.button_to, False, True, 0)
 
-        maxunit = 16
+        maxunit = 0
+        for units in self.main_window.saver.military.values():
+            if maxunit < len(units): maxunit = len(units)
+        
         tbox = Gtk.HBox(spacing=3) 
         tbox.pack_start(Gtk.Label(label="U/I index:"), False, True, 0)
         self.counter_to_order = Gtk.SpinButton.new_with_range(0, maxunit, 1)
         tbox.pack_start(self.counter_to_order, False, True, 0)
         vbox.pack_start(tbox, False, True, 0)
+
+        hbox.pack_start(Gtk.VSeparator(), False, True, 0)
+        hbox.pack_start(Gtk.VSeparator(), False, True, 0)
+
+        self.info2 = Gtk.Label(label="check order...")
+        hbox.pack_start(self.info2, False, True, 0)        
+        self.info2.set_yalign(0.0)
         
-        self.set_title(f"unit-window")
-        self.add_events(Gdk.EventMask.SCROLL_MASK)
-        print("unit-window...")
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        
+        hbox = Gtk.HBox(spacing=3) 
+        self.box.pack_start(hbox, False, True, 0)
+
+        button = Gtk.Button(label="Delete-Unit")
+        button.connect("clicked", self.on_clicked_delete)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Next-Unit")
+        button.connect("clicked", self.on_clicked_next)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Check-Order")
+        button.connect("clicked", self.on_clicked_check)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Set-Order")
+        button.connect("clicked", self.on_clicked_order)
+        hbox.pack_start(button, False, True, 0)
+        
+        # self.add_events(Gdk.EventMask.SCROLL_MASK)
+        print("military-window...")
         self.show_all()
 
     def selected_military_view(self):

@@ -213,29 +213,6 @@ class ControlWindow(Gtk.Window):
             info += f"\n {i}. {it}"            
         self.info.set_text(info)
 
-    def selected_infra_view(self):
-        if self.main_window.selected_infra is not None:
-            info = "selected infra:"
-            hex_xy = self.main_window.selected_infra[:2]
-            index = self.main_window.selected_infra[2]
-            buildings = self.main_window.saver.infra.get(hex_xy)
-            if buildings is not None:
-                infra = buildings[index]
-                info = f"building ({index}) from {len(buildings)}"
-                info += f"\nhex: {hex_xy}"
-                info += f"\nowner: {infra['own']}"
-                info += f"\ntype: {infra['type']}"
-                info += f"\nstate: {round(100*infra['state'])}%"
-                if "supply" in infra:
-                    info += f"\nsuplly: {infra['supply']}"
-                info += "\nstock:"
-                for good in sorted(self.main_window.saver.goods.keys()):
-                    val = infra["stock"].get(good, 0.0)
-                    io = infra["io"].get(good, "off")
-                    info += f"\n\t{good} [{io}] - {round(val, 2)}"
-        else: info = "No selected infra..."
-        self.info.set_text(info)
-    
     def settings_view(self):
         self.__display_offset = 0
         setstr = "settings:\n" + "-" * 40 + "\n"
@@ -285,6 +262,7 @@ class ControlWindow(Gtk.Window):
         self.display_content = orderstr
         display_data = self.get_display_data()
         self.info.set_text(display_data)
+
     def builds_view(self):
         self.__display_offset = 0
         buildstr = "build-list:\n" + "-" * 40 + "\n"
