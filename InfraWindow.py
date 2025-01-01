@@ -18,7 +18,7 @@ class InfraWindow(Gtk.Window):
         self.main_window.on_press(widget, "i")
 
     def __init__(self, main_window):
-        Gtk.Window.__init__(self, title="military-window")
+        Gtk.Window.__init__(self, title="infra-window")
         self.connect("destroy", self.on_destroy)
         self.main_window = main_window
         self.control_window = self.main_window.control_window
@@ -26,14 +26,7 @@ class InfraWindow(Gtk.Window):
         self.box = Gtk.VBox(spacing=3)
         self.add(self.box)        
 
-        self.info = Gtk.Label(label="")
-        self.box.pack_start(self.info, False, True, 0)        
-        self.selected_infra_view()
-        self.info.set_yalign(0.0)
 
-        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
-        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
-        
         hbox = Gtk.HBox(spacing=3) 
         self.box.pack_start(hbox, False, True, 0)
 
@@ -45,6 +38,14 @@ class InfraWindow(Gtk.Window):
         button.connect("clicked", self.on_clicked_next)
         hbox.pack_start(button, False, True, 0)
 
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        
+        
+        self.info = Gtk.Label(label="")
+        self.box.pack_start(self.info, False, True, 0)        
+        self.selected_infra_view()
+        self.info.set_yalign(0.0)
 
         
         # self.add_events(Gdk.EventMask.SCROLL_MASK)

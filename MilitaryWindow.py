@@ -135,7 +135,29 @@ class MilitaryWindow(Gtk.Window):
         
         self.box = Gtk.VBox(spacing=3)
         self.add(self.box)        
+        
+        hbox = Gtk.HBox(spacing=3) 
+        self.box.pack_start(hbox, False, True, 0)
 
+        button = Gtk.Button(label="Delete-Unit")
+        button.connect("clicked", self.on_clicked_delete)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Next-Unit")
+        button.connect("clicked", self.on_clicked_next)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Check-Order")
+        button.connect("clicked", self.on_clicked_check)
+        hbox.pack_start(button, False, True, 0)
+
+        button = Gtk.Button(label="Set-Order")
+        button.connect("clicked", self.on_clicked_order)
+        hbox.pack_start(button, False, True, 0)
+
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
+        
         hbox = Gtk.HBox(spacing=3) 
         self.box.pack_start(hbox, False, True, 0)
         self.info = Gtk.Label(label="")
@@ -183,29 +205,7 @@ class MilitaryWindow(Gtk.Window):
         self.info2 = Gtk.Label(label="check order...")
         hbox.pack_start(self.info2, False, True, 0)        
         self.info2.set_yalign(0.0)
-        
-        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
-        self.box.pack_start(Gtk.HSeparator(), False, True, 0)
-        
-        hbox = Gtk.HBox(spacing=3) 
-        self.box.pack_start(hbox, False, True, 0)
-
-        button = Gtk.Button(label="Delete-Unit")
-        button.connect("clicked", self.on_clicked_delete)
-        hbox.pack_start(button, False, True, 0)
-
-        button = Gtk.Button(label="Next-Unit")
-        button.connect("clicked", self.on_clicked_next)
-        hbox.pack_start(button, False, True, 0)
-
-        button = Gtk.Button(label="Check-Order")
-        button.connect("clicked", self.on_clicked_check)
-        hbox.pack_start(button, False, True, 0)
-
-        button = Gtk.Button(label="Set-Order")
-        button.connect("clicked", self.on_clicked_order)
-        hbox.pack_start(button, False, True, 0)
-        
+                
         # self.add_events(Gdk.EventMask.SCROLL_MASK)
         print("military-window...")
         self.show_all()
