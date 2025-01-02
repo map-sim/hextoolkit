@@ -83,13 +83,14 @@ class ControlWindow(Gtk.Window):
         self.make_button(vbox, "Switch-Control - c", "c")
         self.make_button(vbox, "Select-Unit - v", "v")
         self.make_button(vbox, "Select-Infra - i", "i")
+        self.make_button(vbox, "Show-Infra - j", "j")
         self.make_button(vbox, "Area Control - a", "a")
-        self.make_button(vbox, "Un-Select - q", "q")
 
         vbox = Gtk.VBox(spacing=3)
         self.box.pack_start(vbox, False, True, 0)
         vbox.pack_start(Gtk.Separator(), False, True, 0)
 
+        self.make_button(vbox, "Un-Select - q", "q")
         self.make_button(vbox, "Next turn (n)", "n")
         self.make_button(vbox, "Mode - TAB", "Tab")
         self.make_button(vbox, "Remove Hex - R", "R")

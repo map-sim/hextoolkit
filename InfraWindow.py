@@ -78,8 +78,8 @@ class InfraWindow(Gtk.Window):
                         val = infra["stock"].get(good, 0.0)
                         io = infra["io"].get(good, "off")
                         info += f"\n\t{good} [{io}] - {round(val, 2)}"
-                else: info = "Empty infra slot..."
-            else: info = "No infra in hex..."
+                else: info = f"Empty infra slot {self.main_window.selected_infra}..."
+            else: info = f"No infra in hex {self.main_window.selected_infra}..."
         else: info = "No selected infra..."
         self.info.set_text(info)
         return info

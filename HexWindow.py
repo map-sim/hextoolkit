@@ -92,7 +92,7 @@ class HexWindow(NaviWindow):
             print(f"hex-location: {hex_index_xy}")
             print(f"hex-terrain: {hex_terr}")
             if self.selected_vex != tuple(hex_index_xy):
-                self.unselect_all()
+                self.unselect_all(infra=False)
                 self.selected_vex = tuple(hex_index_xy)
                 self.saver.mark_only_one_vex(hex_index_xy)
                 self.control_window.selected_hex_view(hex_index_xy, hex_terr)
@@ -100,7 +100,7 @@ class HexWindow(NaviWindow):
                     self.saver.orders_to_markers(self.selected_vex, self.selected_own)
             else:
                 self.saver.unmark_all_vexes()
-                self.unselect_all()
+                self.unselect_all(infra=False)
             self.draw_content()
         return True
 
@@ -125,15 +125,17 @@ class HexWindow(NaviWindow):
             self.terr_graph.vex_dict[vex] = terr
         self.reset_vex(vex)
 
-    def unselect_all(self):
+    def unselect_all(self, infra=True):
         self.selected_own = None
-        self.selected_infra = None
+        if infra:
+            self.selected_infra = None
         self.selected_unit = None
         self.selected_vex = None
         if self.military_window is not None:
             self.military_window.destroy()
-        if self.infra_window is not None:
-            self.infra_window.destroy()
+        if infra:
+            if self.infra_window is not None:
+                self.infra_window.destroy()
             
     def on_press(self, widget, event):
         if isinstance(event, str): key_name = event
@@ -321,6 +323,11 @@ class HexWindow(NaviWindow):
             out += f"\nhex ... {self.selected_vex}"
             out += f"\ninfra ... {self.selected_infra}"            
             self.control_window.info.set_text(out)
+        elif key_name == "j":
+            print("##> show selected infra")
+            if self.infra_window is None:
+                self.infra_window = InfraWindow(self)
+            self.infra_window.selected_infra_view()
 
         elif key_name == "n":
             print("##> next turn")
